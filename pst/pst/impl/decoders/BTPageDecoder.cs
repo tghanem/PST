@@ -14,6 +14,8 @@ namespace pst.impl.decoders
 
         public BTPage Decode(BinaryData encodedData)
         {
+            encodedData.AssertNotNullAndLength(512);
+
             var rgEntries = (BinaryData) null;
             var numberOfEntriesInPage = 0;
             var maximumNumberOfEntriesInPage = 0;

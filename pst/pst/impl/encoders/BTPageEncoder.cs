@@ -1,6 +1,5 @@
 ﻿using pst.interfaces;
 using pst.utilities;
-using System;
 
 namespace pst.impl.encoders
 {
@@ -17,8 +16,9 @@ namespace pst.impl.encoders
         {
             if (encoding == PSTFileEncoding.ANSI)
             {
-                if (value.RGEntries.Length > 496)
-                    throw new ArgumentException("RGEntries length is more than expected");
+                value.RGEntries.AssertNotNullAndLength(496);
+
+                value.PageTrailer.AssertNotNullAndLength(12);
 
                 using (var generator = BinaryDataGenerator.New())
                 {
@@ -35,11 +35,11 @@ namespace pst.impl.encoders
             }
             else
             {
-                if (value.RGEntries.Length > 488)
-                    throw new ArgumentException("RGEntries length is more than expected");
+                value.RGEntries.AssertNotNullAndLength(488);
 
-                if (value.Padding == null)
-                    throw new ArgumentNullException("Padding is null");
+                value.Padding.AssertNotNullAndLength(4);
+
+                value.PageTrailer.AssertNotNullAndLength(16);
 
                 using (var generator = BinaryDataGenerator.New())
                 {
