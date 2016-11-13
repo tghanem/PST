@@ -1,0 +1,31 @@
+﻿using pst.interfaces;
+using pst.utilities;
+using pst.encodables;
+
+namespace pst.impl.encoders
+{
+    class IBBTEntryEncoder : IEncoder<IBBTEntry>
+    {
+        private readonly IEncoder<BID> bidEncoder;
+
+        private readonly IEncoder<BREF> brefEncoder;
+
+        public IBBTEntryEncoder(IEncoder<BID> bidEncoder, IEncoder<BREF> brefEncoder)
+        {
+            this.bidEncoder = bidEncoder;
+            this.brefEncoder = brefEncoder;
+        }
+
+        public BinaryData Encode(IBBTEntry value)
+        {
+            using (var generator = BinaryDataGenerator.New())
+            {
+                return
+                    generator
+                    .Append(value.BID, bidEncoder)
+                    .Append(value.BREF, brefEncoder)
+                    .GetData();
+            }
+        }
+    }
+}

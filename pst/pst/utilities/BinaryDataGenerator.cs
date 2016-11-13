@@ -1,4 +1,5 @@
-﻿using System;
+﻿using pst.interfaces;
+using System;
 using System.IO;
 
 namespace pst.utilities
@@ -15,14 +16,11 @@ namespace pst.utilities
         public static BinaryDataGenerator New()
             => new BinaryDataGenerator(new MemoryStream());
 
-        public BinaryDataGenerator Append(int value)
-            => Append(BinaryData.From(value));
-
-        public BinaryDataGenerator Append(byte value)
-            => Append(BinaryData.From(value));
-
         public BinaryData GetData()
             => BinaryData.OfValue(valueStream.ToArray());
+
+        public BinaryDataGenerator Append<TType>(TType typeValue, IEncoder<TType> typeEncoder) where TType : class
+            => Append(typeEncoder.Encode(typeValue));
 
         public BinaryDataGenerator Append(BinaryData data)
         {
