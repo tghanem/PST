@@ -1,6 +1,8 @@
-﻿namespace pst.interfaces
+﻿using pst.utilities;
+
+namespace pst.interfaces
 {
-    public class BTPage
+    class BTPage
     {
         public BinaryData RGEntries { get; }
 

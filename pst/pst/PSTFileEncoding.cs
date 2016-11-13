@@ -1,6 +1,6 @@
 ﻿namespace pst
 {
-    public enum PSTFileEncoding
+    enum PSTFileEncoding
     {
         ANSI,
 

@@ -41,12 +41,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="impl\decoders\BTPageDecoder.cs" />
-    <Compile Include="interfaces\BinaryData.cs" />
-    <Compile Include="interfaces\BTPage.cs" />
+    <Compile Include="impl\encoders\BTPageEncoder.cs" />
+    <Compile Include="utilities\BinaryData.cs" />
+    <Compile Include="encodables\BTPage.cs" />
     <Compile Include="interfaces\IDecoder.cs" />
     <Compile Include="interfaces\IEncoder.cs" />
     <Compile Include="PSTFileEncoding.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="utilities\BinaryDataGenerator.cs" />
+    <Compile Include="utilities\BinaryDataParser.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

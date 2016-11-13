@@ -1,8 +1,9 @@
 ﻿using pst.interfaces;
+using pst.utilities;
 
 namespace pst.impl.decoders
 {
-    public class BTPageDecoder : IDecoder<BTPage>
+    class BTPageDecoder : IDecoder<BTPage>
     {
         private readonly PSTFileEncoding encoding;
 
@@ -23,24 +24,30 @@ namespace pst.impl.decoders
 
             if (encoding == PSTFileEncoding.ANSI)
             {
-                encodedData
+                using (var parser = BinaryDataParser.OfValue(encodedData))
+                {
+                    parser
                     .TakeAndSkip(496, ref rgEntries)
                     .TakeAsInt32AndSkip(1, ref numberOfEntriesInPage)
                     .TakeAsInt32AndSkip(1, ref maximumNumberOfEntriesInPage)
                     .TakeAsInt32AndSkip(1, ref entrySize)
                     .TakeAsInt32AndSkip(1, ref pageLevel)
-                    .TakeAndSkip(12, ref pageTrailer);
+                    .TakeAndSkip(12, ref pageTrailer);                    
+                }
             }
             else
             {
-                encodedData
+                using (var parser = BinaryDataParser.OfValue(encodedData))
+                {
+                    parser
                     .TakeAndSkip(488, ref rgEntries)
                     .TakeAsInt32AndSkip(1, ref numberOfEntriesInPage)
                     .TakeAsInt32AndSkip(1, ref maximumNumberOfEntriesInPage)
                     .TakeAsInt32AndSkip(1, ref entrySize)
                     .TakeAsInt32AndSkip(1, ref pageLevel)
                     .TakeAndSkip(4, ref padding)
-                    .TakeAndSkip(16, ref pageTrailer);
+                    .TakeAndSkip(16, ref pageTrailer);                   
+                }
             }
 
             return

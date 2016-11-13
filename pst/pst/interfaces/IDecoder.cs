@@ -1,6 +1,8 @@
-﻿namespace pst.interfaces
+﻿using pst.utilities;
+
+namespace pst.interfaces
 {
-    public interface IDecoder<TType> where TType : class
+    interface IDecoder<TType> where TType : class
     {
         TType Decode(BinaryData encodedData);
     }
