@@ -1,4 +1,5 @@
-﻿using System;
+﻿using pst.interfaces;
+using System;
 using System.IO;
 
 namespace pst.utilities
@@ -15,30 +16,13 @@ namespace pst.utilities
         public static BinaryDataParser OfValue(BinaryData data)
             => new BinaryDataParser(new MemoryStream(data.Value));
 
-        public BinaryDataParser TakeAsInt32AndSkip(int count, ref int value)
+        public TType TakeAndSkip<TType>(int count, IDecoder<TType> typeDecoder) where TType : class
         {
-            var binaryValue = (BinaryData) null;
-
-            var remainingData =
-                TakeAndSkip(count, ref binaryValue);
-
-            value = BitConverter.ToInt32(binaryValue.Value, 0);
-
-            return this;
-        }
-
-        public BinaryDataParser TakeAndSkip(int count, ref BinaryData value)
-        {
-            if (count > valueStream.Position + valueStream.Length)
-                throw new ArgumentException("Value stream does not have the required number of bytes");
-
             var buffer = new byte[count];
 
             valueStream.Read(buffer, 0, count);
 
-            value = BinaryData.OfValue(buffer);
-
-            return this;
+            return typeDecoder.Decode(BinaryData.OfValue(buffer));
         }
 
         public void Dispose()
