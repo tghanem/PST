@@ -19,7 +19,7 @@ namespace pst.utilities
         public BinaryData GetData()
             => BinaryData.OfValue(valueStream.ToArray());
 
-        public BinaryDataGenerator Append<TType>(TType typeValue, IEncoder<TType> typeEncoder) where TType : class
+        public BinaryDataGenerator Append<TType>(TType typeValue, IEncoder<TType> typeEncoder)
             => Append(typeEncoder.Encode(typeValue));
 
         public BinaryDataGenerator Append(BinaryData data)

@@ -2,7 +2,7 @@
 
 namespace pst.interfaces
 {
-    interface IDecoder<TType> where TType : class
+    interface IDecoder<TType>
     {
         TType Decode(BinaryData encodedData);
     }

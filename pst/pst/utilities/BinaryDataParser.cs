@@ -16,7 +16,16 @@ namespace pst.utilities
         public static BinaryDataParser OfValue(BinaryData data)
             => new BinaryDataParser(new MemoryStream(data.Value));
 
-        public TType TakeAndSkip<TType>(int count, IDecoder<TType> typeDecoder) where TType : class
+        public BinaryData TakeAndSkip(int count)
+        {
+            var buffer = new byte[count];
+
+            valueStream.Read(buffer, 0, count);
+
+            return BinaryData.OfValue(buffer);
+        }
+
+        public TType TakeAndSkip<TType>(int count, IDecoder<TType> typeDecoder)
         {
             var buffer = new byte[count];
 
