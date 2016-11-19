@@ -2,9 +2,9 @@
 
 namespace pst.encodables
 {
-    class LBBTPage
+    class BTPage<TEntry>
     {
-        public LBBTEntry[] Entries { get; }
+        public TEntry[] Entries { get; }
 
         public int NumberOfEntriesInPage { get; }
 
@@ -18,7 +18,7 @@ namespace pst.encodables
 
         public PageTrailer PageTrailer { get; }
 
-        public LBBTPage(LBBTEntry[] entries, int numberOfEntriesInPage, int maximumNumberOfEntriesInPage, int entrySize, int pageLevel, BinaryData padding, PageTrailer pageTrailer)
+        public BTPage(TEntry[] entries, int numberOfEntriesInPage, int maximumNumberOfEntriesInPage, int entrySize, int pageLevel, BinaryData padding, PageTrailer pageTrailer)
         {
             Entries = entries;
             NumberOfEntriesInPage = numberOfEntriesInPage;

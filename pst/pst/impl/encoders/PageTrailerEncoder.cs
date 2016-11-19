@@ -22,8 +22,8 @@ namespace pst.impl.encoders
             {
                 return
                     generator
-                    .Append(value.Type, int32Encoder, 1)
-                    .Append(value.TypeRepeat, int32Encoder, 1)
+                    .Append(value.PageType, int32Encoder, 1)
+                    .Append(value.PageTypeRepeat, int32Encoder, 1)
                     .Append(value.PageSignature, int32Encoder, 2)
                     .Append(value.Crc32ForPageData, int32Encoder)
                     .Append(value.PageBlockId, bidEncoder)
