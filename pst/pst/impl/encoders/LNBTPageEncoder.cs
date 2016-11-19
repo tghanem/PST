@@ -1,7 +1,6 @@
 ﻿using pst.interfaces;
 using pst.utilities;
 using pst.encodables;
-using System;
 
 namespace pst.impl.encoders
 {
@@ -28,10 +27,9 @@ namespace pst.impl.encoders
         {
             using (var generator = BinaryDataGenerator.New())
             {
-                Array.ForEach(value.Entries, e => generator.Append(e, entryEncoder));
-
                 return
                     generator
+                    .Append(value.Entries, entryEncoder)
                     .Append(value.Entries.Length, int32Encoder, 1)
                     .Append(MaximumNumberOfEntriesInPage, int32Encoder, 1)
                     .Append(EntrySize, int32Encoder, 1)

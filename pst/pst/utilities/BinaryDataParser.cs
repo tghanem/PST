@@ -1,5 +1,6 @@
 ﻿using pst.interfaces;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace pst.utilities
@@ -32,6 +33,19 @@ namespace pst.utilities
             valueStream.Read(buffer, 0, count);
 
             return typeDecoder.Decode(BinaryData.OfValue(buffer));
+        }
+
+        public TType[] TakeAndSkip<TType>(int numberOfItems, int itemSize, IDecoder<TType> typeDecoder)
+        {
+            var entries = new List<TType>();
+
+            for(var i = 0; i < numberOfItems; i++)
+            {
+                entries
+                    .Add(TakeAndSkip(itemSize, typeDecoder));
+            }
+
+            return entries.ToArray();
         }
 
         public TType TakeAtWithoutChangingStreamPosition<TType>(int offset, int count, IDecoder<TType> typeDecoder)

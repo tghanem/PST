@@ -1,7 +1,6 @@
 ﻿using pst.encodables;
 using pst.interfaces;
 using pst.utilities;
-using System.Collections.Generic;
 
 namespace pst.impl.decoders
 {
@@ -24,23 +23,15 @@ namespace pst.impl.decoders
         {
             using (var parser = BinaryDataParser.OfValue(encodedData))
             {
-                var numberOfEntries =
-                    parser.TakeAtWithoutChangingStreamPosition(488, 1, int32Decoder);
-
-                var entrySize = 
-                    parser.TakeAtWithoutChangingStreamPosition(490, 1, int32Decoder);
-
-                var entries = new List<LNBTEntry>();
-
-                for(var i = 0; i < numberOfEntries; i++)
-                {
-                    entries
-                        .Add(parser.TakeAndSkip(entrySize, entryDecoder));
-                }
-
                 return
                     new LNBTPage(
-                        entries.ToArray(),
+                        parser.TakeAndSkip(
+                            numberOfItems:
+                                parser.TakeAtWithoutChangingStreamPosition(488, 1, int32Decoder),
+                            itemSize:
+                                parser.TakeAtWithoutChangingStreamPosition(490, 1, int32Decoder),
+                            typeDecoder:
+                                entryDecoder),
                         parser.TakeAndSkip(1, int32Decoder),
                         parser.TakeAndSkip(1, int32Decoder),
                         parser.TakeAndSkip(1, int32Decoder),
