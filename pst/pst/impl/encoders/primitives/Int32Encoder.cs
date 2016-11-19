@@ -2,7 +2,7 @@
 using System;
 using pst.utilities;
 
-namespace pst.impl.encoders
+namespace pst.impl.encoders.primitives
 {
     class Int32Encoder : IEncoder<int>
     {

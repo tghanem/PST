@@ -2,7 +2,7 @@
 using pst.utilities;
 using System;
 
-namespace pst.impl.decoders
+namespace pst.impl.decoders.primitives
 {
     class Int32Decoder : IDecoder<int>
     {
