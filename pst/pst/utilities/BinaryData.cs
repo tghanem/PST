@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace pst.utilities
 {
@@ -22,6 +23,9 @@ namespace pst.utilities
 
         public static BinaryData OfValue(byte[] value)
             => new BinaryData(value);
+
+        public BinaryData Take(int count)
+            => new BinaryData(Value.Take(count).ToArray());
 
         public int Length => Value.Length;
     }

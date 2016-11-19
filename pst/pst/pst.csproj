@@ -47,12 +47,16 @@
     <Compile Include="encodables\INBTEntry.cs" />
     <Compile Include="encodables\LBBTEntry.cs" />
     <Compile Include="encodables\LNBTEntry.cs" />
+    <Compile Include="encodables\LNBTPage.cs" />
     <Compile Include="encodables\NID.cs" />
+    <Compile Include="encodables\PageTrailer.cs" />
     <Compile Include="impl\decoders\BIDDecoder.cs" />
     <Compile Include="impl\decoders\BIDecoder.cs" />
     <Compile Include="impl\decoders\BREFDecoder.cs" />
     <Compile Include="impl\decoders\IBBTEntryDecoder.cs" />
     <Compile Include="impl\decoders\INBTEntryDecoder.cs" />
+    <Compile Include="impl\decoders\LNBTPageDecoder.cs" />
+    <Compile Include="impl\decoders\PageTrailerDecoder.cs" />
     <Compile Include="impl\decoders\primitives\Int32Decoder.cs" />
     <Compile Include="impl\decoders\LBBTEntryDecoder.cs" />
     <Compile Include="impl\decoders\LNBTEntryDecoder.cs" />
@@ -62,6 +66,8 @@
     <Compile Include="impl\encoders\BREFEncoder.cs" />
     <Compile Include="impl\encoders\IBBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\INBTEntryEncoder.cs" />
+    <Compile Include="impl\encoders\LNBTPageEncoder.cs" />
+    <Compile Include="impl\encoders\PageTrailerEncoder.cs" />
     <Compile Include="impl\encoders\primitives\Int32Encoder.cs" />
     <Compile Include="impl\encoders\LBBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\LNBTEntryEncoder.cs" />

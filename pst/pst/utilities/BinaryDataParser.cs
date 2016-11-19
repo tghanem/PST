@@ -34,6 +34,19 @@ namespace pst.utilities
             return typeDecoder.Decode(BinaryData.OfValue(buffer));
         }
 
+        public TType TakeAtWithoutChangingStreamPosition<TType>(int offset, int count, IDecoder<TType> typeDecoder)
+        {
+            var position = valueStream.Position;
+
+            valueStream.Seek(offset, SeekOrigin.Begin);
+
+            var typeValue = TakeAndSkip(count, typeDecoder);
+
+            valueStream.Position = position;
+
+            return typeValue;
+        }
+
         public void Dispose()
         {
             valueStream.Dispose();

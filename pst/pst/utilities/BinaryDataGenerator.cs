@@ -22,6 +22,9 @@ namespace pst.utilities
         public BinaryDataGenerator Append<TType>(TType typeValue, IEncoder<TType> typeEncoder)
             => Append(typeEncoder.Encode(typeValue));
 
+        public BinaryDataGenerator Append<TType>(TType typeValue, IEncoder<TType> typeEncoder, int countOfEncodedDataToAppend)
+            => Append(typeEncoder.Encode(typeValue).Take(countOfEncodedDataToAppend));
+
         public BinaryDataGenerator Append(BinaryData data)
         {
             valueStream.Write(data.Value, 0, data.Length);
