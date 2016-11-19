@@ -8,9 +8,9 @@ namespace pst.impl.encoders
     {
         private readonly IEncoder<BID> bidEncoder;
 
-        private readonly IEncoder<BI> biEncoder;
+        private readonly IEncoder<IB> biEncoder;
 
-        public BREFEncoder(IEncoder<BID> bidEncoder, IEncoder<BI> biEncoder)
+        public BREFEncoder(IEncoder<BID> bidEncoder, IEncoder<IB> biEncoder)
         {
             this.bidEncoder = bidEncoder;
             this.biEncoder = biEncoder;

@@ -2,14 +2,14 @@
 {
     class INBTEntry
     {
-        public NID NID { get; }
+        public NID Key { get; }
 
-        public BREF BREF { get; }
+        public BREF ChildPageBlockReference { get; }
 
-        private INBTEntry(NID nid, BREF bref)
+        private INBTEntry(NID key, BREF childPageBlockReference)
         {
-            NID = nid;
-            BREF = bref;
+            Key = key;
+            ChildPageBlockReference = childPageBlockReference;
         }
 
         public static INBTEntry OfValue(NID nid, BREF bref)

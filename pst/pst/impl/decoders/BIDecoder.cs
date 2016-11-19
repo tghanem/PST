@@ -5,11 +5,11 @@ using System;
 
 namespace pst.impl.decoders
 {
-    class BIDecoder : IDecoder<BI>
+    class BIDecoder : IDecoder<IB>
     {
-        public BI Decode(BinaryData encodedData)
+        public IB Decode(BinaryData encodedData)
         {
-            return BI.OfValue(BitConverter.ToInt64(encodedData.Value, 0));
+            return IB.OfValue(BitConverter.ToInt64(encodedData.Value, 0));
         }
     }
 }

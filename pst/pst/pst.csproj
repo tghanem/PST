@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="encodables\BI.cs" />
+    <Compile Include="encodables\IB.cs" />
     <Compile Include="encodables\BID.cs" />
     <Compile Include="encodables\BREF.cs" />
     <Compile Include="encodables\BTPage.cs" />

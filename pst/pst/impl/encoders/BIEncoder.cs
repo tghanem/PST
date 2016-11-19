@@ -5,9 +5,9 @@ using System;
 
 namespace pst.impl.encoders
 {
-    class BIEncoder : IEncoder<BI>
+    class BIEncoder : IEncoder<IB>
     {
-        public BinaryData Encode(BI value)
+        public BinaryData Encode(IB value)
         {
             return BinaryData.OfValue(BitConverter.GetBytes(value.Value));
         }

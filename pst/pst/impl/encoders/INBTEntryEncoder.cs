@@ -22,8 +22,8 @@ namespace pst.impl.encoders
             {
                 return
                     generator
-                    .Append(value.NID, nidEncoder)
-                    .Append(value.BREF, brefEncoder)
+                    .Append(value.Key, nidEncoder)
+                    .Append(value.ChildPageBlockReference, brefEncoder)
                     .GetData();
             }
         }

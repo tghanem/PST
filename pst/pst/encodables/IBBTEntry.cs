@@ -2,14 +2,14 @@
 {
     class IBBTEntry
     {
-        public BID BID { get; }
+        public BID Key { get; }
 
-        public BREF BREF { get; }
+        public BREF ChildPageBlockReference { get; }
 
-        private IBBTEntry(BID bid, BREF bref)
+        private IBBTEntry(BID key, BREF childPageBlockReference)
         {
-            BID = bid;
-            BREF = bref;
+            Key = key;
+            ChildPageBlockReference = childPageBlockReference;
         }
 
         public static IBBTEntry OfValue(BID bid, BREF bref)
