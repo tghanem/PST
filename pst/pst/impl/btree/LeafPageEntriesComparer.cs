@@ -1,10 +1,13 @@
-﻿using pst.interfaces;
+﻿using pst.core;
+using pst.interfaces;
 using System;
 using System.Linq;
 
 namespace pst.impl
 {
-    class LeafPageEntriesComparer<TKey, TEntry> : IBTreePageEntriesComparer<TKey, TEntry> where TKey : IEquatable<TKey>
+    class LeafPageEntriesComparer<TKey, TEntry> : IBTreePageEntriesComparer<TKey, TEntry>
+        where TKey : IEquatable<TKey>
+        where TEntry : class
     {
         private readonly Func<TEntry, TKey> entryToKey;
 
@@ -13,7 +16,7 @@ namespace pst.impl
             this.entryToKey = entryToKey;
         }
 
-        public TEntry GetMatchingEntry(TEntry[] entries, TKey key)
+        public Maybe<TEntry> GetMatchingEntry(TEntry[] entries, TKey key)
         {
             return
                 entries

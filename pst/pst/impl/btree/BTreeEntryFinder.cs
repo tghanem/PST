@@ -1,10 +1,13 @@
-﻿using pst.encodables;
+﻿using pst.core;
+using pst.encodables;
 using pst.interfaces;
 using System;
 
 namespace pst.impl
 {
-    class BTreeEntryFinder<TKey, TIntermediateEntry, TLeafEntry> : IBTreeEntryFinder<TKey, TIntermediateEntry, TLeafEntry>
+    class BTreeEntryFinder<TKey, TIntermediateEntry, TLeafEntry> : IBTreeEntryFinder<TKey, TLeafEntry>
+        where TIntermediateEntry : class
+        where TLeafEntry : class
     {
         private readonly IBTreePageEntryLocator<TKey, TIntermediateEntry> intermediateEntryLocator;
         private readonly IBTreePageEntryLocator<TKey, TLeafEntry> leafEntryLocator;
@@ -26,30 +29,29 @@ namespace pst.impl
             this.leafEntryLocator = leafEntryLocator;
         }
 
-        public TLeafEntry Find(TKey key)
+        public Maybe<TLeafEntry> Find(TKey key)
         {
             return Find(key, rootPageBlockReference);
         }
 
-        private TLeafEntry Find(TKey key, BREF pageBlockReference)
+        private Maybe<TLeafEntry> Find(TKey key, BREF pageBlockReference)
         {
-            var page =
-                pageLoader.LoadPage(pageBlockReference);
+            var page = pageLoader.LoadPage(pageBlockReference);
 
             if (page.PageLevel > 0)
             {
-                var entry =
-                    intermediateEntryLocator.FindEntry(page, key);
+                var entry = intermediateEntryLocator.FindEntry(page, key);
 
-                return
-                    Find(
-                        key,
-                        intermediateEntryToPageBlockReference(entry));
+                if (entry.HasNoValue)
+                {
+                    return Maybe<TLeafEntry>.NoValue<TLeafEntry>();
+                }
+
+                return Find(key, intermediateEntryToPageBlockReference(entry.Value));
             }
             else
             {
-                return
-                    leafEntryLocator.FindEntry(page, key);
+                return leafEntryLocator.FindEntry(page, key);
             }
         }
     }

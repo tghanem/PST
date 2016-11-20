@@ -1,10 +1,11 @@
 ﻿using pst.interfaces;
 using pst.encodables;
 using pst.utilities;
+using pst.core;
 
 namespace pst.impl
 {
-    class BTreePageEntryLocator<TKey, TEntry> : IBTreePageEntryLocator<TKey, TEntry>
+    class BTreePageEntryLocator<TKey, TEntry> : IBTreePageEntryLocator<TKey, TEntry> where TEntry : class
     {
         private readonly IDecoder<TEntry> entryDecoder;
 
@@ -16,7 +17,7 @@ namespace pst.impl
             this.pageEntriesComparer = pageEntriesComparer;
         }
 
-        public TEntry FindEntry(BTPage page, TKey key)
+        public Maybe<TEntry> FindEntry(BTPage page, TKey key)
         {
             using (var parser = BinaryDataParser.OfValue(page.Entries))
             {

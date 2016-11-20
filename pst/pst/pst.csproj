@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="core\Maybe.cs" />
     <Compile Include="encodables\IB.cs" />
     <Compile Include="encodables\BID.cs" />
     <Compile Include="encodables\BREF.cs" />
@@ -50,8 +51,8 @@
     <Compile Include="encodables\LNBTEntry.cs" />
     <Compile Include="encodables\NID.cs" />
     <Compile Include="encodables\PageTrailer.cs" />
-    <Compile Include="impl\BTreePageEntryLocator.cs" />
-    <Compile Include="impl\IntermediatePageEntriesComparer.cs" />
+    <Compile Include="impl\btree\BTreePageEntryLocator.cs" />
+    <Compile Include="impl\btree\IntermediatePageEntriesComparer.cs" />
     <Compile Include="impl\decoders\BIDDecoder.cs" />
     <Compile Include="impl\decoders\BIDecoder.cs" />
     <Compile Include="impl\decoders\BREFDecoder.cs" />
@@ -74,12 +75,12 @@
     <Compile Include="impl\encoders\LBBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\LNBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\NIDEncoder.cs" />
-    <Compile Include="impl\BTreeEntryFinder.cs" />
-    <Compile Include="impl\LeafPageEntriesComparer.cs" />
-    <Compile Include="interfaces\IBTreePageEntriesComparer.cs" />
-    <Compile Include="interfaces\IBTreeEntryFinder.cs" />
-    <Compile Include="interfaces\IBTreePageEntryLocator.cs" />
-    <Compile Include="interfaces\IBTreePageLoader.cs" />
+    <Compile Include="impl\btree\BTreeEntryFinder.cs" />
+    <Compile Include="impl\btree\LeafPageEntriesComparer.cs" />
+    <Compile Include="interfaces\btree\IBTreePageEntriesComparer.cs" />
+    <Compile Include="interfaces\btree\IBTreeEntryFinder.cs" />
+    <Compile Include="interfaces\btree\IBTreePageEntryLocator.cs" />
+    <Compile Include="interfaces\btree\IBTreePageLoader.cs" />
     <Compile Include="utilities\BinaryData.cs" />
     <Compile Include="interfaces\IDecoder.cs" />
     <Compile Include="interfaces\IEncoder.cs" />
