@@ -1,6 +1,8 @@
-﻿namespace pst.encodables
+﻿using System;
+
+namespace pst.encodables
 {
-    class NID
+    class NID : IComparable<NID>, IEquatable<NID>
     {
         public int Type { get; }
 
@@ -10,6 +12,30 @@
         {
             Type = type;
             Index = index;
+        }
+
+        public int Value => Index | Type << 5;
+
+        public int CompareTo(NID other)
+        {
+            return Value.CompareTo(other.Value);
+        }
+
+        public bool Equals(NID other)
+        {
+            return other.Value == Value;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var nid = obj as NID;
+
+            return nid?.Value == Value;
+        }
+
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
         }
     }
 }
