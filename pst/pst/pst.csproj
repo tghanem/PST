@@ -72,8 +72,6 @@
     <Compile Include="impl\encoders\LBBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\LNBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\NIDEncoder.cs" />
-    <Compile Include="interfaces\IPageEntriesDecoder.cs" />
-    <Compile Include="interfaces\IPageEntriesEncoder.cs" />
     <Compile Include="utilities\BinaryData.cs" />
     <Compile Include="interfaces\IDecoder.cs" />
     <Compile Include="interfaces\IEncoder.cs" />
