@@ -53,6 +53,7 @@
     <Compile Include="encodables\PageTrailer.cs" />
     <Compile Include="impl\btree\BTreePageEntryLocator.cs" />
     <Compile Include="impl\btree\IntermediatePageEntriesComparer.cs" />
+    <Compile Include="impl\ReaderBasedDataBlockLoader.cs" />
     <Compile Include="impl\decoders\BIDDecoder.cs" />
     <Compile Include="impl\decoders\BIDecoder.cs" />
     <Compile Include="impl\decoders\BREFDecoder.cs" />
@@ -77,10 +78,12 @@
     <Compile Include="impl\encoders\NIDEncoder.cs" />
     <Compile Include="impl\btree\BTreeEntryFinder.cs" />
     <Compile Include="impl\btree\LeafPageEntriesComparer.cs" />
+    <Compile Include="impl\StreamBasedDataReader.cs" />
     <Compile Include="interfaces\btree\IBTreePageEntriesComparer.cs" />
     <Compile Include="interfaces\btree\IBTreeEntryFinder.cs" />
     <Compile Include="interfaces\btree\IBTreePageEntryLocator.cs" />
-    <Compile Include="interfaces\btree\IBTreePageLoader.cs" />
+    <Compile Include="interfaces\IDataBlockLoader.cs" />
+    <Compile Include="interfaces\IDataReader.cs" />
     <Compile Include="utilities\BinaryData.cs" />
     <Compile Include="interfaces\IDecoder.cs" />
     <Compile Include="interfaces\IEncoder.cs" />

@@ -11,18 +11,18 @@ namespace pst.impl
     {
         private readonly IBTreePageEntryLocator<TKey, TIntermediateEntry> intermediateEntryLocator;
         private readonly IBTreePageEntryLocator<TKey, TLeafEntry> leafEntryLocator;
-        private readonly IBTreePageLoader pageLoader;
+        private readonly IDataBlockLoader<BTPage> pageDataBlockLoader;
         private readonly BREF rootPageBlockReference;
         private readonly Func<TIntermediateEntry, BREF> intermediateEntryToPageBlockReference;
 
         public BTreeEntryFinder(
             IBTreePageEntryLocator<TKey, TIntermediateEntry> intermediateEntryLocator,
             IBTreePageEntryLocator<TKey, TLeafEntry> leafEntryLocator,
-            IBTreePageLoader pageLoader,
+            IDataBlockLoader<BTPage> pageDataBlockLoader,
             BREF rootPageBlockReference,
             Func<TIntermediateEntry, BREF> intermediateEntryToPageBlockReference)
         {
-            this.pageLoader = pageLoader;
+            this.pageDataBlockLoader = pageDataBlockLoader;
             this.rootPageBlockReference = rootPageBlockReference;
             this.intermediateEntryToPageBlockReference = intermediateEntryToPageBlockReference;
             this.intermediateEntryLocator = intermediateEntryLocator;
@@ -34,9 +34,9 @@ namespace pst.impl
             return Find(key, rootPageBlockReference);
         }
 
-        private Maybe<TLeafEntry> Find(TKey key, BREF pageBlockReference)
+        private Maybe<TLeafEntry> Find(TKey key, BREF pageDataBlockReference)
         {
-            var page = pageLoader.LoadPage(pageBlockReference);
+            var page = pageDataBlockLoader.Load(pageDataBlockReference);
 
             if (page.PageLevel > 0)
             {
