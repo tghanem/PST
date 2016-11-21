@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>PST</id>
+    <version>$version$</version>
+    <title>PST</title>
+    <authors>Timothy Ghanem</authors>
+    <owners>Timothy Ghanem</owners>
+    <projectUrl>https://github.com/tghanem/pst/<projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>.NET library that supports processing Microsoft PST files.</description>
+    <releaseNotes></releaseNotes>
+    <tags>microsoft outlook pst</tags>
+  </metadata>
+  <files>
+	<file src="pst\pst\bin\$configuration$\pst.dll" target="lib\net452\" />
+  </files>
+</package>
