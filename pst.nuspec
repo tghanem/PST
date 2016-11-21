@@ -6,7 +6,7 @@
     <title>PST</title>
     <authors>Timothy Ghanem</authors>
     <owners>Timothy Ghanem</owners>
-    <projectUrl>https://github.com/tghanem/pst/<projectUrl>
+    <projectUrl>https://github.com/tghanem/pst/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>.NET library that supports processing Microsoft PST files.</description>
     <releaseNotes></releaseNotes>
