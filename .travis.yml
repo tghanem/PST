@@ -5,4 +5,4 @@ before_install:
 before_script:
     - nuget restore pst/pst.sln
 after_script:
-    - nunit-console pst/pst/bin/Release/pst.tests.dll
+    - nunit-console pst/pst.tests/bin/Release/pst.tests.dll
