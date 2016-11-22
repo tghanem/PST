@@ -5,7 +5,7 @@ using System;
 
 namespace pst.impl.decoders
 {
-    class BIDecoder : IDecoder<IB>
+    class IBDecoder : IDecoder<IB>
     {
         public IB Decode(BinaryData encodedData)
         {

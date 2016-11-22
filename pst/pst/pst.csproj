@@ -55,7 +55,7 @@
     <Compile Include="impl\btree\IntermediatePageEntriesComparer.cs" />
     <Compile Include="impl\ReaderBasedDataBlockLoader.cs" />
     <Compile Include="impl\decoders\BIDDecoder.cs" />
-    <Compile Include="impl\decoders\BIDecoder.cs" />
+    <Compile Include="impl\decoders\IBDecoder.cs" />
     <Compile Include="impl\decoders\BREFDecoder.cs" />
     <Compile Include="impl\decoders\BTPageDecoder.cs" />
     <Compile Include="impl\decoders\IBBTEntryDecoder.cs" />
@@ -66,7 +66,7 @@
     <Compile Include="impl\decoders\LNBTEntryDecoder.cs" />
     <Compile Include="impl\decoders\NIDDecoder.cs" />
     <Compile Include="impl\encoders\BIDEncoder.cs" />
-    <Compile Include="impl\encoders\BIEncoder.cs" />
+    <Compile Include="impl\encoders\IBEncoder.cs" />
     <Compile Include="impl\encoders\BREFEncoder.cs" />
     <Compile Include="impl\encoders\BTPageEncoder.cs" />
     <Compile Include="impl\encoders\IBBTEntryEncoder.cs" />
