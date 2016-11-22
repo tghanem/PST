@@ -6,6 +6,3 @@ before_script:
     - nuget restore pst/pst.sln
 after_script:
     - nunit-console pst/pst.tests/bin/Release/pst.tests.dll
-addons:
-    code_climate:
-        repo_token: 076f85de6fc3bd896bce255a0a8f537bcd6fc3d24263ee33240422418e04f5a4
