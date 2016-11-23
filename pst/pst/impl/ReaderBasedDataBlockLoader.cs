@@ -1,5 +1,5 @@
 ﻿using pst.interfaces;
-using pst.encodables;
+using pst.encodables.ndb;
 
 namespace pst.impl
 {

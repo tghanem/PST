@@ -1,9 +1,9 @@
 ﻿using pst.interfaces;
 using pst.utilities;
-using pst.encodables;
+using pst.encodables.ndb;
 using System;
 
-namespace pst.impl.encoders
+namespace pst.impl.encoders.ndb
 {
     class IBEncoder : IEncoder<IB>
     {

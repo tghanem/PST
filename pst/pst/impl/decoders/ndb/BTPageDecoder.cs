@@ -1,8 +1,8 @@
-﻿using pst.encodables;
+﻿using pst.encodables.ndb;
 using pst.interfaces;
 using pst.utilities;
 
-namespace pst.impl.decoders
+namespace pst.impl.decoders.ndb
 {
     class BTPageDecoder : IDecoder<BTPage>
     {

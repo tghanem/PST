@@ -1,4 +1,4 @@
-﻿namespace pst.encodables
+﻿namespace pst.encodables.ndb
 {
     class IBBTEntry
     {

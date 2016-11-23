@@ -1,4 +1,4 @@
-﻿using pst.encodables;
+﻿using pst.encodables.ndb;
 
 namespace pst.interfaces
 {

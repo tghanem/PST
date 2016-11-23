@@ -1,9 +1,9 @@
-﻿using pst.encodables;
+﻿using pst.encodables.ndb;
 using pst.interfaces;
 using pst.utilities;
 using System;
 
-namespace pst.impl.decoders
+namespace pst.impl.decoders.ndb
 {
     class NIDDecoder : IDecoder<NID>
     {

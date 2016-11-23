@@ -1,7 +1,7 @@
 ﻿using pst.core;
-using pst.encodables;
+using pst.encodables.ndb;
 
-namespace pst.interfaces
+namespace pst.interfaces.ndb.btree
 {
     interface IBTreePageEntryLocator<TKey, TEntry> where TEntry : class
     {

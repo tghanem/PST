@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace pst.encodables
+namespace pst.encodables.ndb
 {
     class BID : IComparable<BID>, IEquatable<BID>
     {

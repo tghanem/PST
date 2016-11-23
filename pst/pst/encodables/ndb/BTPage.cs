@@ -1,6 +1,6 @@
 ﻿using pst.utilities;
 
-namespace pst.encodables
+namespace pst.encodables.ndb
 {
     class BTPage
     {

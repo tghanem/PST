@@ -1,4 +1,4 @@
-﻿namespace pst.encodables
+﻿namespace pst.encodables.ndb
 {
     /// <summary>
     /// The IB (Byte Index) is used to represent an absolute offset within the PST file with respect to the beginning of the file.

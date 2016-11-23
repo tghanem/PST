@@ -1,6 +1,6 @@
 ﻿using pst.core;
 
-namespace pst.interfaces
+namespace pst.interfaces.ndb.btree
 {
     interface IBTreeEntryFinder<TKey, TEntry> where TEntry : class
     {

@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="core\Maybe.cs" />
+    <Compile Include="encodables\ndb\Root.cs" />
     <Compile Include="encodables\ndb\IB.cs" />
     <Compile Include="encodables\ndb\BID.cs" />
     <Compile Include="encodables\ndb\BREF.cs" />
@@ -51,6 +52,10 @@
     <Compile Include="encodables\ndb\LNBTEntry.cs" />
     <Compile Include="encodables\ndb\NID.cs" />
     <Compile Include="encodables\ndb\PageTrailer.cs" />
+    <Compile Include="impl\decoders\ndb\RootDecoder.cs" />
+    <Compile Include="impl\decoders\primitives\Int64Decoder.cs" />
+    <Compile Include="impl\encoders\ndb\RootEncoder.cs" />
+    <Compile Include="impl\encoders\primitives\Int64Encoder.cs" />
     <Compile Include="impl\ndb\btree\BTreePageEntryLocator.cs" />
     <Compile Include="impl\ndb\btree\IntermediatePageEntriesComparer.cs" />
     <Compile Include="impl\ReaderBasedDataBlockLoader.cs" />
