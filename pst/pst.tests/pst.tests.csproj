@@ -51,7 +51,6 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="IBBTEntryDecoderTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
