@@ -1,6 +1,6 @@
 ﻿using pst.core;
 
-namespace pst.interfaces.ndb.btree
+namespace pst.interfaces.btree
 {
     interface IBTreeNodeKeyLocator<TNode, TKey, TReferenceKey>
         where TReferenceKey : class
