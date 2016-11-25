@@ -58,8 +58,8 @@
     <Compile Include="impl\decoders\primitives\Int64Decoder.cs" />
     <Compile Include="impl\encoders\ndb\RootEncoder.cs" />
     <Compile Include="impl\encoders\primitives\Int64Encoder.cs" />
-    <Compile Include="impl\ndb\btree\BTreeNodeKeyLocator.cs" />
-    <Compile Include="impl\ndb\btree\ComparerThatFindsTheFirstKeyThatIsLargerThanTheReferenceKey.cs" />
+    <Compile Include="impl\btree\BTreeNodeKeyLocator.cs" />
+    <Compile Include="impl\btree\ComparerThatFindsTheFirstKeyThatIsLargerThanTheReferenceKey.cs" />
     <Compile Include="impl\ReaderBasedDataBlockLoader.cs" />
     <Compile Include="impl\decoders\ndb\BIDDecoder.cs" />
     <Compile Include="impl\decoders\ndb\IBDecoder.cs" />
@@ -83,13 +83,13 @@
     <Compile Include="impl\encoders\ndb\LBBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\ndb\LNBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\ndb\NIDEncoder.cs" />
-    <Compile Include="impl\ndb\btree\BTreeKeyFinder.cs" />
-    <Compile Include="impl\ndb\btree\ComparerThatFindsTheFirstKeyThatMatchesTheReferenceKey.cs" />
+    <Compile Include="impl\btree\BTreeKeyFinder.cs" />
+    <Compile Include="impl\btree\ComparerThatFindsTheFirstKeyThatMatchesTheReferenceKey.cs" />
     <Compile Include="impl\StreamBasedDataReader.cs" />
-    <Compile Include="interfaces\ndb\btree\IBTreeNodeLoader.cs" />
-    <Compile Include="interfaces\ndb\btree\IBTreeNodeKeysComparer.cs" />
-    <Compile Include="interfaces\ndb\btree\IBTreeKeyFinder.cs" />
-    <Compile Include="interfaces\ndb\btree\IBTreeNodeKeyLocator.cs" />
+    <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
+    <Compile Include="interfaces\btree\IBTreeNodeKeysComparer.cs" />
+    <Compile Include="interfaces\btree\IBTreeKeyFinder.cs" />
+    <Compile Include="interfaces\btree\IBTreeNodeKeyLocator.cs" />
     <Compile Include="interfaces\IDataBlockLoader.cs" />
     <Compile Include="interfaces\IDataReader.cs" />
     <Compile Include="utilities\BinaryData.cs" />
@@ -99,7 +99,10 @@
     <Compile Include="utilities\BinaryDataGenerator.cs" />
     <Compile Include="utilities\BinaryDataParser.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="impl\ndb\" />
+    <Folder Include="interfaces\ndb\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
