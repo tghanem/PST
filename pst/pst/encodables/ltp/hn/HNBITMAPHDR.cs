@@ -1,6 +1,6 @@
 ﻿using pst.utilities;
 
-namespace pst.encodables.ltp
+namespace pst.encodables.ltp.hn
 {
     class HNBITMAPHDR
     {
