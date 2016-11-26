@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="core\Maybe.cs" />
     <Compile Include="encodables\ndb\blocks\BlockTrailer.cs" />
+    <Compile Include="encodables\ndb\blocks\ExternalDataBlock.cs" />
+    <Compile Include="encodables\ndb\blocks\InternalDataBlock.cs" />
     <Compile Include="encodables\ndb\Header.cs" />
     <Compile Include="encodables\ndb\Root.cs" />
     <Compile Include="encodables\ndb\IB.cs" />
@@ -55,6 +57,8 @@
     <Compile Include="encodables\ndb\NID.cs" />
     <Compile Include="encodables\ndb\btree\PageTrailer.cs" />
     <Compile Include="impl\decoders\ndb\blocks\BlockTrailerDecoder.cs" />
+    <Compile Include="impl\decoders\ndb\blocks\ExternalDataBlockDecoder.cs" />
+    <Compile Include="impl\decoders\ndb\blocks\InternalDataBlockDecoder.cs" />
     <Compile Include="impl\decoders\ndb\HeaderDecoder.cs" />
     <Compile Include="impl\decoders\ndb\RootDecoder.cs" />
     <Compile Include="impl\decoders\primitives\Int64Decoder.cs" />
@@ -101,6 +105,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="utilities\BinaryDataGenerator.cs" />
     <Compile Include="utilities\BinaryDataParser.cs" />
+    <Compile Include="utilities\ExtensionMethods.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
