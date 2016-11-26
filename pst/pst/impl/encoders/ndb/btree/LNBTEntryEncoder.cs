@@ -1,8 +1,9 @@
 ﻿using pst.encodables.ndb;
+using pst.encodables.ndb.btree;
 using pst.interfaces;
 using pst.utilities;
 
-namespace pst.impl.encoders.ndb
+namespace pst.impl.encoders.ndb.btree
 {
     class LNBTEntryEncoder : IEncoder<LNBTEntry>
     {

@@ -1,6 +1,6 @@
 ﻿using pst.utilities;
 
-namespace pst.encodables.ndb
+namespace pst.encodables.ndb.btree
 {
     class LNBTEntry
     {

@@ -1,28 +1,29 @@
 ﻿using pst.interfaces;
 using pst.utilities;
 using pst.encodables.ndb;
+using pst.encodables.ndb.btree;
 
 namespace pst.impl.decoders.ndb
 {
-    class INBTEntryDecoder : IDecoder<INBTEntry>
+    class IBBTEntryDecoder : IDecoder<IBBTEntry>
     {
-        private readonly IDecoder<NID> nidDecoder;
+        private readonly IDecoder<BID> bidDecoder;
 
         private readonly IDecoder<BREF> brefDecoder;
 
-        public INBTEntryDecoder(IDecoder<NID> nidDecoder, IDecoder<BREF> brefDecoder)
+        public IBBTEntryDecoder(IDecoder<BID> bidDecoder, IDecoder<BREF> brefDecoder)
         {
-            this.nidDecoder = nidDecoder;
+            this.bidDecoder = bidDecoder;
             this.brefDecoder = brefDecoder;
         }
 
-        public INBTEntry Decode(BinaryData encodedData)
+        public IBBTEntry Decode(BinaryData encodedData)
         {
             using (var parser = BinaryDataParser.OfValue(encodedData))
             {
                 return
-                    INBTEntry.OfValue(
-                        parser.TakeAndSkip(8, nidDecoder),
+                    IBBTEntry.OfValue(
+                        parser.TakeAndSkip(8, bidDecoder),
                         parser.TakeAndSkip(16, brefDecoder));
             }
         }

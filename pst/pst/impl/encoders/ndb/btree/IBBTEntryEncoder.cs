@@ -1,8 +1,9 @@
 ﻿using pst.interfaces;
 using pst.utilities;
+using pst.encodables.ndb.btree;
 using pst.encodables.ndb;
 
-namespace pst.impl.encoders.ndb
+namespace pst.impl.encoders.ndb.btree
 {
     class IBBTEntryEncoder : IEncoder<IBBTEntry>
     {

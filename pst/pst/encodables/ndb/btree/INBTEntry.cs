@@ -1,4 +1,4 @@
-﻿namespace pst.encodables.ndb
+﻿namespace pst.encodables.ndb.btree
 {
     class INBTEntry
     {
