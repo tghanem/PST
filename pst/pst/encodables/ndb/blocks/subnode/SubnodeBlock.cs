@@ -1,8 +1,8 @@
 ﻿using pst.utilities;
 
-namespace pst.encodables.ndb.blocks
+namespace pst.encodables.ndb.blocks.subnode
 {
-    class InternalDataBlock
+    class SubnodeBlock
     {
         ///1
         public int BlockType { get; }
@@ -14,25 +14,25 @@ namespace pst.encodables.ndb.blocks
         public int NumberOfEntries { get; }
 
         ///4
-        public int TotalByteCount { get; }
+        public BinaryData Padding { get; }
 
-        ///NumberOfEntries * 16
+        ///(variable)
         public BinaryData Entries { get; }
 
         ///(variable)
-        public BinaryData Padding { get; }
+        public BinaryData EntriesPadding { get; }
 
         ///16
         public BlockTrailer Trailer { get; }
 
-        public InternalDataBlock(int blockType, int blockLevel, int numberOfEntries, int totalByteCount, BinaryData entries, BinaryData padding, BlockTrailer trailer)
+        public SubnodeBlock(int blockType, int blockLevel, int numberOfEntries, BinaryData padding, BinaryData entries, BinaryData entriesPadding, BlockTrailer trailer)
         {
             BlockType = blockType;
             BlockLevel = blockLevel;
             NumberOfEntries = numberOfEntries;
-            TotalByteCount = totalByteCount;
-            Entries = entries;
             Padding = padding;
+            Entries = entries;
+            EntriesPadding = entriesPadding;
             Trailer = trailer;
         }
     }

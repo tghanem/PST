@@ -1,8 +1,9 @@
 ﻿using pst.interfaces;
 using pst.utilities;
 using pst.encodables.ndb.blocks;
+using pst.encodables.ndb.blocks.data;
 
-namespace pst.impl.decoders.ndb.blocks
+namespace pst.impl.decoders.ndb.blocks.data
 {
     class InternalDataBlockDecoder : IDecoder<InternalDataBlock>
     {
