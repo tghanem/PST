@@ -41,6 +41,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="core\Maybe.cs" />
+    <Compile Include="encodables\ltp\HID.cs" />
+    <Compile Include="encodables\ltp\HNBITMAPHDR.cs" />
+    <Compile Include="encodables\ltp\HNHDR.cs" />
+    <Compile Include="encodables\ltp\HNPAGEHDR.cs" />
+    <Compile Include="encodables\ltp\HNPAGEMAP.cs" />
     <Compile Include="encodables\ndb\blocks\BlockTrailer.cs" />
     <Compile Include="encodables\ndb\blocks\data\ExternalDataBlock.cs" />
     <Compile Include="encodables\ndb\blocks\data\InternalDataBlock.cs" />
@@ -59,6 +64,11 @@
     <Compile Include="encodables\ndb\btree\LNBTEntry.cs" />
     <Compile Include="encodables\ndb\NID.cs" />
     <Compile Include="encodables\ndb\btree\PageTrailer.cs" />
+    <Compile Include="impl\decoders\ltp\HIDDecoder.cs" />
+    <Compile Include="impl\decoders\ltp\HNBITMAPHDRDecoder.cs" />
+    <Compile Include="impl\decoders\ltp\HNHDRDecoder.cs" />
+    <Compile Include="impl\decoders\ltp\HNPAGEHDRDecoder.cs" />
+    <Compile Include="impl\decoders\ltp\HNPAGEMAPDecoder.cs" />
     <Compile Include="impl\decoders\ndb\blocks\BlockTrailerDecoder.cs" />
     <Compile Include="impl\decoders\ndb\blocks\data\ExternalDataBlockDecoder.cs" />
     <Compile Include="impl\decoders\ndb\blocks\data\InternalDataBlockDecoder.cs" />
