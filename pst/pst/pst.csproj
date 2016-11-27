@@ -87,7 +87,6 @@
     <Compile Include="impl\encoders\primitives\Int64Encoder.cs" />
     <Compile Include="impl\btree\BTreeNodeKeyLocator.cs" />
     <Compile Include="impl\btree\ComparerThatFindsTheFirstKeyThatIsLargerThanTheReferenceKey.cs" />
-    <Compile Include="impl\ReaderBasedDataBlockLoader.cs" />
     <Compile Include="impl\decoders\ndb\BIDDecoder.cs" />
     <Compile Include="impl\decoders\ndb\IBDecoder.cs" />
     <Compile Include="impl\decoders\ndb\BREFDecoder.cs" />
@@ -112,13 +111,10 @@
     <Compile Include="impl\encoders\ndb\NIDEncoder.cs" />
     <Compile Include="impl\btree\BTreeKeyFinder.cs" />
     <Compile Include="impl\btree\ComparerThatFindsTheFirstKeyThatMatchesTheReferenceKey.cs" />
-    <Compile Include="impl\StreamBasedDataReader.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeKeysComparer.cs" />
     <Compile Include="interfaces\btree\IBTreeKeyFinder.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeKeyLocator.cs" />
-    <Compile Include="interfaces\IDataBlockLoader.cs" />
-    <Compile Include="interfaces\IDataReader.cs" />
     <Compile Include="utilities\BinaryData.cs" />
     <Compile Include="interfaces\IDecoder.cs" />
     <Compile Include="interfaces\IEncoder.cs" />
@@ -127,7 +123,9 @@
     <Compile Include="utilities\BinaryDataParser.cs" />
     <Compile Include="utilities\ExtensionMethods.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="interfaces\ndb\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
