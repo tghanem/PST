@@ -41,6 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="core\Maybe.cs" />
+    <Compile Include="encodables\ltp\bth\BTHHEADER.cs" />
+    <Compile Include="encodables\ltp\bth\DataRecord.cs" />
+    <Compile Include="encodables\ltp\bth\IndexRecord.cs" />
     <Compile Include="encodables\ltp\hn\HID.cs" />
     <Compile Include="encodables\ltp\hn\HNBITMAPHDR.cs" />
     <Compile Include="encodables\ltp\hn\HNHDR.cs" />
@@ -64,6 +67,7 @@
     <Compile Include="encodables\ndb\btree\LNBTEntry.cs" />
     <Compile Include="encodables\ndb\NID.cs" />
     <Compile Include="encodables\ndb\btree\PageTrailer.cs" />
+    <Compile Include="impl\decoders\ltp\bth\BTHHEADERDecoder.cs" />
     <Compile Include="impl\decoders\ltp\hn\HIDDecoder.cs" />
     <Compile Include="impl\decoders\ltp\hn\HNBITMAPHDRDecoder.cs" />
     <Compile Include="impl\decoders\ltp\hn\HNHDRDecoder.cs" />
