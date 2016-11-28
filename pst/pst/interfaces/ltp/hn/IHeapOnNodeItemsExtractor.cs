@@ -1,8 +1,8 @@
 ﻿using pst.utilities;
 
-namespace pst.interfaces.ltp
+namespace pst.interfaces.ltp.hn
 {
-    interface IHeapItemsExtractor
+    interface IHeapOnNodeItemsExtractor
     {
         BinaryData[] Extract(BinaryData encodedHeapOnNode, int blockIndex);
     }

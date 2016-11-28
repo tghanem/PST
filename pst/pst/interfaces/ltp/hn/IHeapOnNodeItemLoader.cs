@@ -1,7 +1,7 @@
 ﻿using pst.encodables.ltp.hn;
 using pst.utilities;
 
-namespace pst.interfaces.ltp
+namespace pst.interfaces.ltp.hn
 {
     interface IHeapOnNodeItemLoader
     {

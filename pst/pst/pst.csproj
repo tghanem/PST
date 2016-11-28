@@ -112,8 +112,8 @@
     <Compile Include="impl\btree\BTreeKeyFinder.cs" />
     <Compile Include="impl\btree\ComparerThatFindsTheFirstKeyThatMatchesTheReferenceKey.cs" />
     <Compile Include="impl\io\StreamBasedDataReader.cs" />
-    <Compile Include="impl\ltp\HeapItemsExtractor.cs" />
-    <Compile Include="impl\ltp\HeapOnNodeItemLoader.cs" />
+    <Compile Include="impl\ltp\hn\HeapItemsExtractor.cs" />
+    <Compile Include="impl\ltp\hn\HeapOnNodeItemLoader.cs" />
     <Compile Include="impl\ndb\OrderedNodeDataBlockCollectionLoader.cs" />
     <Compile Include="impl\ndb\OrderedDataBlockCollectionFactory.cs" />
     <Compile Include="impl\ndb\SingleExternalDataBlockBasedOrderedDataBlockCollection.cs" />
@@ -123,8 +123,8 @@
     <Compile Include="interfaces\btree\IBTreeNodeKeyLocator.cs" />
     <Compile Include="interfaces\IFactory.cs" />
     <Compile Include="interfaces\io\IDataReader.cs" />
-    <Compile Include="interfaces\ltp\IHeapItemsExtractor.cs" />
-    <Compile Include="interfaces\ltp\IHeapOnNodeItemLoader.cs" />
+    <Compile Include="interfaces\ltp\hn\IHeapOnNodeItemsExtractor.cs" />
+    <Compile Include="interfaces\ltp\hn\IHeapOnNodeItemLoader.cs" />
     <Compile Include="interfaces\ndb\IOrderedDataBlockCollection.cs" />
     <Compile Include="interfaces\ndb\IOrderedDataBlockCollectionLoader.cs" />
     <Compile Include="utilities\BinaryData.cs" />

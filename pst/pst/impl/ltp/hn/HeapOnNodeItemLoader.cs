@@ -1,17 +1,17 @@
-﻿using pst.interfaces.ltp;
-using pst.encodables.ltp.hn;
+﻿using pst.encodables.ltp.hn;
 using pst.utilities;
 using pst.interfaces.ndb;
+using pst.interfaces.ltp.hn;
 
-namespace pst.impl.ltp
+namespace pst.impl.ltp.hn
 {
     class HeapOnNodeItemLoader : IHeapOnNodeItemLoader
     {
         private readonly IOrderedDataBlockCollection nodeDataBlockCollection;
 
-        private readonly IHeapItemsExtractor heapItemsExtractor;
+        private readonly IHeapOnNodeItemsExtractor heapItemsExtractor;
 
-        public HeapOnNodeItemLoader(IOrderedDataBlockCollection nodeDataBlockCollection, IHeapItemsExtractor heapItemsExtractor)
+        public HeapOnNodeItemLoader(IOrderedDataBlockCollection nodeDataBlockCollection, IHeapOnNodeItemsExtractor heapItemsExtractor)
         {
             this.nodeDataBlockCollection = nodeDataBlockCollection;
             this.heapItemsExtractor = heapItemsExtractor;

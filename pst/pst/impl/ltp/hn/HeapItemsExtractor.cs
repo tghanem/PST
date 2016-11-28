@@ -1,16 +1,13 @@
-﻿using pst.interfaces.ltp;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using pst.utilities;
 using pst.interfaces;
 using pst.encodables.ltp.hn;
+using pst.interfaces.ltp.hn;
 
-namespace pst.impl.ltp
+namespace pst.impl.ltp.hn
 {
-    class HeapItemsExtractor : IHeapItemsExtractor
+    class HeapItemsExtractor : IHeapOnNodeItemsExtractor
     {
         private readonly IDecoder<HNHDR> headerDecoder;
 
