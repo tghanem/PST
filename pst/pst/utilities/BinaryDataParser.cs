@@ -17,6 +17,17 @@ namespace pst.utilities
         public static BinaryDataParser OfValue(BinaryData data)
             => new BinaryDataParser(new MemoryStream(data.Value));
 
+        public BinaryData TakeAt(int offset, int count)
+        {
+            valueStream.Seek(offset, SeekOrigin.Begin);
+
+            var buffer = new byte[count];
+
+            valueStream.Read(buffer, offset, count);
+
+            return BinaryData.OfValue(buffer);
+        }
+
         public BinaryData TakeAndSkip(int count)
         {
             var buffer = new byte[count];
