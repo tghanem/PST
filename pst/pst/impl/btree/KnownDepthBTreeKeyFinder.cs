@@ -1,10 +1,10 @@
-﻿using pst.core;
+﻿using pst.interfaces.btree;
+using pst.core;
 using pst.interfaces;
-using pst.interfaces.btree;
 
 namespace pst.impl.btree
 {
-    class BTreeKeyFinder<TNode, TNodeReference, TIntermediateKey, TLeafKey, TReferenceKey> : IBTreeKeyFinder<TLeafKey, TReferenceKey>
+    class KnownDepthBTreeKeyFinder<TNode, TNodeReference, TIntermediateKey, TLeafKey, TReferenceKey> : IBTreeKeyFinder<TLeafKey, TReferenceKey>
         where TIntermediateKey : class
         where TNodeReference : class
         where TReferenceKey : class
@@ -16,30 +16,30 @@ namespace pst.impl.btree
         private readonly IBTreeNodeLoader<TNode, TNodeReference> intermediateNodeLoader;
         private readonly TNodeReference rootNodeReference;
         private readonly IExtractor<TIntermediateKey, TNodeReference> nodeReferenceFromIntermediateEntry;
-        private readonly IExtractor<TNode, int> nodeLevelFromNodeExtractor;
+        private readonly int treeDepth;
 
-        public BTreeKeyFinder(
+        public KnownDepthBTreeKeyFinder(
             IBTreeNodeKeyLocator<TNode, TIntermediateKey, TReferenceKey> intermediateEntryLocator,
             IBTreeNodeKeyLocator<TNode, TLeafKey, TReferenceKey> leafEntryLocator,
             IBTreeNodeLoader<TNode, TNodeReference> intermediateNodeLoader,
             TNodeReference rootNodeReference,
             IExtractor<TIntermediateKey, TNodeReference> nodeReferenceFromIntermediateEntry,
-            IExtractor<TNode, int> nodeLevelExtractor)
+            int treeDepth)
         {
             this.intermediateEntryLocator = intermediateEntryLocator;
             this.leafEntryLocator = leafEntryLocator;
             this.intermediateNodeLoader = intermediateNodeLoader;
             this.rootNodeReference = rootNodeReference;
             this.nodeReferenceFromIntermediateEntry = nodeReferenceFromIntermediateEntry;
-            this.nodeLevelFromNodeExtractor = nodeLevelExtractor;
+            this.treeDepth = treeDepth;
         }
 
         public Maybe<TLeafKey> Find(TReferenceKey key)
         {
-            return Find(key, rootNodeReference);
+            return Find(key, rootNodeReference, treeDepth);
         }
 
-        private Maybe<TLeafKey> Find(TReferenceKey key, TNodeReference nodeReference)
+        private Maybe<TLeafKey> Find(TReferenceKey key, TNodeReference nodeReference, int currentDepth)
         {
             var node = intermediateNodeLoader.LoadNode(nodeReference);
 
@@ -48,7 +48,7 @@ namespace pst.impl.btree
                 return Maybe<TLeafKey>.NoValue<TLeafKey>();
             }
 
-            if (nodeLevelFromNodeExtractor.Extract(node.Value) > 0)
+            if (currentDepth > 0)
             {
                 var entry = intermediateEntryLocator.FindKey(node.Value, key);
 
@@ -57,7 +57,7 @@ namespace pst.impl.btree
                     return Maybe<TLeafKey>.NoValue<TLeafKey>();
                 }
 
-                return Find(key, nodeReferenceFromIntermediateEntry.Extract(entry.Value));
+                return Find(key, nodeReferenceFromIntermediateEntry.Extract(entry.Value), currentDepth - 1);
             }
             else
             {

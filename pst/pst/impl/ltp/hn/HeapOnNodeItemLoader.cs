@@ -2,6 +2,7 @@
 using pst.utilities;
 using pst.interfaces.ndb;
 using pst.interfaces.ltp.hn;
+using pst.core;
 
 namespace pst.impl.ltp.hn
 {
@@ -17,7 +18,7 @@ namespace pst.impl.ltp.hn
             this.heapItemsExtractor = heapItemsExtractor;
         }
 
-        public BinaryData Load(HID id)
+        public Maybe<BinaryData> Load(HID id)
         {
             var dataBlock =
                 nodeDataBlockCollection.GetDataBlockAt(id.BlockIndex);

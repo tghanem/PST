@@ -1,4 +1,5 @@
 ﻿using pst.core;
+using pst.interfaces;
 using pst.interfaces.btree;
 using System;
 using System.Linq;
@@ -9,18 +10,18 @@ namespace pst.impl.btree
         where TReferenceKey : class, IComparable<TReferenceKey>
         where TKey : class, IComparable<TKey>
     {
-        private readonly Func<TKey, TReferenceKey> keyToReferenceKey;
+        private readonly IExtractor<TKey, TReferenceKey> referenceKeyFromKeyExtractor;
         
-        public ComparerThatFindsTheFirstKeyThatIsLargerThanTheReferenceKey(Func<TKey, TReferenceKey> keyToReferenceKey)
+        public ComparerThatFindsTheFirstKeyThatIsLargerThanTheReferenceKey(IExtractor<TKey, TReferenceKey> referenceKeyFromKeyExtractor)
         {
-            this.keyToReferenceKey = keyToReferenceKey;
+            this.referenceKeyFromKeyExtractor = referenceKeyFromKeyExtractor;
         }
 
         public Maybe<TKey> GetMatchingKey(TKey[] keys, TReferenceKey key)
         {
             return
                 keys
-                .FirstOrDefault(k => keyToReferenceKey(k).CompareTo(key) <= 0);
+                .FirstOrDefault(k => referenceKeyFromKeyExtractor.Extract(k).CompareTo(key) <= 0);
         }
     }
 }

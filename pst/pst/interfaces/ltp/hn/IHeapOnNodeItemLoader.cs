@@ -1,10 +1,11 @@
-﻿using pst.encodables.ltp.hn;
+﻿using pst.core;
+using pst.encodables.ltp.hn;
 using pst.utilities;
 
 namespace pst.interfaces.ltp.hn
 {
     interface IHeapOnNodeItemLoader
     {
-        BinaryData Load(HID id);
+        Maybe<BinaryData> Load(HID id);
     }
 }

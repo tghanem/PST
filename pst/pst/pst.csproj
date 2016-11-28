@@ -67,7 +67,10 @@
     <Compile Include="encodables\ndb\btree\LNBTEntry.cs" />
     <Compile Include="encodables\ndb\NID.cs" />
     <Compile Include="encodables\ndb\btree\PageTrailer.cs" />
+    <Compile Include="impl\btree\KnownDepthBTreeKeyFinder.cs" />
     <Compile Include="impl\decoders\ltp\bth\BTHHEADERDecoder.cs" />
+    <Compile Include="impl\decoders\ltp\bth\DataRecordDecoder.cs" />
+    <Compile Include="impl\decoders\ltp\bth\IndexRecordDecoder.cs" />
     <Compile Include="impl\decoders\ltp\hn\HIDDecoder.cs" />
     <Compile Include="impl\decoders\ltp\hn\HNBITMAPHDRDecoder.cs" />
     <Compile Include="impl\decoders\ltp\hn\HNHDRDecoder.cs" />
@@ -112,6 +115,10 @@
     <Compile Include="impl\btree\BTreeKeyFinder.cs" />
     <Compile Include="impl\btree\ComparerThatFindsTheFirstKeyThatMatchesTheReferenceKey.cs" />
     <Compile Include="impl\io\StreamBasedDataReader.cs" />
+    <Compile Include="impl\ltp\bth\BTreeOnHeapNode.cs" />
+    <Compile Include="impl\ltp\bth\BTreeOnHeapNodeLoader.cs" />
+    <Compile Include="impl\ltp\bth\DataRecordsFromBTreeOnHeapNodeExtractor.cs" />
+    <Compile Include="impl\ltp\bth\IndexRecordsFromBTreeOnHeapNodeExtractor.cs" />
     <Compile Include="impl\ltp\hn\HeapItemsExtractor.cs" />
     <Compile Include="impl\ltp\hn\HeapOnNodeItemLoader.cs" />
     <Compile Include="impl\ndb\OrderedNodeDataBlockCollectionLoader.cs" />
@@ -121,6 +128,7 @@
     <Compile Include="interfaces\btree\IBTreeNodeKeysComparer.cs" />
     <Compile Include="interfaces\btree\IBTreeKeyFinder.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeKeyLocator.cs" />
+    <Compile Include="interfaces\IExtractor.cs" />
     <Compile Include="interfaces\IFactory.cs" />
     <Compile Include="interfaces\io\IDataReader.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeItemsExtractor.cs" />

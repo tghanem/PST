@@ -1,6 +1,6 @@
 ﻿using pst.interfaces.btree;
 using pst.core;
-using System;
+using pst.interfaces;
 
 namespace pst.impl.btree
 {
@@ -10,14 +10,14 @@ namespace pst.impl.btree
         where TKey : class
     {
         private readonly IBTreeNodeKeysComparer<TKey, TReferenceKey> nodeKeysComparer;
-        private readonly Func<TNode, TKey[]> getNodeKeys;
+        private readonly IExtractor<TNode, TKey[]> nodeKeysExtractor;
 
         public BTreeNodeKeyLocator(
             IBTreeNodeKeysComparer<TKey, TReferenceKey> pageEntriesComparer,
-            Func<TNode, TKey[]> getNodeKeys)
+            IExtractor<TNode, TKey[]> nodeKeysExtractor)
         {
             this.nodeKeysComparer = pageEntriesComparer;
-            this.getNodeKeys = getNodeKeys;
+            this.nodeKeysExtractor = nodeKeysExtractor;
         }
 
         public Maybe<TKey> FindKey(TNode node, TReferenceKey key)
@@ -25,7 +25,7 @@ namespace pst.impl.btree
             return
                 nodeKeysComparer
                     .GetMatchingKey(
-                        getNodeKeys(node),
+                        nodeKeysExtractor.Extract(node),
                         key);
         }
     }
