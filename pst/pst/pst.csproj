@@ -111,10 +111,14 @@
     <Compile Include="impl\encoders\ndb\NIDEncoder.cs" />
     <Compile Include="impl\btree\BTreeKeyFinder.cs" />
     <Compile Include="impl\btree\ComparerThatFindsTheFirstKeyThatMatchesTheReferenceKey.cs" />
+    <Compile Include="impl\io\StreamBasedDataReader.cs" />
+    <Compile Include="impl\ndb\BBTBasedBlockLoader.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeKeysComparer.cs" />
     <Compile Include="interfaces\btree\IBTreeKeyFinder.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeKeyLocator.cs" />
+    <Compile Include="interfaces\io\IDataReader.cs" />
+    <Compile Include="interfaces\ndb\IDataBlockLoader.cs" />
     <Compile Include="utilities\BinaryData.cs" />
     <Compile Include="interfaces\IDecoder.cs" />
     <Compile Include="interfaces\IEncoder.cs" />
@@ -123,9 +127,7 @@
     <Compile Include="utilities\BinaryDataParser.cs" />
     <Compile Include="utilities\ExtensionMethods.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="interfaces\ndb\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
