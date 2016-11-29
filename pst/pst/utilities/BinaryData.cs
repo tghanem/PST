@@ -27,6 +27,9 @@ namespace pst.utilities
         public BinaryData Take(int count)
             => new BinaryData(Value.Take(count).ToArray());
 
+        public BinaryData Pad(int count)
+            => new BinaryData(Value.Concat(new byte[count]).ToArray());
+
         public int Length => Value.Length;
     }
 }

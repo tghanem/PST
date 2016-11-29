@@ -1,8 +1,5 @@
 ﻿namespace pst.encodables.ndb
 {
-    /// <summary>
-    /// The IB (Byte Index) is used to represent an absolute offset within the PST file with respect to the beginning of the file.
-    /// </summary>
     class IB
     {
         public long Value { get; }
@@ -12,7 +9,8 @@
             Value = value;
         }
 
-        public static IB OfValue(long value)
-            => new IB(value);
+        public static IB Zero = OfValue(0);
+
+        public static IB OfValue(long value) => new IB(value);
     }
 }

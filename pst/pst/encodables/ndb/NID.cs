@@ -8,6 +8,13 @@ namespace pst.encodables.ndb
 
         public int Index { get; }
 
+        public NID(int value)
+        {
+            Type = value & 0x0000001F;
+
+            Index = value >> 5;
+        }
+
         public NID(int type, int index)
         {
             Type = type;

@@ -8,7 +8,7 @@ namespace pst.impl.btree
 {
     class ComparerThatFindsTheFirstKeyThatMatchesTheReferenceKey<TKey, TReferenceKey> : IBTreeNodeKeysComparer<TKey, TReferenceKey>
         where TReferenceKey : class, IEquatable<TReferenceKey>
-        where TKey : class, IEquatable<TKey>
+        where TKey : class
     {
         private readonly IExtractor<TKey, TReferenceKey> referenceKeyFromKeyExtractor;
 

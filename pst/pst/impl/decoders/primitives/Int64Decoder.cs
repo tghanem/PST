@@ -8,7 +8,7 @@ namespace pst.impl.decoders.primitives
     {
         public long Decode(BinaryData encodedData)
         {
-            return BitConverter.ToInt64(encodedData.Value, 1);
+            return BitConverter.ToInt64(encodedData.Value, 0);
         }
     }
 }

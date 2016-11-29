@@ -8,7 +8,20 @@ namespace pst.impl.decoders.primitives
     {
         public int Decode(BinaryData encodedData)
         {
-            return BitConverter.ToInt32(encodedData.Value, 0);
+            if (encodedData.Length < 4)
+            {
+                var paddedData = encodedData.Pad(4 - encodedData.Length);
+
+                return BitConverter.ToInt32(paddedData.Value, 0);
+            }
+            else if (encodedData.Length == 4)
+            {
+                return BitConverter.ToInt32(encodedData.Value, 0);
+            }
+            else
+            {
+                throw new InvalidOperationException("Invalid data length");
+            }
         }
     }
 }
