@@ -127,7 +127,6 @@
     <Compile Include="impl\ltp\pc\PropertyIdFromIndexRecordExtractor.cs" />
     <Compile Include="impl\ndb\bbt\BIDFromIBBTEntryExtractor.cs" />
     <Compile Include="impl\ndb\bbt\BIDFromLBBTEntryExtractor.cs" />
-    <Compile Include="impl\ndb\bbt\BlockBTree.cs" />
     <Compile Include="impl\ndb\bbt\BREFFromIBBTEntryExtractor.cs" />
     <Compile Include="impl\ndb\bbt\IBBTEntriesFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\bbt\LBBTEntriesFromBTPageExtractor.cs" />

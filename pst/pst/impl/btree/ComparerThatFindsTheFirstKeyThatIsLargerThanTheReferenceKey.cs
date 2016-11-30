@@ -11,7 +11,7 @@ namespace pst.impl.btree
         where TKey : class
     {
         private readonly IExtractor<TKey, TReferenceKey> referenceKeyFromKeyExtractor;
-        
+
         public ComparerThatFindsTheFirstKeyThatIsLargerThanTheReferenceKey(IExtractor<TKey, TReferenceKey> referenceKeyFromKeyExtractor)
         {
             this.referenceKeyFromKeyExtractor = referenceKeyFromKeyExtractor;
@@ -19,9 +19,21 @@ namespace pst.impl.btree
 
         public Maybe<TKey> GetMatchingKey(TKey[] keys, TReferenceKey key)
         {
-            return
+            var referenceKeys =
                 keys
-                .FirstOrDefault(k => referenceKeyFromKeyExtractor.Extract(k).CompareTo(key) <= 0);
+                .Select(referenceKeyFromKeyExtractor.Extract)
+                .ToArray();
+
+            for (var i = 0; i < referenceKeys.Length - 1; i++)
+            {
+                if (key.CompareTo(referenceKeys[i]) >= 0 &&
+                    key.CompareTo(referenceKeys[i + 1]) < 0)
+                {
+                    return keys[i];
+                }
+            }
+
+            return keys[keys.Length - 1];
         }
     }
 }

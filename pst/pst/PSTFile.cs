@@ -1,22 +1,27 @@
-﻿using pst.encodables.ndb;
+﻿using pst.core;
+using pst.encodables.ndb;
+using pst.encodables.ndb.btree;
+using pst.impl.btree;
+using pst.impl.decoders.ltp.hn;
 using pst.impl.decoders.ndb;
+using pst.impl.decoders.ndb.btree;
 using pst.impl.decoders.primitives;
 using pst.impl.io;
+using pst.impl.ndb;
 using pst.impl.ndb.bbt;
 using pst.impl.ndb.nbt;
-using System;
-using System.Collections.Generic;
+using pst.interfaces;
+using pst.interfaces.btree;
+using pst.interfaces.io;
+using pst.interfaces.ndb;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace pst
 {
     public class PSTFile
     {
         private readonly NodeBTree nodeBTree;
-        private readonly BlockBTree blockBTree;
+        private readonly IOrderedDataBlockCollectionLoader nodeOrderedDataBlockCollectionLoader;
 
         public PSTFile(string filePath)
         {
@@ -42,17 +47,65 @@ namespace pst
             nodeBTree =
                 new NodeBTree(dataReader, header.Root.NBTRootPage);
 
-            blockBTree =
-                new BlockBTree(dataReader, header.Root.BBTRootPage);
+            nodeOrderedDataBlockCollectionLoader =
+                new OrderedNodeDataBlockCollectionLoader(
+                    CreateBlockBTreeKeyFinder(
+                        dataReader,
+                        header.Root.BBTRootPage),
+                    new OrderedDataBlockCollectionFactory(
+                        dataReader));
         }
 
         public MessageStore GetMessageStore()
         {
-            var lnbtEntry = nodeBTree.Find(new NID(0x21));
+            var lnbtEntry =
+                nodeBTree.Find(new NID(0x21));
 
-            var lbbtEntry = blockBTree.Find(lnbtEntry.DataBlockId);
+            var orderedDataBlockCollection =
+                nodeOrderedDataBlockCollectionLoader.Load(lnbtEntry.DataBlockId);
+
+            var hnHDRDecoder =
+                new HNHDRDecoder(
+                    new Int32Decoder());
+
+            var hnHDR =
+                hnHDRDecoder.Decode(orderedDataBlockCollection.Value.GetDataBlockAt(0).Data);
 
             return null;
+        }
+
+        private IBTreeKeyFinder<LBBTEntry, BID> CreateBlockBTreeKeyFinder(IDataReader dataReader, BREF rootNodeReference)
+        {
+            return
+                new BTreeKeyFinder<BTPage, BREF, IBBTEntry, LBBTEntry, BID>(
+                    new BTreeNodeKeyLocator<BTPage, IBBTEntry, BID>(
+                        new ComparerThatFindsTheFirstKeyThatIsLargerThanTheReferenceKey<IBBTEntry, BID>(
+                            new BIDFromIBBTEntryExtractor()),
+                        new IBBTEntriesFromBTPageExtractor(
+                            new IBBTEntryDecoder(
+                                new BIDDecoder(),
+                                new BREFDecoder(
+                                    new BIDDecoder(),
+                                    new IBDecoder())))),
+                    new BTreeNodeKeyLocator<BTPage, LBBTEntry, BID>(
+                        new ComparerThatFindsTheFirstKeyThatMatchesTheReferenceKey<LBBTEntry, BID>(
+                            new BIDFromLBBTEntryExtractor()),
+                        new LBBTEntriesFromBTPageExtractor(
+                            new LBBTEntryDecoder(
+                                new BREFDecoder(
+                                    new BIDDecoder(),
+                                    new IBDecoder()),
+                                new Int32Decoder()))),
+                    new BTPageLoader(
+                        dataReader,
+                        new BTPageDecoder(
+                            new Int32Decoder(),
+                            new PageTrailerDecoder(
+                                new Int32Decoder(),
+                                new BIDDecoder()))),
+                    rootNodeReference,
+                    new BREFFromIBBTEntryExtractor(),
+                    new PageLevelFromBTPageExtractor());
         }
     }
 }

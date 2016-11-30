@@ -19,7 +19,7 @@
             AmountOfData = amountOfData;
             BlockSignature = blockSignature;
             DataCrc = dataCrc;
-            BlockId = BlockId;
+            BlockId = blockId;
         }
     }
 }
