@@ -1,13 +1,13 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using pst.tests.Properties;
 using System.IO;
 
 namespace pst.tests
 {
-    [TestClass]
+    [TestFixture]
     public class MessageStoreTests
     {
-        [TestMethod]
+        [Test]
         public void ShouldCorrectlyReadThePSTDisplayName()
         {
             //Arrange
