@@ -30,11 +30,9 @@ namespace pst
         private readonly NodeBTree nodeBTree;
         private readonly IOrderedDataBlockCollectionLoader nodeOrderedDataBlockCollectionLoader;
 
-        public PSTFile(string filePath)
+        public PSTFile(Stream stream)
         {
-            var fileStream = File.Open(filePath, FileMode.Open, FileAccess.ReadWrite);
-
-            var dataReader = new StreamBasedDataReader(fileStream);
+            var dataReader = new StreamBasedDataReader(stream);
 
             var headerDecoder =
                 new HeaderDecoder(
@@ -61,6 +59,11 @@ namespace pst
                         header.Root.BBTRootPage),
                     new OrderedDataBlockCollectionFactory(
                         dataReader));
+        }
+
+        public PSTFile(string filePath)
+            : this(File.Open(filePath, FileMode.Open, FileAccess.ReadWrite))
+        {
         }
 
         public MessageStore GetMessageStore()

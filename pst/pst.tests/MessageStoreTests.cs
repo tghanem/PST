@@ -1,4 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using pst.tests.Properties;
+using System.IO;
 
 namespace pst.tests
 {
@@ -6,10 +8,10 @@ namespace pst.tests
     public class MessageStoreTests
     {
         [TestMethod]
-        public void TestMethod1()
+        public void ShouldCorrectlyReadThePSTDisplayName()
         {
             //Arrange
-            var sut = new PSTFile(@"c:\users\timothy\Desktop\Test.pst");
+            var sut = new PSTFile(new MemoryStream(Resources.PST));
 
             //Act
             var store = sut.GetMessageStore();
