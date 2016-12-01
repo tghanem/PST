@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace pst.encodables.ltp.hn
+﻿namespace pst.encodables.ltp.hn
 {
     class HID
     {

@@ -23,7 +23,7 @@ namespace pst.utilities
 
             var buffer = new byte[count];
 
-            valueStream.Read(buffer, offset, count);
+            valueStream.Read(buffer, 0, count);
 
             return BinaryData.OfValue(buffer);
         }

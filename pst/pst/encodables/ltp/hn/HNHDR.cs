@@ -12,12 +12,12 @@
         public int ClientSignature { get; }
 
         ///4
-        public int UserRoot { get; }
+        public HID UserRoot { get; }
 
         ///4
         public int FillLevel { get; }
 
-        public HNHDR(int pageMapOffset, int blockSignature, int clientSignature, int userRoot, int fillLevel)
+        public HNHDR(int pageMapOffset, int blockSignature, int clientSignature, HID userRoot, int fillLevel)
         {
             PageMapOffset = pageMapOffset;
             BlockSignature = blockSignature;

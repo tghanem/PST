@@ -33,7 +33,8 @@ namespace pst.impl.ndb
                         new ExternalDataBlockDecoder(
                             new BlockTrailerDecoder(
                                 new BIDDecoder(),
-                                new Int32Decoder())),
+                                new Int32Decoder()),
+                            new PermutativeDecoder(false)),
                         parameter.BlockReference.ByteIndex,
                         GetBlockSize(parameter));
             }

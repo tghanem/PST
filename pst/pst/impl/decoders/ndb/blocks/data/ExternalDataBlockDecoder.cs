@@ -9,9 +9,12 @@ namespace pst.impl.decoders.ndb.blocks.data
     {
         private readonly IDecoder<BlockTrailer> trailerDecoder;
 
-        public ExternalDataBlockDecoder(IDecoder<BlockTrailer> trailerDecoder)
+        private readonly IDecoder<BinaryData> blockDataDecoder;
+
+        public ExternalDataBlockDecoder(IDecoder<BlockTrailer> trailerDecoder, IDecoder<BinaryData> blockDataDecoder)
         {
             this.trailerDecoder = trailerDecoder;
+            this.blockDataDecoder = blockDataDecoder;
         }
 
         public ExternalDataBlock Decode(BinaryData encodedData)
@@ -22,10 +25,19 @@ namespace pst.impl.decoders.ndb.blocks.data
                     parser
                     .TakeAtWithoutChangingStreamPosition(encodedData.Length - 16, 16, trailerDecoder);
 
+                var encodedBlockData =
+                    parser.TakeAndSkip(trailer.AmountOfData);
+
+                var decodedBlockData =
+                    blockDataDecoder.Decode(encodedBlockData);
+
+                var padding =
+                    parser.TakeAndSkip(trailer.AmountOfData.GetRemainingToNextMultipleOf(64));
+
                 return
                     new ExternalDataBlock(
-                        parser.TakeAndSkip(trailer.AmountOfData),
-                        parser.TakeAndSkip(trailer.AmountOfData.GetRemainingToNextMultipleOf(64)),
+                        decodedBlockData,
+                        padding,
                         trailer);
             }
         }

@@ -22,7 +22,7 @@ namespace pst.impl.decoders.ltp.hn
                 return
                     new HID(
                         value & 0x0000001F,
-                        (value >> 5) & 0x000000FE,
+                        (value >> 5) & 0x000003FF,
                         (value >> 16) & 0x0000FFFF);
             }
         }

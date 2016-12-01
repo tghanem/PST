@@ -122,7 +122,6 @@
     <Compile Include="impl\ltp\bth\IndexRecordsFromBTreeOnHeapNodeExtractor.cs" />
     <Compile Include="impl\ltp\hn\HeapItemsExtractor.cs" />
     <Compile Include="impl\ltp\hn\HeapOnNodeItemLoader.cs" />
-    <Compile Include="impl\ltp\pc\PropertyContext.cs" />
     <Compile Include="impl\ltp\pc\PropertyIdFromDataRecordExtractor.cs" />
     <Compile Include="impl\ltp\pc\PropertyIdFromIndexRecordExtractor.cs" />
     <Compile Include="impl\ndb\bbt\BIDFromIBBTEntryExtractor.cs" />
@@ -163,6 +162,7 @@
     <Compile Include="utilities\BinaryDataGenerator.cs" />
     <Compile Include="utilities\BinaryDataParser.cs" />
     <Compile Include="utilities\ExtensionMethods.cs" />
+    <Compile Include="utilities\PermutativeDecoder.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

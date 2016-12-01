@@ -15,7 +15,7 @@ namespace pst.tests
             var store = sut.GetMessageStore();
 
             //Assert
-
+            Assert.AreEqual("Test", store.DisplayName);
         }
     }
 }

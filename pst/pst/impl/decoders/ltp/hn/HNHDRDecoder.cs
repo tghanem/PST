@@ -8,9 +8,12 @@ namespace pst.impl.decoders.ltp.hn
     {
         private readonly IDecoder<int> int32Decoder;
 
-        public HNHDRDecoder(IDecoder<int> int32Decoder)
+        private readonly IDecoder<HID> hidDecoder;
+
+        public HNHDRDecoder(IDecoder<int> int32Decoder, IDecoder<HID> hidDecoder)
         {
             this.int32Decoder = int32Decoder;
+            this.hidDecoder = hidDecoder;
         }
 
         public HNHDR Decode(BinaryData encodedData)
@@ -22,7 +25,7 @@ namespace pst.impl.decoders.ltp.hn
                         parser.TakeAndSkip(2, int32Decoder),
                         parser.TakeAndSkip(1, int32Decoder),
                         parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(4, int32Decoder),
+                        parser.TakeAndSkip(4, hidDecoder),
                         parser.TakeAndSkip(4, int32Decoder));
             }
         }

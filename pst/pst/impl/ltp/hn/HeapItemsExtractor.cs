@@ -62,7 +62,7 @@ namespace pst.impl.ltp.hn
             {
                 for(int i = 0; i <= pageMap.AllocationCount; i++)
                 {
-                    offsets.Add(parser.TakeAndSkip(i * 2, int32Decoder));
+                    offsets.Add(parser.TakeAtWithoutChangingStreamPosition(i * 2, 2, int32Decoder));
                 }
             }
 

@@ -1,18 +1,25 @@
 ﻿using pst.core;
+using pst.encodables.ltp.bth;
+using pst.encodables.ltp.hn;
 using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.impl.btree;
+using pst.impl.decoders.ltp.bth;
 using pst.impl.decoders.ltp.hn;
 using pst.impl.decoders.ndb;
 using pst.impl.decoders.ndb.btree;
 using pst.impl.decoders.primitives;
 using pst.impl.io;
+using pst.impl.ltp.bth;
+using pst.impl.ltp.hn;
+using pst.impl.ltp.pc;
 using pst.impl.ndb;
 using pst.impl.ndb.bbt;
 using pst.impl.ndb.nbt;
 using pst.interfaces;
 using pst.interfaces.btree;
 using pst.interfaces.io;
+using pst.interfaces.ltp.hn;
 using pst.interfaces.ndb;
 using System.IO;
 
@@ -66,12 +73,79 @@ namespace pst
 
             var hnHDRDecoder =
                 new HNHDRDecoder(
-                    new Int32Decoder());
+                    new Int32Decoder(),
+                    new HIDDecoder(
+                        new Int32Decoder()));
 
             var hnHDR =
                 hnHDRDecoder.Decode(orderedDataBlockCollection.Value.GetDataBlockAt(0).Data);
 
-            return null;
+            var heapOnNodeItemLoader =
+                new HeapOnNodeItemLoader(
+                    orderedDataBlockCollection.Value,
+                    new HeapItemsExtractor(
+                        new HNHDRDecoder(
+                            new Int32Decoder(),
+                            new HIDDecoder(
+                                new Int32Decoder())),
+                        new HNPAGEMAPDecoder(
+                            new Int32Decoder()),
+                        new Int32Decoder()));
+
+            var rootHeapItem =
+                heapOnNodeItemLoader.Load(hnHDR.UserRoot);
+
+            var bthHeaderDecoder =
+                new BTHHEADERDecoder(
+                    new Int32Decoder(),
+                    new HIDDecoder(
+                        new Int32Decoder()));
+
+            var bthHeader =
+                bthHeaderDecoder.Decode(rootHeapItem.Value);
+
+            var propertyContext =
+                CreateBTreeOnHeap(
+                    heapOnNodeItemLoader,
+                    bthHeader);
+
+            return
+                new MessageStore(
+                    propertyContext,
+                    heapOnNodeItemLoader,
+                    new HIDDecoder(
+                        new Int32Decoder()));
+        }
+
+        private IBTreeKeyFinder<DataRecord, PropertyId> CreateBTreeOnHeap(IHeapOnNodeItemLoader hnItemLoader,  BTHHEADER bthHeader)
+        {
+            return
+                new KnownDepthBTreeKeyFinder<BTreeOnHeapNode, HID, IndexRecord, DataRecord, PropertyId>(
+                    new BTreeNodeKeyLocator<BTreeOnHeapNode, IndexRecord, PropertyId>(
+                        new ComparerThatFindsTheFirstKeyThatIsLargerThanTheReferenceKey<IndexRecord, PropertyId>(
+                            new PropertyIdFromIndexRecordExtractor(
+                                new Int32Decoder())),
+                        new IndexRecordsFromBTreeOnHeapNodeExtractor(
+                            new IndexRecordDecoder(
+                                new HIDDecoder(
+                                    new Int32Decoder()),
+                                bthHeader.Key),
+                            bthHeader.Key)),
+                    new BTreeNodeKeyLocator<BTreeOnHeapNode, DataRecord, PropertyId>(
+                        new ComparerThatFindsTheFirstKeyThatMatchesTheReferenceKey<DataRecord, PropertyId>(
+                            new PropertyIdFromDataRecordExtractor(
+                                new Int32Decoder())),
+                        new DataRecordsFromBTreeOnHeapNodeExtractor(
+                            new DataRecordDecoder(
+                                bthHeader.Key,
+                                bthHeader.SizeOfDataValue),
+                            bthHeader.Key,
+                            bthHeader.SizeOfDataValue)),
+                    new BTreeOnHeapNodeLoader(
+                        hnItemLoader),
+                    bthHeader.Root,
+                    new HIDFromIndexRecordExtractor(),
+                    bthHeader.IndexDepth);
         }
 
         private IBTreeKeyFinder<LBBTEntry, BID> CreateBlockBTreeKeyFinder(IDataReader dataReader, BREF rootNodeReference)
