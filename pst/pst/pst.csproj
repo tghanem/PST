@@ -67,6 +67,7 @@
     <Compile Include="encodables\ndb\btree\LNBTEntry.cs" />
     <Compile Include="encodables\ndb\NID.cs" />
     <Compile Include="encodables\ndb\btree\PageTrailer.cs" />
+    <Compile Include="Factory.cs" />
     <Compile Include="impl\btree\KnownDepthBTreeKeyFinder.cs" />
     <Compile Include="impl\decoders\ltp\bth\BTHHEADERDecoder.cs" />
     <Compile Include="impl\decoders\ltp\bth\DataRecordDecoder.cs" />
@@ -135,9 +136,7 @@
     <Compile Include="impl\ndb\nbt\LNBTEntriesFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\nbt\NIDFromINBTEntryExtractor.cs" />
     <Compile Include="impl\ndb\nbt\NIDFromLNBTEntryExtractor.cs" />
-    <Compile Include="impl\ndb\nbt\NodeBTree.cs" />
     <Compile Include="impl\ndb\OrderedNodeDataBlockCollectionLoader.cs" />
-    <Compile Include="impl\ndb\OrderedDataBlockCollectionFactory.cs" />
     <Compile Include="impl\ndb\PageLevelFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\SingleExternalDataBlockBasedOrderedDataBlockCollection.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
