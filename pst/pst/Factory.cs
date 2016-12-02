@@ -5,12 +5,12 @@ using pst.encodables.ndb.btree;
 using pst.impl.btree;
 using pst.impl.decoders.ltp.bth;
 using pst.impl.decoders.ltp.hn;
+using pst.impl.decoders.messaging;
 using pst.impl.decoders.ndb;
 using pst.impl.decoders.ndb.btree;
 using pst.impl.decoders.primitives;
 using pst.impl.ltp.bth;
 using pst.impl.ltp.hn;
-using pst.impl.ltp.pc;
 using pst.impl.ndb;
 using pst.impl.ndb.bbt;
 using pst.impl.ndb.nbt;
@@ -19,6 +19,7 @@ using pst.interfaces.btree;
 using pst.interfaces.io;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.ndb;
+using System;
 
 namespace pst
 {
@@ -28,6 +29,8 @@ namespace pst
         public static IDecoder<HNHDR> HeapOnNodeHeaderDecoder;
         public static IDecoder<BTHHEADER> BTreeOnHeapHeaderDecoder;
         public static IDecoder<HID> HIDDecoder;
+        public static IDecoder<NID> NIDDecoder;
+        public static IDecoder<PropertyType> PropertyTypeDecoder;
 
         static Factory()
         {
@@ -58,6 +61,13 @@ namespace pst
             HIDDecoder =
                 new HIDDecoder(
                     new Int32Decoder());
+
+            NIDDecoder =
+                new NIDDecoder();
+
+            PropertyTypeDecoder =
+                new PropertyTypeDecoder(
+                    new Int32Decoder());
         }
 
         public static IHeapOnNodeItemLoader CreateHeapOnNodeItemLoader(IOrderedDataBlockCollection orderedNodeBlockCollection)
@@ -75,24 +85,27 @@ namespace pst
                         new Int32Decoder()));
         }
 
-        public static IBTreeKeyFinder<DataRecord, PropertyId> CreateBTreeOnHeapKeyFinder(IHeapOnNodeItemLoader hnItemLoader, BTHHEADER bthHeader)
+        public static IBTreeKeyFinder<DataRecord, TReferenceKey> CreateBTreeOnHeap<TReferenceKey>(
+            IExtractor<IndexRecord, TReferenceKey> referenceKeyFromIndexRecordExtractor,
+            IExtractor<DataRecord, TReferenceKey> referenceKeyFromDataRecordExtractor,
+            IHeapOnNodeItemLoader hnItemLoader,
+            BTHHEADER bthHeader)
+            where TReferenceKey : class, IComparable<TReferenceKey>, IEquatable<TReferenceKey>
         {
             return
-                new KnownDepthBTreeKeyFinder<BTreeOnHeapNode, HID, IndexRecord, DataRecord, PropertyId>(
-                    new BTreeNodeKeyLocator<BTreeOnHeapNode, IndexRecord, PropertyId>(
-                        new ComparerThatFindsTheFirstKeyThatIsLargerThanTheReferenceKey<IndexRecord, PropertyId>(
-                            new PropertyIdFromIndexRecordExtractor(
-                                new Int32Decoder())),
+                new KnownDepthBTreeKeyFinder<BTreeOnHeapNode, HID, IndexRecord, DataRecord, TReferenceKey>(
+                    new BTreeNodeKeyLocator<BTreeOnHeapNode, IndexRecord, TReferenceKey>(
+                        new ComparerThatFindsTheFirstKeyThatIsLargerThanTheReferenceKey<IndexRecord, TReferenceKey>(
+                            referenceKeyFromIndexRecordExtractor),
                         new IndexRecordsFromBTreeOnHeapNodeExtractor(
                             new IndexRecordDecoder(
                                 new HIDDecoder(
                                     new Int32Decoder()),
                                 bthHeader.Key),
                             bthHeader.Key)),
-                    new BTreeNodeKeyLocator<BTreeOnHeapNode, DataRecord, PropertyId>(
-                        new ComparerThatFindsTheFirstKeyThatMatchesTheReferenceKey<DataRecord, PropertyId>(
-                            new PropertyIdFromDataRecordExtractor(
-                                new Int32Decoder())),
+                    new BTreeNodeKeyLocator<BTreeOnHeapNode, DataRecord, TReferenceKey>(
+                        new ComparerThatFindsTheFirstKeyThatMatchesTheReferenceKey<DataRecord, TReferenceKey>(
+                            referenceKeyFromDataRecordExtractor),
                         new DataRecordsFromBTreeOnHeapNodeExtractor(
                             new DataRecordDecoder(
                                 bthHeader.Key,

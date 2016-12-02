@@ -1,39 +1,30 @@
-﻿using pst.encodables.ltp.bth;
-using pst.interfaces.btree;
-using pst.interfaces.ltp.hn;
-using pst.utilities;
+﻿using pst.impl.ltp.pc;
 using System.Text;
 
 namespace pst
 {
     public class MessageStore
     {
-        private readonly IBTreeKeyFinder<DataRecord, PropertyId> propertyContext;
-        private readonly IHeapOnNodeItemLoader heapOnNodeItemLoader;
+        private readonly PropertyContext propertyContext;
 
-        internal MessageStore(IBTreeKeyFinder<DataRecord, PropertyId> propertyContext, IHeapOnNodeItemLoader heapOnNodeItemLoader)
+        internal MessageStore(PropertyContext propertyContext)
         {
             this.propertyContext = propertyContext;
-            this.heapOnNodeItemLoader = heapOnNodeItemLoader;
         }
 
         public string DisplayName
         {
             get
             {
-                var dataRecord =
-                    propertyContext.Find(new PropertyId(0x3001));
+                var propertyValue =
+                    propertyContext.GetPropertyValue(new PropertyId(0x3001));
 
-                using (var parser = BinaryDataParser.OfValue(dataRecord.Value.Data))
+                if (propertyValue.HasNoValue)
                 {
-                    var propertyType = parser.TakeAndSkip(2);
-
-                    var hid = parser.TakeAndSkip(4, Factory.HIDDecoder);
-
-                    var heapItem = heapOnNodeItemLoader.Load(hid);
-
-                    return Encoding.Unicode.GetString(heapItem.Value.Value);
+                    return null;
                 }
+
+                return Encoding.Unicode.GetString(propertyValue.Value.Value);
             }
         }
     }

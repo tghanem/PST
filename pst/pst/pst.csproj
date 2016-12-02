@@ -77,6 +77,7 @@
     <Compile Include="impl\decoders\ltp\hn\HNHDRDecoder.cs" />
     <Compile Include="impl\decoders\ltp\hn\HNPAGEHDRDecoder.cs" />
     <Compile Include="impl\decoders\ltp\hn\HNPAGEMAPDecoder.cs" />
+    <Compile Include="impl\decoders\messaging\PropertyTypeDecoder.cs" />
     <Compile Include="impl\decoders\ndb\blocks\BlockTrailerDecoder.cs" />
     <Compile Include="impl\decoders\ndb\blocks\data\ExternalDataBlockDecoder.cs" />
     <Compile Include="impl\decoders\ndb\blocks\data\InternalDataBlockDecoder.cs" />
@@ -123,6 +124,7 @@
     <Compile Include="impl\ltp\bth\IndexRecordsFromBTreeOnHeapNodeExtractor.cs" />
     <Compile Include="impl\ltp\hn\HeapItemsExtractor.cs" />
     <Compile Include="impl\ltp\hn\HeapOnNodeItemLoader.cs" />
+    <Compile Include="impl\ltp\pc\PropertyContext.cs" />
     <Compile Include="impl\ltp\pc\PropertyIdFromDataRecordExtractor.cs" />
     <Compile Include="impl\ltp\pc\PropertyIdFromIndexRecordExtractor.cs" />
     <Compile Include="impl\ndb\bbt\BIDFromIBBTEntryExtractor.cs" />
@@ -144,14 +146,15 @@
     <Compile Include="interfaces\btree\IBTreeKeyFinder.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeKeyLocator.cs" />
     <Compile Include="interfaces\IExtractor.cs" />
-    <Compile Include="interfaces\IFactory.cs" />
     <Compile Include="interfaces\io\IDataReader.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeItemsExtractor.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeItemLoader.cs" />
+    <Compile Include="interfaces\messaging\IPropertyTypeMetadataProvider.cs" />
     <Compile Include="interfaces\ndb\IOrderedDataBlockCollection.cs" />
     <Compile Include="interfaces\ndb\IOrderedDataBlockCollectionLoader.cs" />
     <Compile Include="MessageStore.cs" />
     <Compile Include="PropertyId.cs" />
+    <Compile Include="PropertyType.cs" />
     <Compile Include="PropertyValue.cs" />
     <Compile Include="PSTFile.cs" />
     <Compile Include="utilities\BinaryData.cs" />
@@ -161,7 +164,9 @@
     <Compile Include="utilities\BinaryDataGenerator.cs" />
     <Compile Include="utilities\BinaryDataParser.cs" />
     <Compile Include="utilities\ExtensionMethods.cs" />
+    <Compile Include="utilities\Globals.cs" />
     <Compile Include="utilities\PermutativeDecoder.cs" />
+    <Compile Include="utilities\PropertyTypeMetadataProvider.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

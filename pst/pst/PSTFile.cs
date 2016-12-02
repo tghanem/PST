@@ -1,9 +1,12 @@
 ﻿using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
+using pst.impl.decoders.primitives;
 using pst.impl.io;
+using pst.impl.ltp.pc;
 using pst.impl.ndb;
 using pst.interfaces.btree;
 using pst.interfaces.ndb;
+using pst.utilities;
 using System.IO;
 
 namespace pst
@@ -68,12 +71,23 @@ namespace pst
 
             var propertyContext =
                 Factory
-                .CreateBTreeOnHeapKeyFinder(heapOnNodeItemLoader, bthHeader);
-
+                .CreateBTreeOnHeap(
+                    new PropertyIdFromIndexRecordExtractor(
+                        new Int32Decoder()),
+                    new PropertyIdFromDataRecordExtractor(
+                        new Int32Decoder()),
+                    heapOnNodeItemLoader,
+                    bthHeader);
+            
             return
                 new MessageStore(
-                    propertyContext,
-                    heapOnNodeItemLoader);
+                    new PropertyContext(
+                        propertyContext,
+                        new PropertyTypeMetadataProvider(),
+                        Factory.PropertyTypeDecoder,
+                        heapOnNodeItemLoader,
+                        Factory.HIDDecoder,
+                        Factory.NIDDecoder));
         }
     }
 }
