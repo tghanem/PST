@@ -1,0 +1,6 @@
+{
+  "name": "Personal Storage Table (PST) File Processor",
+  "tagline": ".NET library that supports processing Microsoft PST files.",
+  "body": "# pst\r\n.NET library that supports processing Microsoft PST files.\r\n\r\n[![Build Status:](https://travis-ci.org/tghanem/pst.svg?branch=master)](https://travis-ci.org/tghanem/pst)\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
