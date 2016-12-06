@@ -60,9 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <EmbeddedResource Include="Resources\PST.pst">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <None Include="Resources\PST.pst" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\pst\pst.csproj">

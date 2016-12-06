@@ -1,7 +1,12 @@
-﻿namespace pst.utilities
+﻿using pst.encodables.ndb;
+
+namespace pst.utilities
 {
     static class Globals
     {
+        public static readonly NID NID_MESSAGE_STORE = new NID(0x21);
+        public static readonly NID NID_ROOT_FOLDER = new NID(0x122);
+
         public const int NID_TYPE_HID = 0x00;
 
         public const int PtypInteger16 = 0x0002;

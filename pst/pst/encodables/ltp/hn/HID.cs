@@ -2,6 +2,8 @@
 {
     class HID
     {
+        public static readonly HID Zero = new HID(0, 0, 0);
+
         ///5 bits
         public int Type { get; }
 
