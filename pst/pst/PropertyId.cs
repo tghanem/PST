@@ -2,7 +2,7 @@
 
 namespace pst
 {
-    public class PropertyId : IComparable<PropertyId>, IEquatable<PropertyId>
+    public class PropertyId
     {
         public int Value { get; }
 
@@ -11,14 +11,16 @@ namespace pst
             Value = value;
         }
 
-        public int CompareTo(PropertyId other)
+        public override bool Equals(object obj)
         {
-            return Value.CompareTo(other.Value);
+            var propertyId = obj as PropertyId;
+
+            return propertyId?.Value == Value;
         }
 
-        public bool Equals(PropertyId other)
+        public override int GetHashCode()
         {
-            return Value == other.Value;
+            return Value.GetHashCode();
         }
     }
 }

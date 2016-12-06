@@ -1,6 +1,7 @@
 ﻿using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.impl.io;
+using pst.interfaces.io;
 using pst.utilities;
 using System.Collections.Generic;
 using System.IO;
@@ -12,23 +13,26 @@ namespace pst
         private readonly Dictionary<NID, LNBTEntry> nodeBTree;
         private readonly Dictionary<BID, LBBTEntry> blockBTree;
 
+        private readonly IDataBlockReader<BREF> streamReader;
+
         public PSTFile(Stream stream)
         {
-            var reader =
+            streamReader =
                 new StreamBasedBlockReader(stream);
 
             var header =
                 PSTServices.HeaderDecoder.Decode(
-                    reader.Read(BREF.OfValue(BID.OfValue(0), IB.Zero), 546));
+                    streamReader.Read(BREF.OfValue(BID.OfValue(0), IB.Zero), 546));
 
             nodeBTree = new Dictionary<NID, LNBTEntry>();
+            blockBTree = new Dictionary<BID, LBBTEntry>();
 
-            foreach (var entry in PSTServices.NodeBTreeKeysEnumerator.Enumerate(reader, header.Root.NBTRootPage))
+            foreach (var entry in PSTServices.NodeBTreeKeysEnumerator.Enumerate(streamReader, header.Root.NBTRootPage))
             {
                 nodeBTree.Add(entry.NodeId, entry);
             }
 
-            foreach (var entry in PSTServices.BlockBTreeKeysEnumerator.Enumerate(reader, header.Root.BBTRootPage))
+            foreach (var entry in PSTServices.BlockBTreeKeysEnumerator.Enumerate(streamReader, header.Root.BBTRootPage))
             {
                 blockBTree.Add(entry.BlockReference.BlockId, entry);
             }
@@ -36,7 +40,16 @@ namespace pst
 
         public MessageStore GetMessageStore()
         {
-            return null;
+            var nbtEntry = nodeBTree[Globals.NID_MESSAGE_STORE];
+
+            var bbtEntry = blockBTree[nbtEntry.DataBlockId];
+
+            var properties = PSTServices.PropertiesFromPropertyContextLoader.Load(
+                new LBBTEntryBlockReaderAdapter(streamReader),
+                blockBTree,
+                bbtEntry);
+
+            return new MessageStore(properties);
         }
 
         public Folder GetRootFolder()

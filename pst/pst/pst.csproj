@@ -113,6 +113,7 @@
     <Compile Include="impl\encoders\ndb\btree\LBBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\ndb\btree\LNBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\ndb\NIDEncoder.cs" />
+    <Compile Include="impl\io\LBBTEntryBlockReaderAdapter.cs" />
     <Compile Include="impl\io\StreamBasedBlockReader.cs" />
     <Compile Include="impl\ltp\bth\BTreeOnHeapLeafKeysEnumerator.cs" />
     <Compile Include="impl\ltp\bth\HIDFromIndexRecordExtractor.cs" />

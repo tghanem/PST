@@ -1,5 +1,4 @@
 ﻿using pst.interfaces.ltp.pc;
-using System;
 using System.Collections.Generic;
 using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
@@ -108,13 +107,9 @@ namespace pst.impl.ltp.pc
                 {
                     return new PropertyValue(heapOnNode[hid].Value);
                 }
+            }
 
-                return new PropertyValue(new byte[0]);
-            }
-            else
-            {
-                throw new Exception($"Property type {propertyType.Value} is not supported");
-            }
+            return new PropertyValue(new byte[0]);
         }
     }
 }

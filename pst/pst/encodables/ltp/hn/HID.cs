@@ -1,4 +1,6 @@
-﻿namespace pst.encodables.ltp.hn
+﻿using System;
+
+namespace pst.encodables.ltp.hn
 {
     class HID
     {
@@ -18,6 +20,20 @@
             Type = type;
             Index = index;
             BlockIndex = blockIndex;
+        }
+
+        public int Value => BlockIndex << 16 | Index << 5 | Type;
+
+        public override bool Equals(object obj)
+        {
+            var hid = obj as HID;
+
+            return hid?.Value == Value;
+        }
+
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
         }
     }
 }

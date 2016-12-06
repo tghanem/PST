@@ -66,7 +66,7 @@ namespace pst.impl.ltp.hn
                         hnHDR.PageMapOffset),
                     externalDataBlocks[0].Data));
 
-            for(var i = 0; i < externalDataBlocks.Length; i++)
+            for(var i = 1; i < externalDataBlocks.Length; i++)
             {
                 var pageMapOffset = 0;
 

@@ -29,7 +29,7 @@ namespace pst.impl.ltp.hn
                     parser.TakeAt(offsets[i], offsets[i + 1] - offsets[i]);
 
                 var hid =
-                    new HID(Globals.NID_TYPE_HID, i, pageIndex);
+                    new HID(Globals.NID_TYPE_HID, i + 1, pageIndex);
 
                 items.Add(
                     hid,
