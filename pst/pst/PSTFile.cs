@@ -54,7 +54,16 @@ namespace pst
 
         public Folder GetRootFolder()
         {
-            return null;
+            var nbtEntry = nodeBTree[Globals.NID_ROOT_FOLDER];
+
+            var bbtEntry = blockBTree[nbtEntry.DataBlockId];
+
+            var properties = PSTServices.PropertiesFromPropertyContextLoader.Load(
+                new LBBTEntryBlockReaderAdapter(streamReader),
+                blockBTree,
+                bbtEntry);
+
+            return new Folder(properties);
         }
     }
 }
