@@ -15,18 +15,17 @@ namespace pst.impl.decoders.ltp.hn
 
         public HNPAGEMAP Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                var allocationCount = parser.TakeAndSkip(2, int32Decoder);
-                var freeCount = parser.TakeAndSkip(2, int32Decoder);
-                var allocationTable = parser.TakeAndSkip((allocationCount + 1) * 2);
+            var parser = BinaryDataParser.OfValue(encodedData);
 
-                return
-                    new HNPAGEMAP(
-                        allocationCount,
-                        freeCount,
-                        allocationTable);
-            }
+            var allocationCount = parser.TakeAndSkip(2, int32Decoder);
+            var freeCount = parser.TakeAndSkip(2, int32Decoder);
+            var allocationTable = parser.TakeAndSkip((allocationCount + 1) * 2);
+
+            return
+                new HNPAGEMAP(
+                    allocationCount,
+                    freeCount,
+                    allocationTable);
         }
     }
 }

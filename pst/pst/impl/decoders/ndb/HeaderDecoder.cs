@@ -24,37 +24,36 @@ namespace pst.impl.decoders.ndb
 
         public Header Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                return
-                    new Header(
-                        parser.TakeAndSkip(4),
-                        parser.TakeAndSkip(4, int32Decoder),
-                        parser.TakeAndSkip(2),
-                        parser.TakeAndSkip(2, int32Decoder),
-                        parser.TakeAndSkip(2, int32Decoder),
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(4),
-                        parser.TakeAndSkip(4),
-                        parser.TakeAndSkip(8),
-                        parser.TakeAndSkip(8, bidDecoder),
-                        parser.TakeAndSkip(4, int32Decoder),
-                        parser.TakeAndSkip(32, 4, nidDecoder),
-                        parser.TakeAndSkip(8),
-                        parser.TakeAndSkip(72, rootDecoder),
-                        parser.TakeAndSkip(4),
-                        parser.TakeAndSkip(128),
-                        parser.TakeAndSkip(128),
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(2),
-                        parser.TakeAndSkip(8, bidDecoder),
-                        parser.TakeAndSkip(4, int32Decoder),
-                        parser.TakeAndSkip(3),
-                        parser.TakeAndSkip(1),
-                        parser.TakeAndSkip(32));
-            }
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new Header(
+                    parser.TakeAndSkip(4),
+                    parser.TakeAndSkip(4, int32Decoder),
+                    parser.TakeAndSkip(2),
+                    parser.TakeAndSkip(2, int32Decoder),
+                    parser.TakeAndSkip(2, int32Decoder),
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(4),
+                    parser.TakeAndSkip(4),
+                    parser.TakeAndSkip(8),
+                    parser.TakeAndSkip(8, bidDecoder),
+                    parser.TakeAndSkip(4, int32Decoder),
+                    parser.TakeAndSkip(32, 4, nidDecoder),
+                    parser.TakeAndSkip(8),
+                    parser.TakeAndSkip(72, rootDecoder),
+                    parser.TakeAndSkip(4),
+                    parser.TakeAndSkip(128),
+                    parser.TakeAndSkip(128),
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(2),
+                    parser.TakeAndSkip(8, bidDecoder),
+                    parser.TakeAndSkip(4, int32Decoder),
+                    parser.TakeAndSkip(3),
+                    parser.TakeAndSkip(1),
+                    parser.TakeAndSkip(32));
         }
     }
 }

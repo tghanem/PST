@@ -19,14 +19,13 @@ namespace pst.impl.encoders.ndb.btree
 
         public BinaryData Encode(INBTEntry value)
         {
-            using (var generator = BinaryDataGenerator.New())
-            {
-                return
-                    generator
-                    .Append(value.Key, nidEncoder)
-                    .Append(value.ChildPageBlockReference, brefEncoder)
-                    .GetData();
-            }
+            var generator = BinaryDataGenerator.New();
+
+            return
+                generator
+                .Append(value.Key, nidEncoder)
+                .Append(value.ChildPageBlockReference, brefEncoder)
+                .GetData();
         }
     }
 }

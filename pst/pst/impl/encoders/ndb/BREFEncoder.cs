@@ -18,14 +18,13 @@ namespace pst.impl.encoders.ndb
 
         public BinaryData Encode(BREF value)
         {
-            using (var generator = BinaryDataGenerator.New())
-            {
-                return
-                    generator
-                    .Append(value.BlockId, bidEncoder)
-                    .Append(value.ByteIndex, biEncoder)
-                    .GetData();
-            }
+            var generator = BinaryDataGenerator.New();
+
+            return
+                generator
+                .Append(value.BlockId, bidEncoder)
+                .Append(value.ByteIndex, biEncoder)
+                .GetData();
         }
     }
 }

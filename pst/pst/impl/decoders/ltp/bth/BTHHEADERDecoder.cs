@@ -19,16 +19,15 @@ namespace pst.impl.decoders.ltp.bth
 
         public BTHHEADER Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                return
-                    new BTHHEADER(
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(4, hidDecoder));
-            }
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new BTHHEADER(
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(4, hidDecoder));
         }
     }
 }

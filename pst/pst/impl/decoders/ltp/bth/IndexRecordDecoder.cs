@@ -19,13 +19,12 @@ namespace pst.impl.decoders.ltp.bth
 
         public IndexRecord Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                return
-                    new IndexRecord(
-                        parser.TakeAndSkip(keySize),
-                        parser.TakeAndSkip(4, hidDecoder));
-            }
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new IndexRecord(
+                    parser.TakeAndSkip(keySize),
+                    parser.TakeAndSkip(4, hidDecoder));
         }
     }
 }

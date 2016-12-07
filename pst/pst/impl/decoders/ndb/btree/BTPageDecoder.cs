@@ -18,18 +18,17 @@ namespace pst.impl.decoders.ndb.btree
 
         public BTPage Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                return
-                    new BTPage(
-                        parser.TakeAndSkip(488),
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(4),
-                        parser.TakeAndSkip(16, pageTrailerDecoder));
-            }
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new BTPage(
+                    parser.TakeAndSkip(488),
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(4),
+                    parser.TakeAndSkip(16, pageTrailerDecoder));
         }
     }
 }

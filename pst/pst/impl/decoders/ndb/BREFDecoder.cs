@@ -18,13 +18,12 @@ namespace pst.impl.decoders.ndb
 
         public BREF Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                return
-                    BREF.OfValue(
-                        parser.TakeAndSkip(8, bidDecoder),
-                        parser.TakeAndSkip(8, biDecoder));
-            }
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                BREF.OfValue(
+                    parser.TakeAndSkip(8, bidDecoder),
+                    parser.TakeAndSkip(8, biDecoder));
         }
     }
 }

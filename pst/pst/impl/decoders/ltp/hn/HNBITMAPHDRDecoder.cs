@@ -15,13 +15,12 @@ namespace pst.impl.decoders.ltp.hn
 
         public HNBITMAPHDR Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                return
-                    new HNBITMAPHDR(
-                        parser.TakeAndSkip(2, int32Decoder),
-                        parser.TakeAndSkip(64));
-            }
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new HNBITMAPHDR(
+                    parser.TakeAndSkip(2, int32Decoder),
+                    parser.TakeAndSkip(64));
         }
     }
 }

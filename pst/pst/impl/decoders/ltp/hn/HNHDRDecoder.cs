@@ -18,16 +18,15 @@ namespace pst.impl.decoders.ltp.hn
 
         public HNHDR Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                return
-                    new HNHDR(
-                        parser.TakeAndSkip(2, int32Decoder),
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(4, hidDecoder),
-                        parser.TakeAndSkip(4, int32Decoder));
-            }
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new HNHDR(
+                    parser.TakeAndSkip(2, int32Decoder),
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(4, hidDecoder),
+                    parser.TakeAndSkip(4, int32Decoder));
         }
     }
 }

@@ -19,27 +19,26 @@ namespace pst.impl.decoders.ndb.blocks.data
 
         public ExternalDataBlock Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                var trailer =
-                    parser
-                    .TakeAtWithoutChangingStreamPosition(encodedData.Length - 16, 16, trailerDecoder);
+            var parser = BinaryDataParser.OfValue(encodedData);
 
-                var encodedBlockData =
-                    parser.TakeAndSkip(trailer.AmountOfData);
+            var trailer =
+                parser
+                .TakeAtWithoutChangingStreamPosition(encodedData.Length - 16, 16, trailerDecoder);
 
-                var decodedBlockData =
-                    blockDataDecoder.Decode(encodedBlockData);
+            var encodedBlockData =
+                parser.TakeAndSkip(trailer.AmountOfData);
 
-                var padding =
-                    parser.TakeAndSkip(trailer.AmountOfData.GetRemainingToNextMultipleOf(64));
+            var decodedBlockData =
+                blockDataDecoder.Decode(encodedBlockData);
 
-                return
-                    new ExternalDataBlock(
-                        decodedBlockData,
-                        padding,
-                        trailer);
-            }
+            var padding =
+                parser.TakeAndSkip(trailer.AmountOfData.GetRemainingToNextMultipleOf(64));
+
+            return
+                new ExternalDataBlock(
+                    decodedBlockData,
+                    padding,
+                    trailer);
         }
     }
 }

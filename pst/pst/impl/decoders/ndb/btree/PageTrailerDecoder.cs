@@ -19,16 +19,15 @@ namespace pst.impl.decoders.ndb
 
         public PageTrailer Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                return
-                    new PageTrailer(
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(2, int32Decoder),
-                        parser.TakeAndSkip(4, int32Decoder),
-                        parser.TakeAndSkip(8, bidDecoder));
-            }
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new PageTrailer(
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(2, int32Decoder),
+                    parser.TakeAndSkip(4, int32Decoder),
+                    parser.TakeAndSkip(8, bidDecoder));
         }
     }
 }

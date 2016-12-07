@@ -15,12 +15,11 @@ namespace pst.impl.decoders.ltp.hn
 
         public HNPAGEHDR Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                return
-                    new HNPAGEHDR(
-                        parser.TakeAndSkip(2, int32Decoder));
-            }
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new HNPAGEHDR(
+                    parser.TakeAndSkip(2, int32Decoder));
         }
     }
 }

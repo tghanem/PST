@@ -19,16 +19,15 @@ namespace pst.impl.encoders.ndb.blocks
 
         public BinaryData Encode(BlockTrailer value)
         {
-            using (var generator = BinaryDataGenerator.New())
-            {
-                return
-                    generator
-                    .Append(value.AmountOfData, int32Encoder, 2)
-                    .Append(value.BlockSignature, int32Encoder, 2)
-                    .Append(value.DataCrc, int32Encoder)
-                    .Append(value.BlockId, bidEncoder)
-                    .GetData();
-            }
+            var generator = BinaryDataGenerator.New();
+
+            return
+                generator
+                .Append(value.AmountOfData, int32Encoder, 2)
+                .Append(value.BlockSignature, int32Encoder, 2)
+                .Append(value.DataCrc, int32Encoder)
+                .Append(value.BlockId, bidEncoder)
+                .GetData();
         }
     }
 }

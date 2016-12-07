@@ -18,13 +18,12 @@ namespace pst.impl.decoders.ltp.bth
 
         public DataRecord Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                return
-                    new DataRecord(
-                        parser.TakeAndSkip(keySize),
-                        parser.TakeAndSkip(dataSize));
-            }
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new DataRecord(
+                    parser.TakeAndSkip(keySize),
+                    parser.TakeAndSkip(dataSize));
         }
     }
 }

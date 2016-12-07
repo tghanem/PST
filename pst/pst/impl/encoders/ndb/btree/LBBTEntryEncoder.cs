@@ -19,16 +19,15 @@ namespace pst.impl.encoders.ndb.btree
 
         public BinaryData Encode(LBBTEntry value)
         {
-            using (var generator = BinaryDataGenerator.New())
-            {
-                return
-                    generator
-                    .Append(value.BlockReference, brefEncoder)
-                    .Append(value.ByteCountOfRawDataInReferencedBlockExcludingTrailerAndAlignmentPadding, int32Encoder)
-                    .Append(value.NumberOfReferencesToThisBlock, int32Encoder)
-                    .Append(value.Padding)
-                    .GetData();
-            }
+            var generator = BinaryDataGenerator.New();
+
+            return
+                generator
+                .Append(value.BlockReference, brefEncoder)
+                .Append(value.ByteCountOfRawDataInReferencedBlockExcludingTrailerAndAlignmentPadding, int32Encoder)
+                .Append(value.NumberOfReferencesToThisBlock, int32Encoder)
+                .Append(value.Padding)
+                .GetData();
         }
     }
 }

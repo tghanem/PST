@@ -19,17 +19,16 @@ namespace pst.impl.encoders.ndb.btree
 
         public BinaryData Encode(PageTrailer value)
         {
-            using (var generator = BinaryDataGenerator.New())
-            {
-                return
-                    generator
-                    .Append(value.PageType, int32Encoder, 1)
-                    .Append(value.PageTypeRepeat, int32Encoder, 1)
-                    .Append(value.PageSignature, int32Encoder, 2)
-                    .Append(value.Crc32ForPageData, int32Encoder)
-                    .Append(value.PageBlockId, bidEncoder)
-                    .GetData();
-            }
+            var generator = BinaryDataGenerator.New();
+
+            return
+                generator
+                .Append(value.PageType, int32Encoder, 1)
+                .Append(value.PageTypeRepeat, int32Encoder, 1)
+                .Append(value.PageSignature, int32Encoder, 2)
+                .Append(value.Crc32ForPageData, int32Encoder)
+                .Append(value.PageBlockId, bidEncoder)
+                .GetData();
         }
     }
 }

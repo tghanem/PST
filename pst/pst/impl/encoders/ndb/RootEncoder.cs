@@ -21,22 +21,21 @@ namespace pst.impl.encoders.ndb
 
         public BinaryData Encode(Root value)
         {
-            using (var generator = BinaryDataGenerator.New())
-            {
-                return
-                    generator
-                    .Append(value.Reserved, int32Encoder)
-                    .Append(value.FileEOF, int64Encoder)
-                    .Append(value.AMapLast, int64Encoder)
-                    .Append(value.AMapFree, int64Encoder)
-                    .Append(value.PMapFree, int64Encoder)
-                    .Append(value.NBTRootPage, brefEncoder)
-                    .Append(value.BBTRootPage, brefEncoder)
-                    .Append(value.AMapValid, int32Encoder, 1)
-                    .Append(value.BReserved, int32Encoder, 1)
-                    .Append(value.WReserved, int32Encoder, 2)
-                    .GetData();
-            }
+            var generator = BinaryDataGenerator.New();
+
+            return
+                generator
+                .Append(value.Reserved, int32Encoder)
+                .Append(value.FileEOF, int64Encoder)
+                .Append(value.AMapLast, int64Encoder)
+                .Append(value.AMapFree, int64Encoder)
+                .Append(value.PMapFree, int64Encoder)
+                .Append(value.NBTRootPage, brefEncoder)
+                .Append(value.BBTRootPage, brefEncoder)
+                .Append(value.AMapValid, int32Encoder, 1)
+                .Append(value.BReserved, int32Encoder, 1)
+                .Append(value.WReserved, int32Encoder, 2)
+                .GetData();
         }
     }
 }

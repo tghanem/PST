@@ -15,16 +15,15 @@ namespace pst.impl.decoders.ltp.hn
 
         public HID Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                var value = parser.TakeAndSkip(4, int32Decoder);
+            var parser = BinaryDataParser.OfValue(encodedData);
 
-                return
-                    new HID(
-                        value & 0x0000001F,
-                        (value >> 5) & 0x000003FF,
-                        (value >> 16) & 0x0000FFFF);
-            }
+            var value = parser.TakeAndSkip(4, int32Decoder);
+
+            return
+                new HID(
+                    value & 0x0000001F,
+                    (value >> 5) & 0x000003FF,
+                    (value >> 16) & 0x0000FFFF);
         }
     }
 }

@@ -17,18 +17,17 @@ namespace pst.impl.encoders.ndb.btree
 
         public BinaryData Encode(BTPage value)
         {
-            using (var generator = BinaryDataGenerator.New())
-            {
-                return
-                    generator
-                    .Append(value.Entries)
-                    .Append(value.Entries.Length, int32Encoder, 1)
-                    .Append(value.MaximumNumberOfEntriesInPage, int32Encoder, 1)
-                    .Append(value.EntrySize, int32Encoder, 1)
-                    .Append(value.PageLevel, int32Encoder, 1)
-                    .Append(value.PageTrailer, pageTrailerEncoder)
-                    .GetData();
-            }
+            var generator = BinaryDataGenerator.New();
+
+            return
+                generator
+                .Append(value.Entries)
+                .Append(value.Entries.Length, int32Encoder, 1)
+                .Append(value.MaximumNumberOfEntriesInPage, int32Encoder, 1)
+                .Append(value.EntrySize, int32Encoder, 1)
+                .Append(value.PageLevel, int32Encoder, 1)
+                .Append(value.PageTrailer, pageTrailerEncoder)
+                .GetData();
         }
     }
 }

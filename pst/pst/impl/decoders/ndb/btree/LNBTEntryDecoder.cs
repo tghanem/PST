@@ -19,16 +19,15 @@ namespace pst.impl.decoders.ndb
 
         public LNBTEntry Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                return
-                    new LNBTEntry(
-                        parser.TakeAndSkip(8, nidDecoder),
-                        parser.TakeAndSkip(8, bidDecoder),
-                        parser.TakeAndSkip(8, bidDecoder),
-                        parser.TakeAndSkip(4, nidDecoder),
-                        parser.TakeAndSkip(4));
-            }
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new LNBTEntry(
+                    parser.TakeAndSkip(8, nidDecoder),
+                    parser.TakeAndSkip(8, bidDecoder),
+                    parser.TakeAndSkip(8, bidDecoder),
+                    parser.TakeAndSkip(4, nidDecoder),
+                    parser.TakeAndSkip(4));
         }
     }
 }

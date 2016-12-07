@@ -18,15 +18,14 @@ namespace pst.impl.decoders.ndb.blocks
 
         public BlockTrailer Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                return
-                    new BlockTrailer(
-                        parser.TakeAndSkip(2, int32Decoder),
-                        parser.TakeAndSkip(2, int32Decoder),
-                        parser.TakeAndSkip(4, int32Decoder),
-                        parser.TakeAndSkip(8, bidDecoder));
-            }
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new BlockTrailer(
+                    parser.TakeAndSkip(2, int32Decoder),
+                    parser.TakeAndSkip(2, int32Decoder),
+                    parser.TakeAndSkip(4, int32Decoder),
+                    parser.TakeAndSkip(8, bidDecoder));
         }
     }
 }

@@ -19,13 +19,12 @@ namespace pst.impl.decoders.ndb.blocks.subnode
 
         public SIEntry Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                return
-                    new SIEntry(
-                        parser.TakeAndSkip(8, nidDecoder),
-                        parser.TakeAndSkip(8, bidDecoder));
-            }
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new SIEntry(
+                    parser.TakeAndSkip(8, nidDecoder),
+                    parser.TakeAndSkip(8, bidDecoder));
         }
     }
 }

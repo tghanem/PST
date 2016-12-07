@@ -19,13 +19,12 @@ namespace pst.impl.decoders.ndb
 
         public INBTEntry Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                return
-                    INBTEntry.OfValue(
-                        parser.TakeAndSkip(8, nidDecoder),
-                        parser.TakeAndSkip(16, brefDecoder));
-            }
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                INBTEntry.OfValue(
+                    parser.TakeAndSkip(8, nidDecoder),
+                    parser.TakeAndSkip(16, brefDecoder));
         }
     }
 }

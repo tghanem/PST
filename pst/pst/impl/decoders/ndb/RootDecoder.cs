@@ -21,21 +21,20 @@ namespace pst.impl.decoders.ndb
 
         public Root Decode(BinaryData encodedData)
         {
-            using (var parser = BinaryDataParser.OfValue(encodedData))
-            {
-                return
-                    new Root(
-                        parser.TakeAndSkip(4, int32Decoder),
-                        parser.TakeAndSkip(8, int64Decoder),
-                        parser.TakeAndSkip(8, int64Decoder),
-                        parser.TakeAndSkip(8, int64Decoder),
-                        parser.TakeAndSkip(8, int64Decoder),
-                        parser.TakeAndSkip(16, brefDecoder),
-                        parser.TakeAndSkip(16, brefDecoder),
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(1, int32Decoder),
-                        parser.TakeAndSkip(2, int32Decoder));
-            }
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new Root(
+                    parser.TakeAndSkip(4, int32Decoder),
+                    parser.TakeAndSkip(8, int64Decoder),
+                    parser.TakeAndSkip(8, int64Decoder),
+                    parser.TakeAndSkip(8, int64Decoder),
+                    parser.TakeAndSkip(8, int64Decoder),
+                    parser.TakeAndSkip(16, brefDecoder),
+                    parser.TakeAndSkip(16, brefDecoder),
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(2, int32Decoder));
         }
     }
 }
