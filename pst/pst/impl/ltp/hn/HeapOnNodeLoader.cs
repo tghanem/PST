@@ -50,21 +50,24 @@ namespace pst.impl.ltp.hn
                     blockEntry);
 
             if (externalDataBlocks.Length == 0)
-                return new HeapOnNode(HID.Zero);
+                return new HeapOnNode(HID.Zero, new Dictionary<HID, BinaryData>());
 
             var hnHDR =
                 hnHDRDecoder.Decode(externalDataBlocks[0].Data.Take(12));
 
             var heapOnNode =
-                new HeapOnNode(hnHDR.UserRoot);
+                new HeapOnNode(
+                    hnHDR.UserRoot,
+                    new Dictionary<HID, BinaryData>());
 
-            heapOnNode.FillFrom(
-                heapOnNodeItemsLoader.Load(
-                    0,
-                    GetPageMapFromExternalDataBlock(
-                        externalDataBlocks[0],
-                        hnHDR.PageMapOffset),
-                    externalDataBlocks[0].Data));
+            heapOnNode =
+                heapOnNode.Append(
+                    heapOnNodeItemsLoader.Load(
+                        0,
+                        GetPageMapFromExternalDataBlock(
+                            externalDataBlocks[0],
+                            hnHDR.PageMapOffset),
+                        externalDataBlocks[0].Data));
 
             for(var i = 1; i < externalDataBlocks.Length; i++)
             {
@@ -88,13 +91,14 @@ namespace pst.impl.ltp.hn
                     pageMapOffset = hnPageHDR.PageMapOffset;
                 }
 
-                heapOnNode.FillFrom(
-                    heapOnNodeItemsLoader.Load(
-                        i,
-                        GetPageMapFromExternalDataBlock(
-                            externalDataBlocks[i],
-                            pageMapOffset),
-                        externalDataBlocks[i].Data));
+                heapOnNode =
+                    heapOnNode.Append(
+                        heapOnNodeItemsLoader.Load(
+                            i,
+                            GetPageMapFromExternalDataBlock(
+                                externalDataBlocks[i],
+                                pageMapOffset),
+                            externalDataBlocks[i].Data));
             }
 
             return heapOnNode;

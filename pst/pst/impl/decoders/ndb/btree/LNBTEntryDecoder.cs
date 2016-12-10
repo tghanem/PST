@@ -21,9 +21,13 @@ namespace pst.impl.decoders.ndb
         {
             var parser = BinaryDataParser.OfValue(encodedData);
 
+            var nid = parser.TakeAndSkip(4, nidDecoder);
+
+            parser.TakeAndSkip(4);
+
             return
                 new LNBTEntry(
-                    parser.TakeAndSkip(8, nidDecoder),
+                    nid,
                     parser.TakeAndSkip(8, bidDecoder),
                     parser.TakeAndSkip(8, bidDecoder),
                     parser.TakeAndSkip(4, nidDecoder),

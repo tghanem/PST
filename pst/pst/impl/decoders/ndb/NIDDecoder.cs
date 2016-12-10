@@ -7,9 +7,16 @@ namespace pst.impl.decoders.ndb
 {
     class NIDDecoder : IDecoder<NID>
     {
+        private readonly IDecoder<int> int32Decoder;
+
+        public NIDDecoder(IDecoder<int> int32Decoder)
+        {
+            this.int32Decoder = int32Decoder;
+        }
+
         public NID Decode(BinaryData encodedData)
         {
-            var value = BitConverter.ToInt32(encodedData.Value, 0);
+            var value = int32Decoder.Decode(encodedData);
 
             var type = value & 0x0000001F;
 

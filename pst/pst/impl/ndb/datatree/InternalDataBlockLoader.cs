@@ -18,7 +18,7 @@ namespace pst.impl.ndb.datatree
             this.internalDataBlockDecoder = internalDataBlockDecoder;
         }
 
-        public Maybe<InternalDataBlock> LoadNode(IDataBlockReader<LBBTEntry> reader, LBBTEntry nodeReference)
+        public InternalDataBlock LoadNode(IDataBlockReader<LBBTEntry> reader, LBBTEntry nodeReference)
         {
             var encodedBlock =
                 reader

@@ -28,7 +28,10 @@ namespace pst.impl.btree
             this.nodeLoader = nodeLoader;
         }
 
-        public TLeafKey[] Enumerate(IDataBlockReader<TNodeReference> reader, IReadOnlyDictionary<TIntermediateKey, TNodeReference> keyToNodeReferenceMapping, TNodeReference rootNodeReference)
+        public TLeafKey[] Enumerate(
+            IDataBlockReader<TNodeReference> reader,
+            IReadOnlyDictionary<TIntermediateKey, TNodeReference> keyToNodeReferenceMapping,
+            TNodeReference rootNodeReference)
         {
             var leafKeys = new List<TLeafKey>();
 
@@ -46,15 +49,10 @@ namespace pst.impl.btree
             var node =
                 nodeLoader.LoadNode(reader, nodeReference);
 
-            if (node.HasNoValue)
-            {
-                return;
-            }
-
-            if (nodeLevelFromNodeExtractor.Extract(node.Value) > 0)
+            if (nodeLevelFromNodeExtractor.Extract(node) > 0)
             {
                 var intermediateKeys =
-                    intermediateKeysExtractor.Extract(node.Value);
+                    intermediateKeysExtractor.Extract(node);
 
                 foreach (var key in intermediateKeys)
                 {
@@ -68,7 +66,7 @@ namespace pst.impl.btree
             else
             {
                 leafKeys.AddRange(
-                    leafKeysExtractor.Extract(node.Value));
+                    leafKeysExtractor.Extract(node));
             }
         }
     }

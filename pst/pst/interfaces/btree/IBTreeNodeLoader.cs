@@ -7,6 +7,6 @@ namespace pst.interfaces.btree
         where TNodeReference : class
         where TNode : class
     {
-        Maybe<TNode> LoadNode(IDataBlockReader<TNodeReference> reader, TNodeReference nodeReference);
+        TNode LoadNode(IDataBlockReader<TNodeReference> reader, TNodeReference nodeReference);
     }
 }

@@ -20,5 +20,15 @@ namespace pst.tests
             //Assert
             Assert.AreEqual("Test", store.DisplayName);
         }
+
+        [Test]
+        public void Test2()
+        {
+            //Arrange
+            var sut = new PSTFile(new MemoryStream(Resources.PST));
+
+            //Act
+            var store = sut.GetRootFolder();
+        }
     }
 }

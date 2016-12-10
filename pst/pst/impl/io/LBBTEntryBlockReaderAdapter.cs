@@ -18,7 +18,10 @@ namespace pst.impl.io
 
         public BinaryData Read(LBBTEntry blockReference, int blockSize)
         {
-            return actualReader.Read(blockReference.BlockReference, blockSize);
+            return
+                actualReader.Read(
+                    blockReference.BlockReference,
+                    blockSize);
         }
     }
 }

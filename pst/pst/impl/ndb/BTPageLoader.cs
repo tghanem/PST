@@ -1,5 +1,4 @@
-﻿using pst.core;
-using pst.encodables.ndb;
+﻿using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.interfaces;
 using pst.interfaces.btree;
@@ -16,7 +15,7 @@ namespace pst.impl.ndb
             this.pageDecoder = pageDecoder;
         }
 
-        public Maybe<BTPage> LoadNode(IDataBlockReader<BREF> reader, BREF pageReference)
+        public BTPage LoadNode(IDataBlockReader<BREF> reader, BREF pageReference)
         {
             var encodedPage = reader.Read(pageReference, 512);
 

@@ -95,7 +95,7 @@ namespace pst.impl.ltp.pc
                     var hid =
                         parser.TakeAndSkip(4, hidDecoder);
 
-                    return new PropertyValue(heapOnNode[hid].Value);
+                    return new PropertyValue(heapOnNode.GetItem(hid).Value);
                 }
             }
             else if (propertyTypeMetadataProvider.IsVariableLength(propertyType))
@@ -105,7 +105,7 @@ namespace pst.impl.ltp.pc
 
                 if (hid.Type == Globals.NID_TYPE_HID)
                 {
-                    return new PropertyValue(heapOnNode[hid].Value);
+                    return new PropertyValue(heapOnNode.GetItem(hid).Value);
                 }
             }
 

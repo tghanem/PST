@@ -1,9 +1,6 @@
 ﻿using pst.interfaces.ltp.bth;
 using System.Collections.Generic;
 using pst.encodables.ltp.bth;
-using pst.encodables.ndb;
-using pst.encodables.ndb.btree;
-using pst.interfaces.io;
 using pst.interfaces;
 using pst.interfaces.ltp.hn;
 using pst.encodables.ltp.hn;
@@ -48,7 +45,7 @@ namespace pst.impl.ltp.bth
 
         public void Enumerate(HeapOnNode heapOnNode, HID nodeId, int keySize, int dataSize, int currentDepth, List<DataRecord> dataRecords)
         {
-            var node = heapOnNode[nodeId];
+            var node = heapOnNode.GetItem(nodeId);
 
             if (currentDepth > 0)
             {

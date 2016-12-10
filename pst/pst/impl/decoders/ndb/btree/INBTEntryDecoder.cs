@@ -23,8 +23,8 @@ namespace pst.impl.decoders.ndb
 
             return
                 INBTEntry.OfValue(
-                    parser.TakeAndSkip(8, nidDecoder),
-                    parser.TakeAndSkip(16, brefDecoder));
+                    parser.TakeAndSkip(4, nidDecoder),
+                    parser.TakeAtWithoutChangingStreamPosition(8, 16, brefDecoder));
         }
     }
 }

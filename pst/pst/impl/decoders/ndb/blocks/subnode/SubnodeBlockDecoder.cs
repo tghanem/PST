@@ -11,13 +11,10 @@ namespace pst.impl.decoders.ndb.blocks.subnode
 
         private readonly IDecoder<BlockTrailer> trailerDecoder;
 
-        private readonly int entrySize;
-
-        public SubnodeBlockDecoder(IDecoder<int> int32Decoder, IDecoder<BlockTrailer> trailerDecoder, int entrySize)
+        public SubnodeBlockDecoder(IDecoder<int> int32Decoder, IDecoder<BlockTrailer> trailerDecoder)
         {
             this.int32Decoder = int32Decoder;
             this.trailerDecoder = trailerDecoder;
-            this.entrySize = entrySize;
         }
 
         public SubnodeBlock Decode(BinaryData encodedData)
@@ -26,6 +23,12 @@ namespace pst.impl.decoders.ndb.blocks.subnode
 
             var blockType = parser.TakeAndSkip(1, int32Decoder);
             var blockLevel = parser.TakeAndSkip(1, int32Decoder);
+
+            var entrySize =
+                blockLevel == 1
+                ? 16
+                : 24;
+            
             var numberOfEntries = parser.TakeAndSkip(2, int32Decoder);
             var padding = parser.TakeAndSkip(4);
             var entries = parser.TakeAndSkip(numberOfEntries * entrySize);

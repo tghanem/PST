@@ -54,7 +54,7 @@ namespace pst
 
         public Folder GetRootFolder()
         {
-            var nbtEntry = nodeBTree[Globals.NID_ROOT_FOLDER];
+            var nbtEntry = nodeBTree[new NID(0x12d)];
 
             var bbtEntry = blockBTree[nbtEntry.DataBlockId];
 
