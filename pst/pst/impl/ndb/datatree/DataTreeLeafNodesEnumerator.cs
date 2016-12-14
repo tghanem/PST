@@ -24,7 +24,7 @@ namespace pst.impl.ndb.datatree
 
         public ExternalDataBlock[] Enumerate(
             IDataBlockReader<LBBTEntry> reader,
-            IReadOnlyDictionary<BID, LBBTEntry> blockIdToEntryMapping,
+            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             LBBTEntry blockEntry)
         {
             var blockSize = blockEntry.GetBlockSize();
@@ -46,7 +46,7 @@ namespace pst.impl.ndb.datatree
 
                 foreach (var bid in bids)
                 {
-                    var entry = blockIdToEntryMapping[bid];
+                    var entry = blockIdToEntryMapping.Map(bid);
 
                     var block = LoadBlock(reader, entry);
 

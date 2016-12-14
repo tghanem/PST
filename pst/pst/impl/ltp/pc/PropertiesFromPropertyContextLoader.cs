@@ -41,7 +41,7 @@ namespace pst.impl.ltp.pc
 
         public IDictionary<PropertyId, PropertyValue> Load(
             IDataBlockReader<LBBTEntry> reader,
-            IReadOnlyDictionary<BID, LBBTEntry> blockIdToEntryMapping,
+            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             LBBTEntry blockEntry)
         {
             var heapOnNode =

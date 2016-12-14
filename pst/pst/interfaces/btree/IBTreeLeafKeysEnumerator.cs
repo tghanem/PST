@@ -15,6 +15,6 @@ namespace pst.interfaces.btree
         where TNodeReference : class
         where TLeafKey : class
     {
-        TLeafKey[] Enumerate(IDataBlockReader<TNodeReference> reader, IReadOnlyDictionary<TIntermediateKey, TNodeReference> keyToNodeReferenceMapping, TNodeReference rootNodeReference);
+        TLeafKey[] Enumerate(IDataBlockReader<TNodeReference> reader, IMapper<TIntermediateKey, TNodeReference> keyToNodeReferenceMapping, TNodeReference rootNodeReference);
     }
 }

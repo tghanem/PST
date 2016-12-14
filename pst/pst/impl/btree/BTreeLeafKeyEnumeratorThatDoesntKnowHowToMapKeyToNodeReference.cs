@@ -30,7 +30,7 @@ namespace pst.impl.btree
 
         public TLeafKey[] Enumerate(
             IDataBlockReader<TNodeReference> reader,
-            IReadOnlyDictionary<TIntermediateKey, TNodeReference> keyToNodeReferenceMapping,
+            IMapper<TIntermediateKey, TNodeReference> keyToNodeReferenceMapping,
             TNodeReference rootNodeReference)
         {
             var leafKeys = new List<TLeafKey>();
@@ -44,7 +44,11 @@ namespace pst.impl.btree
             return leafKeys.ToArray();
         }
 
-        private void EnumerateAndAdd(IDataBlockReader<TNodeReference> reader, IReadOnlyDictionary<TIntermediateKey, TNodeReference> keyToNodeReferenceMapping, TNodeReference nodeReference, List<TLeafKey> leafKeys)
+        private void EnumerateAndAdd(
+            IDataBlockReader<TNodeReference> reader,
+            IMapper<TIntermediateKey, TNodeReference> keyToNodeReferenceMapping,
+            TNodeReference nodeReference,
+            List<TLeafKey> leafKeys)
         {
             var node =
                 nodeLoader.LoadNode(reader, nodeReference);
@@ -59,7 +63,7 @@ namespace pst.impl.btree
                     EnumerateAndAdd(
                         reader,
                         keyToNodeReferenceMapping,
-                        keyToNodeReferenceMapping[key],
+                        keyToNodeReferenceMapping.Map(key),
                         leafKeys);
                 }
             }

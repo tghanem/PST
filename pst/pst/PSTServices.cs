@@ -42,7 +42,7 @@ namespace pst
         public static readonly IDataTreeLeafNodesEnumerator DataTreeLeafNodesEnumerator;
         public static readonly IPropertiesFromPropertyContextLoader PropertiesFromPropertyContextLoader;
         public static readonly IDecoder<Header> HeaderDecoder;
-        public static readonly IRowIndexLoader RowIndexLoader;
+        public static readonly ITableContextLoader TableContextLoader;
 
         static PSTServices()
         {
@@ -61,8 +61,8 @@ namespace pst
             PropertiesFromPropertyContextLoader =
                 CreatePropertiesFromPropertyContextLoader();
 
-            RowIndexLoader =
-                CreateRowIndexLoader();
+            TableContextLoader =
+                CreateTableContextLoader();
 
             HeaderDecoder =
                 new HeaderDecoder(
@@ -78,20 +78,26 @@ namespace pst
                         new Int32Decoder()));
         }
 
-        private static IRowIndexLoader CreateRowIndexLoader()
+        private static ITableContextLoader CreateTableContextLoader()
         {
             return
-                new RowIndexLoader(
+                new TableContextLoader(
                     new DataRecordToTCROWIDConverter(
                         new NIDDecoder(
                             new Int32Decoder()),
                         new Int32Decoder()),
                     CreateBTreeOnHeapLeafKeyEnumerator(),
+                    CreateHeapOnNodeLoader(),
                     new TCINFODecoder(
                         new Int32Decoder(),
                         new HIDDecoder(
                             new Int32Decoder()),
                         new TCOLDESCDecoder(
+                            new Int32Decoder())),
+                    new HNIDDecoder(
+                        new HIDDecoder(
+                            new Int32Decoder()),
+                        new NIDDecoder(
                             new Int32Decoder())));
         }
 

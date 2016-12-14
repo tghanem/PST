@@ -39,7 +39,7 @@ namespace pst.impl.ltp.hn
 
         public HeapOnNode Load(
             IDataBlockReader<LBBTEntry> reader,
-            IReadOnlyDictionary<BID, LBBTEntry> blockIdToEntryMapping,
+            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             LBBTEntry blockEntry)
         {
             var externalDataBlocks =

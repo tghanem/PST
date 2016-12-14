@@ -50,7 +50,7 @@ namespace pst.utilities
         {
             var entries = new List<TType>();
 
-            for(var i = 0; i < numberOfItems; i++)
+            for (var i = 0; i < numberOfItems; i++)
             {
                 entries
                     .Add(TakeAndSkip(itemSize, typeDecoder));

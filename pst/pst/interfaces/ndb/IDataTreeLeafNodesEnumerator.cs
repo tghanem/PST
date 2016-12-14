@@ -2,7 +2,6 @@
 using pst.encodables.ndb.blocks.data;
 using pst.encodables.ndb.btree;
 using pst.interfaces.io;
-using System.Collections.Generic;
 
 namespace pst.interfaces.ndb
 {
@@ -10,7 +9,7 @@ namespace pst.interfaces.ndb
     {
         ExternalDataBlock[] Enumerate(
             IDataBlockReader<LBBTEntry> reader,
-            IReadOnlyDictionary<BID, LBBTEntry> blockIdToEntryMapping,
+            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             LBBTEntry blockEntry);
     }
 }

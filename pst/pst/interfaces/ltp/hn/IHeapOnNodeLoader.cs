@@ -9,7 +9,7 @@ namespace pst.interfaces.ltp.hn
     {
         HeapOnNode Load(
             IDataBlockReader<LBBTEntry> reader,
-            IReadOnlyDictionary<BID, LBBTEntry> blockIdToEntryMapping,
+            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             LBBTEntry blockEntry);
     }
 }

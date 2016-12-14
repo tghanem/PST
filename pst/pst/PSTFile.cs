@@ -1,6 +1,7 @@
 ﻿using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.impl.io;
+using pst.impl.ndb.subnodebtree;
 using pst.interfaces.io;
 using pst.utilities;
 using System.Collections.Generic;
@@ -46,7 +47,7 @@ namespace pst
 
             var properties = PSTServices.PropertiesFromPropertyContextLoader.Load(
                 new LBBTEntryBlockReaderAdapter(streamReader),
-                blockBTree,
+                new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree),
                 bbtEntry);
 
             return new MessageStore(properties);
@@ -58,12 +59,12 @@ namespace pst
 
             var bbtEntry = blockBTree[nbtEntry.DataBlockId];
 
-            var properties = PSTServices.PropertiesFromPropertyContextLoader.Load(
+            var blocks = PSTServices.TableContextLoader.Load(
                 new LBBTEntryBlockReaderAdapter(streamReader),
-                blockBTree,
-                bbtEntry);
+                new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree),
+                blockBTree[nbtEntry.DataBlockId]);
 
-            return new Folder(properties);
+            return new Folder(null);
         }
     }
 }
