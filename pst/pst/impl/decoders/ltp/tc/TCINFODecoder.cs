@@ -31,7 +31,7 @@ namespace pst.impl.decoders.ltp.tc
             var rowIndex = parser.TakeAndSkip(4, hidDecoder);
             var rowMatrix = parser.TakeAndSkip(4);
             var deprecated = parser.TakeAndSkip(4);
-            var columnDescriptors = parser.TakeAndSkip(numberOfColumns, 16, columnDescriptorDecoder);
+            var columnDescriptors = parser.TakeAndSkip(numberOfColumns, 8, columnDescriptorDecoder);
 
             return
                 new TCINFO(

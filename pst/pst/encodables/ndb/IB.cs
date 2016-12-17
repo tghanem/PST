@@ -15,7 +15,7 @@
 
         public override string ToString()
         {
-            return $"0x{Value.ToString("X")}";
+            return $"0x{Value.ToString("x")}".ToLower();
         }
     }
 }
