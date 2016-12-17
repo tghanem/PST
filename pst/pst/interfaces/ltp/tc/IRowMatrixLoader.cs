@@ -9,10 +9,13 @@ namespace pst.interfaces.ltp.tc
 {
     class TableRow
     {
+        public NID RowId { get; }
+
         public IReadOnlyDictionary<int, BinaryData> Values { get; }
 
-        public TableRow(IReadOnlyDictionary<int, BinaryData> values)
+        public TableRow(NID rowId, IReadOnlyDictionary<int, BinaryData> values)
         {
+            RowId = rowId;
             Values = values;
         }
     }

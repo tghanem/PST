@@ -35,5 +35,10 @@ namespace pst.encodables.ndb
         {
             return Value.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return $"0x{Value.ToString("X")}";
+        }
     }
 }

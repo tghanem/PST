@@ -20,6 +20,9 @@ namespace pst.encodables.ltp.hn
         public HID HID => hid.Value;
         public NID NID => nid.Value;
 
-        public bool IsZero => hid.Value.Value == 0 && nid.Value.Value == 0;
+        public bool IsZero
+            =>
+            (hid.HasValue && hid.Value.IsZero) ||
+            (nid.HasValue && nid.Value.IsZero);
     }
 }

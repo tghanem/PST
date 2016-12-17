@@ -1,14 +1,12 @@
 ﻿using pst.encodables.ndb;
-using pst.encodables.ndb.blocks.subnode;
 using pst.encodables.ndb.btree;
+using pst.impl.decoders.ndb;
+using pst.impl.decoders.primitives;
 using pst.impl.io;
-using pst.impl.ndb.subnodebtree;
-using pst.interfaces;
 using pst.interfaces.io;
 using pst.utilities;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace pst
 {
@@ -60,13 +58,15 @@ namespace pst
         {
             var lnbtEntry = nodeBTree[new NID(0x12d)];
 
-            var bbtEntry = blockBTree[lnbtEntry.DataBlockId];
-
-            return new Folder(
-                new Dictionary<PropertyId, PropertyValue>(),
-                blockBTree,
-                streamReader,
-                lnbtEntry);
+            return
+                new Folder(
+                    new Dictionary<PropertyId, PropertyValue>(),
+                    streamReader,
+                    new NIDDecoder(
+                        new Int32Decoder()),
+                    nodeBTree,
+                    blockBTree,
+                    lnbtEntry);
         }
     }
 }

@@ -23,6 +23,10 @@ namespace pst.encodables.ndb
 
         public int Value => Index << 5 | Type;
 
+        public bool IsZero => Value == 0;
+
+        public NID ChangeType(int type) => new NID(type, Index);
+
         public override bool Equals(object obj)
         {
             var nid = obj as NID;
@@ -33,6 +37,11 @@ namespace pst.encodables.ndb
         public override int GetHashCode()
         {
             return Value.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return $"0x{Value.ToString("X")}";
         }
     }
 }

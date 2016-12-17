@@ -3,6 +3,7 @@ using pst.encodables.ndb.blocks.data;
 using pst.encodables.ndb.blocks.subnode;
 using pst.encodables.ndb.btree;
 using pst.impl.btree;
+using pst.impl.converters;
 using pst.impl.decoders.ltp.bth;
 using pst.impl.decoders.ltp.hn;
 using pst.impl.decoders.ltp.tc;
@@ -127,6 +128,18 @@ namespace pst
                             new Int32Decoder()),
                         new TCOLDESCDecoder(
                             new Int32Decoder())),
+                    new RowIndexLoader(
+                        new DataRecordToTCROWIDConverter(
+                            new NIDDecoder(
+                                new Int32Decoder()),
+                            new Int32Decoder()),
+                        CreateBTreeOnHeapLeafKeyEnumerator(),
+                        new TCINFODecoder(
+                            new Int32Decoder(),
+                            new HIDDecoder(
+                                new Int32Decoder()),
+                            new TCOLDESCDecoder(
+                                new Int32Decoder()))),
                     new HNIDDecoder(
                         new HIDDecoder(
                             new Int32Decoder()),

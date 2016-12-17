@@ -1,6 +1,7 @@
 ﻿using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.impl.io;
+using pst.interfaces;
 using pst.interfaces.io;
 using pst.utilities;
 using System.Collections.Generic;
@@ -11,24 +12,34 @@ namespace pst
     public class Folder
     {
         private readonly IDictionary<PropertyId, PropertyValue> properties;
-        private readonly Dictionary<BID, LBBTEntry> blockBTree;
         private readonly IDataBlockReader<BREF> streamReader;
+        private readonly IDecoder<NID> nidDecoder;
+
+        private readonly Dictionary<NID, LNBTEntry> nodeBTree;
+        private readonly Dictionary<BID, LBBTEntry> blockBTree;
         private readonly LNBTEntry lnbtEntry;
 
         internal Folder(
             IDictionary<PropertyId, PropertyValue> properties,
-            Dictionary<BID, LBBTEntry> blockBTree,
             IDataBlockReader<BREF> streamReader,
+            IDecoder<NID> nidDecoder,
+            Dictionary<NID, LNBTEntry> nodeBTree,
+            Dictionary<BID, LBBTEntry> blockBTree,
             LNBTEntry lnbtEntry)
         {
+            this.lnbtEntry = lnbtEntry;
+            this.nodeBTree = nodeBTree;
+            this.nidDecoder = nidDecoder;
             this.properties = properties;
             this.blockBTree = blockBTree;
             this.streamReader = streamReader;
-            this.lnbtEntry = lnbtEntry;
         }
 
         public Folder[] GetSubFolders()
         {
+            var lnbtEntryForHierarchyTable =
+                nodeBTree[lnbtEntry.NodeId.ChangeType(Globals.NID_TYPE_HIERARCHY_TABLE)];
+
             var table =
                 PSTServices
                 .RowMatrixLoader
@@ -37,9 +48,9 @@ namespace pst
                     PSTServices.GetMapperForSubnodes(
                         blockBTree,
                         streamReader,
-                        lnbtEntry.SubnodeBlockId),
+                        lnbtEntryForHierarchyTable.SubnodeBlockId),
                     new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree),
-                    blockBTree[lnbtEntry.DataBlockId]);
+                    blockBTree[lnbtEntryForHierarchyTable.DataBlockId]);
 
             var folders = new List<Folder>();
 
@@ -51,17 +62,19 @@ namespace pst
                         PSTServices.GetMapperForSubnodes(
                             blockBTree,
                             streamReader,
-                            lnbtEntry.SubnodeBlockId),
+                            lnbtEntryForHierarchyTable.SubnodeBlockId),
                         new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree),
-                        blockBTree[lnbtEntry.DataBlockId],
+                        blockBTree[lnbtEntryForHierarchyTable.DataBlockId],
                         row);
 
                 folders.Add(
                     new Folder(
                         properties,
-                        blockBTree,
                         streamReader,
-                        null));
+                        nidDecoder,
+                        nodeBTree,
+                        blockBTree,
+                        nodeBTree[row.RowId]));
             }
 
             return folders.ToArray();
@@ -78,6 +91,11 @@ namespace pst
 
                 return Encoding.Unicode.GetString(properties[propertyId].Value);
             }
+        }
+
+        public override string ToString()
+        {
+            return DisplayName;
         }
     }
 }

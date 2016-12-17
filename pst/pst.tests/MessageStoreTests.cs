@@ -28,10 +28,10 @@ namespace pst.tests
             var sut = new PSTFile(new MemoryStream(Resources.PST));
 
             //Act
-            var rootFolder = sut.GetRootFolder();
+            var topOfPSTDataFile = sut.GetRootFolder().GetSubFolders();
 
             //Assert
-            Assert.IsTrue(rootFolder.GetSubFolders().Any(f => f.DisplayName == "Inbox"));
+            Assert.IsTrue(topOfPSTDataFile[0].GetSubFolders().Any(f => f.DisplayName == "Inbox"));
         }
     }
 }

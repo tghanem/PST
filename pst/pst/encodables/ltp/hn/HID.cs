@@ -24,6 +24,8 @@ namespace pst.encodables.ltp.hn
 
         public int Value => BlockIndex << 16 | Index << 5 | Type;
 
+        public bool IsZero => Value == 0;
+
         public override bool Equals(object obj)
         {
             var hid = obj as HID;
@@ -34,6 +36,11 @@ namespace pst.encodables.ltp.hn
         public override int GetHashCode()
         {
             return Value.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return $"0x{Value.ToString("X")}";
         }
     }
 }
