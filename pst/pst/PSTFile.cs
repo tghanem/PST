@@ -1,11 +1,14 @@
 ﻿using pst.encodables.ndb;
+using pst.encodables.ndb.blocks.subnode;
 using pst.encodables.ndb.btree;
 using pst.impl.io;
 using pst.impl.ndb.subnodebtree;
+using pst.interfaces;
 using pst.interfaces.io;
 using pst.utilities;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace pst
 {
@@ -55,16 +58,15 @@ namespace pst
 
         public Folder GetRootFolder()
         {
-            var nbtEntry = nodeBTree[new NID(0x12d)];
+            var lnbtEntry = nodeBTree[new NID(0x12d)];
 
-            var bbtEntry = blockBTree[nbtEntry.DataBlockId];
+            var bbtEntry = blockBTree[lnbtEntry.DataBlockId];
 
-            var blocks = PSTServices.TableContextLoader.Load(
-                new LBBTEntryBlockReaderAdapter(streamReader),
-                new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree),
-                blockBTree[nbtEntry.DataBlockId]);
-
-            return new Folder(null);
+            return new Folder(
+                new Dictionary<PropertyId, PropertyValue>(),
+                blockBTree,
+                streamReader,
+                lnbtEntry);
         }
     }
 }

@@ -1,7 +1,8 @@
-﻿using pst.interfaces.messaging;
+﻿using pst.interfaces.ltp;
+using pst.utilities;
 using System;
 
-namespace pst.utilities
+namespace pst.impl.ltp
 {
     class PropertyTypeMetadataProvider : IPropertyTypeMetadataProvider
     {

@@ -43,12 +43,11 @@ namespace pst.impl.ltp.hn
         {
             var offsets = new List<int>();
 
-            using (var parser = BinaryDataParser.OfValue(pageMap.AllocationTable))
+            var parser = BinaryDataParser.OfValue(pageMap.AllocationTable);
+
+            for (int i = 0; i <= pageMap.AllocationCount; i++)
             {
-                for (int i = 0; i <= pageMap.AllocationCount; i++)
-                {
-                    offsets.Add(parser.TakeAtWithoutChangingStreamPosition(i * 2, 2, int32Decoder));
-                }
+                offsets.Add(parser.TakeAtWithoutChangingStreamPosition(i * 2, 2, int32Decoder));
             }
 
             return offsets.ToArray();

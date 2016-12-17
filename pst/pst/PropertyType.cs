@@ -8,5 +8,7 @@
         {
             Value = value;
         }
+
+        public static PropertyType OfValue(int value) => new PropertyType(value);
     }
 }

@@ -22,13 +22,16 @@ namespace pst.tests
         }
 
         [Test]
-        public void Test2()
+        public void ShouldDetectInboxFolder()
         {
             //Arrange
             var sut = new PSTFile(new MemoryStream(Resources.PST));
 
             //Act
-            var store = sut.GetRootFolder();
+            var rootFolder = sut.GetRootFolder();
+
+            //Assert
+            Assert.IsTrue(rootFolder.GetSubFolders().Any(f => f.DisplayName == "Inbox"));
         }
     }
 }

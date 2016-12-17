@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace pst
+﻿namespace pst
 {
     public class PropertyId
     {
@@ -10,6 +8,8 @@ namespace pst
         {
             Value = value;
         }
+
+        public static PropertyId OfValue(int value) => new PropertyId(value);
 
         public override bool Equals(object obj)
         {

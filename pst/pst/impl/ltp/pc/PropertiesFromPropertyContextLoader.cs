@@ -8,8 +8,8 @@ using pst.interfaces.ltp.bth;
 using pst.encodables.ltp.bth;
 using pst.utilities;
 using pst.interfaces;
-using pst.interfaces.messaging;
 using pst.encodables.ltp.hn;
+using pst.interfaces.ltp;
 
 namespace pst.impl.ltp.pc
 {

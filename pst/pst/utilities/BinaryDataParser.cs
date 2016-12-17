@@ -5,7 +5,7 @@ using System.IO;
 
 namespace pst.utilities
 {
-    class BinaryDataParser : IDisposable
+    class BinaryDataParser
     {
         private readonly MemoryStream valueStream;
 
@@ -16,6 +16,18 @@ namespace pst.utilities
 
         public static BinaryDataParser OfValue(BinaryData data)
             => new BinaryDataParser(new MemoryStream(data.Value));
+
+        public BinaryData[] Slice(int numberOfItems, int itemSize)
+        {
+            var data = new List<BinaryData>();
+
+            for (int i = 0; i < numberOfItems; i++)
+            {
+                data.Add(TakeAndSkip(itemSize));
+            }
+
+            return data.ToArray();
+        }
 
         public BinaryData TakeAt(int offset, int count)
         {
@@ -70,11 +82,6 @@ namespace pst.utilities
             valueStream.Position = position;
 
             return typeValue;
-        }
-
-        public void Dispose()
-        {
-            valueStream.Dispose();
         }
     }
 }

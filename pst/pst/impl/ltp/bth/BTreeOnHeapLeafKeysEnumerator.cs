@@ -30,6 +30,9 @@ namespace pst.impl.ltp.bth
             var bthHeader =
                 bthHeaderDecoder.Decode(heapOnNode.Root);
 
+            if (bthHeader.Root.Value == 0)
+                return new DataRecord[0];
+
             var dataRecords = new List<DataRecord>();
 
             Enumerate(

@@ -3,7 +3,6 @@ using pst.encodables.ndb.blocks.data;
 using pst.encodables.ndb.blocks.subnode;
 using pst.encodables.ndb.btree;
 using pst.impl.btree;
-using pst.impl.converters;
 using pst.impl.decoders.ltp.bth;
 using pst.impl.decoders.ltp.hn;
 using pst.impl.decoders.ltp.tc;
@@ -14,6 +13,8 @@ using pst.impl.decoders.ndb.blocks.data;
 using pst.impl.decoders.ndb.blocks.subnode;
 using pst.impl.decoders.ndb.btree;
 using pst.impl.decoders.primitives;
+using pst.impl.io;
+using pst.impl.ltp;
 using pst.impl.ltp.bth;
 using pst.impl.ltp.hn;
 using pst.impl.ltp.pc;
@@ -25,12 +26,15 @@ using pst.impl.ndb.nbt;
 using pst.impl.ndb.subnodebtree;
 using pst.interfaces;
 using pst.interfaces.btree;
+using pst.interfaces.io;
 using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.ltp.pc;
 using pst.interfaces.ltp.tc;
 using pst.interfaces.ndb;
 using pst.utilities;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace pst
 {
@@ -41,16 +45,17 @@ namespace pst
         public static readonly IBTreeLeafKeysEnumeratorThatDoesntKnowHowToMapTheKeyToNodeReference<SLEntry, SIEntry, LBBTEntry> SubnodeBTreeKeysEnumerator;
         public static readonly IDataTreeLeafNodesEnumerator DataTreeLeafNodesEnumerator;
         public static readonly IPropertiesFromPropertyContextLoader PropertiesFromPropertyContextLoader;
+        public static readonly IPropertiesFromTableContextRowLoader PropertiesFromTableContextRowLoader;
         public static readonly IDecoder<Header> HeaderDecoder;
-        public static readonly ITableContextLoader TableContextLoader;
+        public static readonly IRowMatrixLoader RowMatrixLoader;
 
         static PSTServices()
         {
             NodeBTreeKeysEnumerator =
-                CreateNodeBTreeLeafKeysTraverser();
+                CreateNodeBTreeLeafKeysEnumerator();
 
             BlockBTreeKeysEnumerator =
-                CreateBlockBTreeLeafKeysTraverser();
+                CreateBlockBTreeLeafKeysEnumerator();
 
             DataTreeLeafNodesEnumerator =
                 CreateDataTreeLeafNodesEnumerator();
@@ -61,8 +66,11 @@ namespace pst
             PropertiesFromPropertyContextLoader =
                 CreatePropertiesFromPropertyContextLoader();
 
-            TableContextLoader =
-                CreateTableContextLoader();
+            PropertiesFromTableContextRowLoader =
+                CreatePropertiesFromTableContextRowLoader();
+
+            RowMatrixLoader =
+                CreateRowMatrixLoader();
 
             HeaderDecoder =
                 new HeaderDecoder(
@@ -78,15 +86,40 @@ namespace pst
                         new Int32Decoder()));
         }
 
-        private static ITableContextLoader CreateTableContextLoader()
+        public static IMapper<NID, SLEntry> GetMapperForSubnodes(
+            IReadOnlyDictionary<BID, LBBTEntry> blockBTree,
+            IDataBlockReader<BREF> streamReader,
+            BID subnodeBlockId)
+        {
+            if (subnodeBlockId.Value == 0)
+            {
+                return
+                    new DictionaryBasedMapper<NID, SLEntry>(
+                        new Dictionary<NID, SLEntry>());
+            }
+            else
+            {
+                var bbtEntryForSubnode = blockBTree[subnodeBlockId];
+
+                return
+                    new DictionaryBasedMapper<NID, SLEntry>(
+                        SubnodeBTreeKeysEnumerator
+                        .Enumerate(
+                            new LBBTEntryBlockReaderAdapter(streamReader),
+                            new SIEntryToLBBTEntryMapper(blockBTree),
+                            bbtEntryForSubnode)
+                        .ToDictionary(
+                            k => k.LocalSubnodeId,
+                            k => k));
+            }
+        }
+
+        private static IRowMatrixLoader CreateRowMatrixLoader()
         {
             return
-                new TableContextLoader(
-                    new DataRecordToTCROWIDConverter(
-                        new NIDDecoder(
-                            new Int32Decoder()),
-                        new Int32Decoder()),
-                    CreateBTreeOnHeapLeafKeyEnumerator(),
+                new RowMatrixLoader(
+                    CreateDataTreeLeafNodesEnumerator(),
+                    new RowValuesExtractor(),
                     CreateHeapOnNodeLoader(),
                     new TCINFODecoder(
                         new Int32Decoder(),
@@ -99,6 +132,21 @@ namespace pst
                             new Int32Decoder()),
                         new NIDDecoder(
                             new Int32Decoder())));
+        }
+
+        private static IPropertiesFromTableContextRowLoader CreatePropertiesFromTableContextRowLoader()
+        {
+            return
+                new PropertiesFromTableContextRowLoader(
+                    new PropertyValueLoader(
+                        new PropertyTypeMetadataProvider(),
+                        CreateHeapOnNodeLoader(),
+                        new HNIDDecoder(
+                            new HIDDecoder(
+                                new Int32Decoder()),
+                            new NIDDecoder(
+                                new Int32Decoder()))),
+                    CreateHeapOnNodeLoader());
         }
 
         private static IPropertiesFromPropertyContextLoader CreatePropertiesFromPropertyContextLoader()
@@ -209,7 +257,7 @@ namespace pst
                                 new Int32Decoder()))));
         }
 
-        private static IBTreeLeafKeysEnumerator<LNBTEntry, BREF> CreateNodeBTreeLeafKeysTraverser()
+        private static IBTreeLeafKeysEnumerator<LNBTEntry, BREF> CreateNodeBTreeLeafKeysEnumerator()
         {
             return
                 new BTreeLeafKeysEnumerator<BTPage, BREF, INBTEntry, LNBTEntry>(
@@ -235,7 +283,7 @@ namespace pst
                                 new BIDDecoder()))));
         }
 
-        private static IBTreeLeafKeysEnumerator<LBBTEntry, BREF> CreateBlockBTreeLeafKeysTraverser()
+        private static IBTreeLeafKeysEnumerator<LBBTEntry, BREF> CreateBlockBTreeLeafKeysEnumerator()
         {
             return
                 new BTreeLeafKeysEnumerator<BTPage, BREF, IBBTEntry, LBBTEntry>(

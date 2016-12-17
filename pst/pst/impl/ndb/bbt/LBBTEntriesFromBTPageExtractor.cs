@@ -15,15 +15,14 @@ namespace pst.impl.ndb.bbt
 
         public LBBTEntry[] Extract(BTPage parameter)
         {
-            using (var parser = BinaryDataParser.OfValue(parameter.Entries))
-            {
-                return
-                    parser
-                    .TakeAndSkip(
-                        parameter.NumberOfEntriesInPage,
-                        parameter.EntrySize,
-                        entryDecoder);
-            }
+            var parser = BinaryDataParser.OfValue(parameter.Entries);
+
+            return
+                parser
+                .TakeAndSkip(
+                    parameter.NumberOfEntriesInPage,
+                    parameter.EntrySize,
+                    entryDecoder);
         }
     }
 }

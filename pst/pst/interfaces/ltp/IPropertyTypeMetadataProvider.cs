@@ -1,4 +1,4 @@
-﻿namespace pst.interfaces.messaging
+﻿namespace pst.interfaces.ltp
 {
     interface IPropertyTypeMetadataProvider
     {
