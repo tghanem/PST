@@ -23,7 +23,7 @@ namespace pst.impl.ltp.tc
             this.heapOnNodeLoader = heapOnNodeLoader;
         }
 
-        public IDictionary<PropertyId, PropertyValue> Load(
+        public Dictionary<PropertyId, PropertyValue> Load(
             IDataBlockReader<LBBTEntry> reader,
             IMapper<NID, SLEntry> nidToSLEntryMapping,
             IMapper<BID, LBBTEntry> blockIdToEntryMapping,

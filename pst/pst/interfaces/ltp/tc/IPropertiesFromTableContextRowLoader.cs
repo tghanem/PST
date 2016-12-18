@@ -8,7 +8,7 @@ namespace pst.interfaces.ltp.tc
 {
     interface IPropertiesFromTableContextRowLoader
     {
-        IDictionary<PropertyId, PropertyValue> Load(
+        Dictionary<PropertyId, PropertyValue> Load(
             IDataBlockReader<LBBTEntry> reader,
             IMapper<NID, SLEntry> nidToSLEntryMapping,
             IMapper<BID, LBBTEntry> blockIdToEntryMapping,

@@ -3,6 +3,7 @@ using pst.encodables.ndb.btree;
 using pst.impl.io;
 using pst.interfaces;
 using pst.interfaces.io;
+using pst.interfaces.ltp.tc;
 using pst.utilities;
 using System.Collections.Generic;
 using System.Text;
@@ -11,17 +12,21 @@ namespace pst
 {
     public class Folder
     {
-        private readonly IDictionary<PropertyId, PropertyValue> properties;
+        private readonly IPropertiesFromTableContextRowLoader propertiesFromTableContextRowLoader;
         private readonly IDataBlockReader<BREF> streamReader;
+        private readonly IRowMatrixLoader rowMatrixLoader;
         private readonly IDecoder<NID> nidDecoder;
 
+        private readonly Dictionary<PropertyId, PropertyValue> properties;
         private readonly Dictionary<NID, LNBTEntry> nodeBTree;
         private readonly Dictionary<BID, LBBTEntry> blockBTree;
         private readonly LNBTEntry lnbtEntry;
 
         internal Folder(
-            IDictionary<PropertyId, PropertyValue> properties,
+            Dictionary<PropertyId, PropertyValue> properties,
+            IPropertiesFromTableContextRowLoader propertiesFromTableContextRowLoader,
             IDataBlockReader<BREF> streamReader,
+            IRowMatrixLoader rowMatrixLoader,
             IDecoder<NID> nidDecoder,
             Dictionary<NID, LNBTEntry> nodeBTree,
             Dictionary<BID, LBBTEntry> blockBTree,
@@ -33,6 +38,8 @@ namespace pst
             this.properties = properties;
             this.blockBTree = blockBTree;
             this.streamReader = streamReader;
+            this.rowMatrixLoader = rowMatrixLoader;
+            this.propertiesFromTableContextRowLoader = propertiesFromTableContextRowLoader;
         }
 
         public Folder[] GetSubFolders()
@@ -41,11 +48,10 @@ namespace pst
                 nodeBTree[lnbtEntry.NodeId.ChangeType(Globals.NID_TYPE_HIERARCHY_TABLE)];
 
             var table =
-                PSTServices
-                .RowMatrixLoader
+                rowMatrixLoader
                 .Load(
                     new LBBTEntryBlockReaderAdapter(streamReader),
-                    PSTServices.GetMapperForSubnodes(
+                    PSTServiceFactory.GetMapperForSubnodes(
                         blockBTree,
                         streamReader,
                         lnbtEntryForHierarchyTable.SubnodeBlockId),
@@ -57,9 +63,10 @@ namespace pst
             foreach (var row in table)
             {
                 var properties =
-                    PSTServices.PropertiesFromTableContextRowLoader.Load(
+                    propertiesFromTableContextRowLoader
+                    .Load(
                         new LBBTEntryBlockReaderAdapter(streamReader),
-                        PSTServices.GetMapperForSubnodes(
+                        PSTServiceFactory.GetMapperForSubnodes(
                             blockBTree,
                             streamReader,
                             lnbtEntryForHierarchyTable.SubnodeBlockId),
@@ -70,7 +77,9 @@ namespace pst
                 folders.Add(
                     new Folder(
                         properties,
+                        propertiesFromTableContextRowLoader,
                         streamReader,
+                        rowMatrixLoader,
                         nidDecoder,
                         nodeBTree,
                         blockBTree,

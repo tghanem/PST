@@ -12,7 +12,7 @@ namespace pst.tests
         public void ShouldCorrectlyReadThePSTDisplayName()
         {
             //Arrange
-            var sut = new PSTFile(new MemoryStream(Resources.PST));
+            var sut = PSTFile.Open(new MemoryStream(Resources.PST));
 
             //Act
             var store = sut.GetMessageStore();
@@ -25,7 +25,7 @@ namespace pst.tests
         public void ShouldDetectInboxFolder()
         {
             //Arrange
-            var sut = new PSTFile(new MemoryStream(Resources.PST));
+            var sut = PSTFile.Open(new MemoryStream(Resources.PST));
 
             //Act
             var topOfPSTDataFile = sut.GetRootFolder().GetSubFolders()[0];
