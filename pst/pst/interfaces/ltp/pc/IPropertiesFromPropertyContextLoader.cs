@@ -7,7 +7,7 @@ namespace pst.interfaces.ltp.pc
 {
     interface IPropertiesFromPropertyContextLoader
     {
-        IDictionary<PropertyId, PropertyValue> Load(
+        Dictionary<PropertyId, PropertyValue> Load(
             IDataBlockReader<LBBTEntry> reader,
             IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             LBBTEntry blockEntry);

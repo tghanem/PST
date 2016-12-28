@@ -128,15 +128,21 @@ namespace pst
         {
             return
                 new PropertiesFromTableContextRowLoader(
-                    new PropertyValueLoader(
-                        new PropertyTypeMetadataProvider(),
-                        CreateHeapOnNodeLoader(),
-                        new HNIDDecoder(
-                            new HIDDecoder(
-                                new Int32Decoder()),
-                            new NIDDecoder(
-                                new Int32Decoder()))),
+                    CreatePropertyValueLoader(),
                     CreateHeapOnNodeLoader());
+        }
+
+        private static PropertyValueLoader CreatePropertyValueLoader()
+        {
+            return
+                new PropertyValueLoader(
+                    new PropertyTypeMetadataProvider(),
+                    CreateHeapOnNodeLoader(),
+                    new HNIDDecoder(
+                        new HIDDecoder(
+                            new Int32Decoder()),
+                        new NIDDecoder(
+                            new Int32Decoder())));
         }
 
         public static IPropertiesFromPropertyContextLoader CreatePropertiesFromPropertyContextLoader()
@@ -147,9 +153,9 @@ namespace pst
                     new HIDDecoder(
                         new Int32Decoder()),
                     new Int32Decoder(),
+                    CreatePropertyValueLoader(),
                     new PropertyTypeDecoder(
                         new Int32Decoder()),
-                    new PropertyTypeMetadataProvider(),
                     CreateBTreeOnHeapLeafKeyEnumerator());
         }
 

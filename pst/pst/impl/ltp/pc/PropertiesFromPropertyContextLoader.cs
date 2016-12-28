@@ -5,7 +5,6 @@ using pst.encodables.ndb.btree;
 using pst.interfaces.io;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.ltp.bth;
-using pst.encodables.ltp.bth;
 using pst.utilities;
 using pst.interfaces;
 using pst.encodables.ltp.hn;
@@ -19,27 +18,27 @@ namespace pst.impl.ltp.pc
         private readonly IHeapOnNodeLoader heapOnNodeLoader;
         private readonly IDecoder<HID> hidDecoder;
         private readonly IDecoder<int> int32Decoder;
+        private readonly IPropertyValueLoader propertyValueLoader;
         private readonly IDecoder<PropertyType> propertyTypeDecoder;
-        private readonly IPropertyTypeMetadataProvider propertyTypeMetadataProvider;
         private readonly IBTreeOnHeapLeafKeysEnumerator btreeOnHeapLeafKeysEnumerator;
 
         public PropertiesFromPropertyContextLoader(
             IHeapOnNodeLoader heapOnNodeLoader,
             IDecoder<HID> hidDecoder,
             IDecoder<int> int32Decoder,
+            IPropertyValueLoader propertyValueLoader,
             IDecoder<PropertyType> propertyTypeDecoder,
-            IPropertyTypeMetadataProvider propertyTypeMetadataProvider,
             IBTreeOnHeapLeafKeysEnumerator btreeOnHeapLeafKeysEnumerator)
         {
             this.heapOnNodeLoader = heapOnNodeLoader;
             this.hidDecoder = hidDecoder;
             this.int32Decoder = int32Decoder;
+            this.propertyValueLoader = propertyValueLoader;
             this.propertyTypeDecoder = propertyTypeDecoder;
-            this.propertyTypeMetadataProvider = propertyTypeMetadataProvider;
             this.btreeOnHeapLeafKeysEnumerator = btreeOnHeapLeafKeysEnumerator;
         }
 
-        public IDictionary<PropertyId, PropertyValue> Load(
+        public Dictionary<PropertyId, PropertyValue> Load(
             IDataBlockReader<LBBTEntry> reader,
             IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             LBBTEntry blockEntry)
@@ -60,11 +59,25 @@ namespace pst.impl.ltp.pc
 
             foreach (var dataRecord in dataRecords)
             {
-                var parser = BinaryDataParser.OfValue(dataRecord.Key);
+                var propertyIdParser = BinaryDataParser.OfValue(dataRecord.Key);
 
-                var propertyId = parser.TakeAndSkip(2, int32Decoder);
+                var propertyId = propertyIdParser.TakeAndSkip(2, int32Decoder);
 
-                var propertyValue = LoadPropertyValue(dataRecord, heapOnNode);
+
+                var propertyTypeParser = BinaryDataParser.OfValue(dataRecord.Data);
+
+                var propertyType = propertyTypeParser.TakeAndSkip(2, propertyTypeDecoder);
+
+                var propertyValue =
+                    propertyValueLoader.Load(
+                        new PropertyId(propertyId),
+                        propertyType,
+                        propertyTypeParser.TakeAndSkip(4),
+                        reader,
+                        null,
+                        blockIdToEntryMapping,
+                        blockEntry);
+
 
                 properties.Add(
                     new PropertyId(propertyId),
@@ -72,44 +85,6 @@ namespace pst.impl.ltp.pc
             }
 
             return properties;
-        }
-
-        private PropertyValue LoadPropertyValue(DataRecord dataRecord, HeapOnNode heapOnNode)
-        {
-            var parser = BinaryDataParser.OfValue(dataRecord.Data);
-
-            var propertyType = parser.TakeAndSkip(2, propertyTypeDecoder);
-
-            if (propertyTypeMetadataProvider.IsFixedLength(propertyType))
-            {
-                var size = propertyTypeMetadataProvider.GetFixedLengthTypeSize(propertyType);
-
-                if (size <= 4)
-                {
-                    return
-                        new PropertyValue(
-                            parser.TakeAndSkip(4).Value);
-                }
-                else
-                {
-                    var hid =
-                        parser.TakeAndSkip(4, hidDecoder);
-
-                    return new PropertyValue(heapOnNode.GetItem(hid).Value);
-                }
-            }
-            else if (propertyTypeMetadataProvider.IsVariableLength(propertyType))
-            {
-                var hid =
-                    parser.TakeAtWithoutChangingStreamPosition(2, 4, hidDecoder);
-
-                if (hid.Type == Globals.NID_TYPE_HID)
-                {
-                    return new PropertyValue(heapOnNode.GetItem(hid).Value);
-                }
-            }
-
-            return new PropertyValue(new byte[0]);
         }
     }
 }

@@ -36,15 +36,29 @@ namespace pst
                 blockBTree.Add(entry.BlockReference.BlockId, entry);
             }
 
+            var subFoldersFactory =
+                new FolderSubFoldersFactory(
+                    PSTServiceFactory.CreateSubnodeBTreeLeafKeysEnumerator(),
+                    PSTServiceFactory.CreatePropertiesFromTableContextRowLoader(),
+                    PSTServiceFactory.CreateRowMatrixLoader(),
+                    streamReader,
+                    blockBTree,
+                    nodeBTree);
+
             return
                 new PSTFile(
-                    streamReader,
-                    nodeBTree,
-                    blockBTree,
-                    PSTServiceFactory.CreatePropertiesFromTableContextRowLoader(),
-                    PSTServiceFactory.CreatePropertiesFromPropertyContextLoader(),
-                    PSTServiceFactory.CreateRowMatrixLoader(),
-                    PSTServiceFactory.CreateNIDDecoder());
+                    new MessageStoreFactory(
+                        PSTServiceFactory.CreatePropertiesFromPropertyContextLoader(),
+                        subFoldersFactory,
+                        streamReader,
+                        blockBTree,
+                        nodeBTree),
+                    new FolderFactory(
+                        PSTServiceFactory.CreatePropertiesFromPropertyContextLoader(),
+                        subFoldersFactory,
+                        streamReader,
+                        blockBTree,
+                        nodeBTree));
         }
     }
 }
