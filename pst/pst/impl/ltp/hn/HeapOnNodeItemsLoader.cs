@@ -19,14 +19,12 @@ namespace pst.impl.ltp.hn
         {
             var items = new Dictionary<HID, BinaryData>();
 
-            var parser = BinaryDataParser.OfValue(pageData);
-
             var offsets = GetOffsetsFromPageMap(pageMap);
 
             for (int i = 0; i < offsets.Length - 1; i++)
             {
                 var itemData =
-                    parser.TakeAt(offsets[i], offsets[i + 1] - offsets[i]);
+                    pageData.TakeAt(offsets[i], offsets[i + 1] - offsets[i]);
 
                 var hid =
                     new HID(Globals.NID_TYPE_HID, i + 1, pageIndex);
@@ -43,11 +41,11 @@ namespace pst.impl.ltp.hn
         {
             var offsets = new List<int>();
 
-            var parser = BinaryDataParser.OfValue(pageMap.AllocationTable);
-
             for (int i = 0; i <= pageMap.AllocationCount; i++)
             {
-                offsets.Add(parser.TakeAtWithoutChangingStreamPosition(i * 2, 2, int32Decoder));
+                var offset = pageMap.AllocationTable.TakeAt(i * 2, 2);
+
+                offsets.Add(int32Decoder.Decode(offset));
             }
 
             return offsets.ToArray();

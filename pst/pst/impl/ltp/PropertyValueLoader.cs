@@ -1,9 +1,5 @@
 ﻿using pst.interfaces.ltp;
-using pst.encodables.ndb;
-using pst.encodables.ndb.blocks.subnode;
-using pst.encodables.ndb.btree;
 using pst.interfaces;
-using pst.interfaces.io;
 using pst.interfaces.ltp.hn;
 using pst.encodables.ltp.hn;
 using pst.utilities;
@@ -27,20 +23,10 @@ namespace pst.impl.ltp
         }
 
         public PropertyValue Load(
-            PropertyId id,
             PropertyType propertyType,
             BinaryData encodedValue,
-            IDataBlockReader<LBBTEntry> reader,
-            IMapper<NID, SLEntry> nidToSLEntryMapping,
-            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
-            LBBTEntry blockEntry)
+            HeapOnNode heapOnNode)
         {
-            var heapOnNode =
-                heapOnNodeLoader.Load(
-                    reader,
-                    blockIdToEntryMapping,
-                    blockEntry);
-
             if (propertyTypeMetadataProvider.IsFixedLength(propertyType))
             {
                 var size = propertyTypeMetadataProvider.GetFixedLengthTypeSize(propertyType);

@@ -69,14 +69,11 @@ namespace pst.impl.ltp.pc
                 var propertyType = propertyTypeParser.TakeAndSkip(2, propertyTypeDecoder);
 
                 var propertyValue =
-                    propertyValueLoader.Load(
-                        new PropertyId(propertyId),
+                    propertyValueLoader
+                    .Load(
                         propertyType,
                         propertyTypeParser.TakeAndSkip(4),
-                        reader,
-                        null,
-                        blockIdToEntryMapping,
-                        blockEntry);
+                        heapOnNode);
 
 
                 properties.Add(

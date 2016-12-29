@@ -6,6 +6,7 @@ using pst.impl.ndb.subnodebtree;
 using pst.interfaces;
 using pst.interfaces.btree;
 using pst.interfaces.io;
+using pst.interfaces.ltp.hn;
 using pst.interfaces.ltp.tc;
 using pst.utilities;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace pst
     {
         private readonly IBTreeLeafKeysEnumeratorThatDoesntKnowHowToMapTheKeyToNodeReference<SLEntry, SIEntry, LBBTEntry> subNodesBTreeLeafKeysEnumerator;
         private readonly IPropertiesFromTableContextRowLoader propertiesFromTableContextRowLoader;
+        private readonly IHeapOnNodeLoader heapOnNodeLoader;
         private readonly IRowMatrixLoader rowMatrixLoader;
 
         private readonly IDataBlockReader<BREF> streamReader;
@@ -27,12 +29,14 @@ namespace pst
             IBTreeLeafKeysEnumeratorThatDoesntKnowHowToMapTheKeyToNodeReference<SLEntry, SIEntry, LBBTEntry> subNodesBTreeLeafKeysEnumerator,
             IPropertiesFromTableContextRowLoader propertiesFromTableContextRowLoader,
             IRowMatrixLoader rowMatrixLoader,
+            IHeapOnNodeLoader heapOnNodeLoader,
             IDataBlockReader<BREF> streamReader,
             Dictionary<BID, LBBTEntry> blockBTree,
             Dictionary<NID, LNBTEntry> nodeBTree)
         {
             this.subNodesBTreeLeafKeysEnumerator = subNodesBTreeLeafKeysEnumerator;
             this.propertiesFromTableContextRowLoader = propertiesFromTableContextRowLoader;
+            this.heapOnNodeLoader = heapOnNodeLoader;
             this.rowMatrixLoader = rowMatrixLoader;
             this.streamReader = streamReader;
             this.blockBTree = blockBTree;
@@ -58,13 +62,17 @@ namespace pst
 
             foreach (var row in rowMatrix)
             {
+                var heapOnNode =
+                    heapOnNodeLoader
+                    .Load(
+                        new LBBTEntryBlockReaderAdapter(streamReader),
+                        new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree),
+                        blockBTree[lnbtEntryForHierarchyTable.DataBlockId]);
+
                 var properties =
                     propertiesFromTableContextRowLoader
                     .Load(
-                        new LBBTEntryBlockReaderAdapter(streamReader),
-                        GetMapperForSubnodes(lnbtEntryForHierarchyTable.SubnodeBlockId),
-                        new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree),
-                        blockBTree[lnbtEntryForHierarchyTable.DataBlockId],
+                        heapOnNode,
                         row);
 
                 folders.Add(

@@ -162,6 +162,8 @@
     <Compile Include="interfaces\IFactory.cs" />
     <Compile Include="interfaces\IMapper.cs" />
     <Compile Include="interfaces\io\IDataReader.cs" />
+    <Compile Include="interfaces\IPropertyAdder.cs" />
+    <Compile Include="interfaces\IPropertyReader.cs" />
     <Compile Include="interfaces\ltp\bth\IBTreeOnHeapLeafKeysEnumerator.cs" />
     <Compile Include="interfaces\ltp\hn\HeapOnNode.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeItemsLoader.cs" />

@@ -3,7 +3,6 @@ using pst.encodables.ndb;
 using pst.encodables.ndb.blocks.subnode;
 using pst.encodables.ndb.btree;
 using pst.interfaces;
-using pst.interfaces.io;
 using System.Collections.Generic;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.ltp;
@@ -24,18 +23,9 @@ namespace pst.impl.ltp.tc
         }
 
         public Dictionary<PropertyId, PropertyValue> Load(
-            IDataBlockReader<LBBTEntry> reader,
-            IMapper<NID, SLEntry> nidToSLEntryMapping,
-            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
-            LBBTEntry blockEntry,
+            HeapOnNode heapOnNode,
             TableRow tableRow)
         {
-            var heapOnNode =
-                heapOnNodeLoader.Load(
-                    reader,
-                    blockIdToEntryMapping,
-                    blockEntry);
-
             var dictionary = new Dictionary<PropertyId, PropertyValue>();
 
             foreach (var columnTagWithValue in tableRow.Values)
@@ -47,14 +37,11 @@ namespace pst.impl.ltp.tc
                     PropertyType.OfValue(columnTagWithValue.Key & 0x00FF);
 
                 var propertyValue =
-                    propertyValueLoader.Load(
-                        propertyId,
+                    propertyValueLoader
+                    .Load(
                         propertyType,
                         columnTagWithValue.Value,
-                        reader,
-                        nidToSLEntryMapping,
-                        blockIdToEntryMapping,
-                        blockEntry);
+                        heapOnNode);
 
                 dictionary.Add(propertyId, propertyValue);
             }

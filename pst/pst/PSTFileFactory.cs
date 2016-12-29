@@ -41,6 +41,7 @@ namespace pst
                     PSTServiceFactory.CreateSubnodeBTreeLeafKeysEnumerator(),
                     PSTServiceFactory.CreatePropertiesFromTableContextRowLoader(),
                     PSTServiceFactory.CreateRowMatrixLoader(),
+                    PSTServiceFactory.CreateHeapOnNodeLoader(),
                     streamReader,
                     blockBTree,
                     nodeBTree);
