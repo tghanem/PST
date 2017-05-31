@@ -13,11 +13,11 @@
 
         public bool HasNoValue => Value == null;
 
-        public static Maybe<TValue> OfValue<TValue>(TValue value) where TValue : class
-            => new Maybe<TValue>(value);
+        public static Maybe<T> OfValue(T value)
+            => new Maybe<T>(value);
 
-        public static Maybe<TValue> NoValue<TValue>() where TValue : class
-            => new Maybe<TValue>(null);
+        public static Maybe<T> NoValue()
+            => new Maybe<T>(null);
 
         public static implicit operator Maybe<T>(T value)
             => new Maybe<T>(value);

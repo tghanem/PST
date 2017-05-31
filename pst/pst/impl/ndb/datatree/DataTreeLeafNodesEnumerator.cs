@@ -22,20 +22,20 @@ namespace pst.impl.ndb.datatree
             this.externalDataBlockDecoder = externalDataBlockDecoder;
         }
 
-        public ExternalDataBlock[] Enumerate(
+        public BID[] Enumerate(
             IDataBlockReader<LBBTEntry> reader,
             IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             LBBTEntry blockEntry)
         {
             var blockSize = blockEntry.GetBlockSize();
 
-            if (blockSize <= 8*1024)
+            if (blockSize <= 8 * 1024)
             {
-                return new[] {LoadBlock(reader, blockEntry)};
+                return new[] { blockEntry.BlockReference.BlockId };
             }
             else
             {
-                var blocks = new List<ExternalDataBlock>();
+                var blockIds = new List<BID>();
 
                 var bids =
                     dataTreeLeafKeysEnumerator
@@ -46,14 +46,10 @@ namespace pst.impl.ndb.datatree
 
                 foreach (var bid in bids)
                 {
-                    var entry = blockIdToEntryMapping.Map(bid);
-
-                    var block = LoadBlock(reader, entry);
-
-                    blocks.Add(block);
+                    blockIds.Add(bid);
                 }
 
-                return blocks.ToArray();
+                return blockIds.ToArray();
             }
         }
 

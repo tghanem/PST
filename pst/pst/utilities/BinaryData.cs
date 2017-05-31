@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace pst.utilities
 {
-    class BinaryData
+    public class BinaryData
     {
         public byte[] Value { get; }
 
@@ -33,6 +33,19 @@ namespace pst.utilities
 
         public BinaryData Pad(int count)
             => new BinaryData(Value.Concat(new byte[count]).ToArray());
+
+        public BinaryData Reverse()
+            => new BinaryData(Value.Reverse().ToArray());
+
+        public int ToInt32()
+        {
+            if (Value.Length < 4)
+            {
+                return BitConverter.ToInt32(Pad(4 - Value.Length).Value, 0);
+            }
+
+            return BitConverter.ToInt32(Value, 0);            
+        }
 
         public BinaryData[] Slice(int itemLength)
         {

@@ -2,7 +2,7 @@
 
 namespace pst.encodables.ndb
 {
-    class NID
+    class NID : IComparable<NID>
     {
         public int Type { get; }
 
@@ -26,6 +26,11 @@ namespace pst.encodables.ndb
         public bool IsZero => Value == 0;
 
         public NID ChangeType(int type) => new NID(type, Index);
+
+        public int CompareTo(NID other)
+        {
+            return Value.CompareTo(other.Value);
+        }
 
         public override bool Equals(object obj)
         {

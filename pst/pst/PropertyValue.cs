@@ -1,10 +1,12 @@
-﻿namespace pst
+﻿using pst.utilities;
+
+namespace pst
 {
     public class PropertyValue
     {
-        public byte[] Value { get; }
+        public BinaryData Value { get; }
 
-        public PropertyValue(byte[] value)
+        public PropertyValue(BinaryData value)
         {
             Value = value;
         }

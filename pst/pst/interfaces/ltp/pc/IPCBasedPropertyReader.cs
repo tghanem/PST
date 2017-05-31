@@ -1,15 +1,16 @@
-﻿using pst.encodables.ndb;
+﻿using pst.core;
+using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.interfaces.io;
-using System.Collections.Generic;
 
 namespace pst.interfaces.ltp.pc
 {
-    interface IPropertiesFromPropertyContextLoader
+    interface IPCBasedPropertyReader
     {
-        Dictionary<PropertyId, PropertyValue> Load(
+        Maybe<PropertyValue> ReadProperty(
             IDataBlockReader<LBBTEntry> reader,
             IMapper<BID, LBBTEntry> blockIdToEntryMapping,
-            LBBTEntry blockEntry);
+            LBBTEntry blockEntry,
+            PropertyTag propertyTag);
     }
 }

@@ -49,6 +49,12 @@ namespace pst.utilities
             return BinaryData.OfValue(buffer);
         }
 
+        public BinaryDataParser Skip(int count)
+        {
+            TakeAndSkip(count);
+            return this;
+        }
+
         public TType TakeAndSkip<TType>(int count, IDecoder<TType> typeDecoder)
         {
             var buffer = new byte[count];

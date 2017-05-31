@@ -1,4 +1,5 @@
-﻿using pst.encodables.ndb;
+﻿using pst.core;
+using pst.encodables.ndb;
 using pst.encodables.ndb.blocks.subnode;
 using pst.encodables.ndb.btree;
 using pst.interfaces.io;
@@ -20,12 +21,13 @@ namespace pst.interfaces.ltp.tc
         }
     }
 
-    interface IRowMatrixLoader
+    interface IRowMatrixReader<TRowId>
     {
-        TableRow[] Load(
+        Maybe<TableRow> GetRow(
             IDataBlockReader<LBBTEntry> reader,
             IMapper<NID, SLEntry> nidToSLEntryMapping,
             IMapper<BID, LBBTEntry> blockIdToEntryMapping,
-            LBBTEntry blockEntry);
+            LBBTEntry blockEntry,
+            TRowId rowId);
     }
 }

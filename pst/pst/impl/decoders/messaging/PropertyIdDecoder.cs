@@ -14,8 +14,7 @@ namespace pst.impl.decoders.messaging
 
         public PropertyId Decode(BinaryData encodedData)
         {
-            return
-                new PropertyId(int32Decoder.Decode(encodedData.Take(4)));
+            return new PropertyId(int32Decoder.Decode(encodedData.Take(4)));
         }
     }
 }

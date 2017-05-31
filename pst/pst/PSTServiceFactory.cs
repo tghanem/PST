@@ -34,6 +34,7 @@ using pst.interfaces.ltp.pc;
 using pst.interfaces.ltp.tc;
 using pst.interfaces.ndb;
 using pst.utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -92,25 +93,26 @@ namespace pst
                         new Int32Decoder()));
         }
 
-        public static IRowMatrixLoader CreateRowMatrixLoader()
+        public static IRowMatrixReader<TRowId> CreateRowMatrixReader<TRowId>(IDecoder<TRowId> rowIdDecoder) where TRowId : IComparable<TRowId>
         {
             return
-                new RowMatrixLoader(
+                new RowMatrixReader<TRowId>(
                     CreateDataTreeLeafNodesEnumerator(),
                     new RowValuesExtractor(),
-                    CreateHeapOnNodeLoader(),
+                    CreateHeapOnNodeReader(),
                     new TCINFODecoder(
                         new Int32Decoder(),
                         new HIDDecoder(
                             new Int32Decoder()),
                         new TCOLDESCDecoder(
                             new Int32Decoder())),
-                    new RowIndexLoader(
+                    new RowIndexReader<TRowId>(
                         new DataRecordToTCROWIDConverter(
                             new NIDDecoder(
                                 new Int32Decoder()),
                             new Int32Decoder()),
-                        CreateBTreeOnHeapLeafKeyEnumerator(),
+                        CreateBTreeOnHeapReader(rowIdDecoder),
+                        CreateHeapOnNodeReader(),
                         new TCINFODecoder(
                             new Int32Decoder(),
                             new HIDDecoder(
@@ -124,57 +126,40 @@ namespace pst
                             new Int32Decoder())));
         }
 
-        public static IPropertiesFromTableContextRowLoader CreatePropertiesFromTableContextRowLoader()
+        public static IPCBasedPropertyReader CreatePCBasedPropertyReader()
         {
             return
-                new PropertiesFromTableContextRowLoader(
-                    CreatePropertyValueLoader(),
-                    CreateHeapOnNodeLoader());
-        }
-
-        private static PropertyValueLoader CreatePropertyValueLoader()
-        {
-            return
-                new PropertyValueLoader(
-                    new PropertyTypeMetadataProvider(),
-                    CreateHeapOnNodeLoader(),
+                new PCBasedPropertyReader(
+                    CreateHeapOnNodeReader(),
                     new HNIDDecoder(
                         new HIDDecoder(
                             new Int32Decoder()),
                         new NIDDecoder(
-                            new Int32Decoder())));
+                            new Int32Decoder())),
+                    CreateBTreeOnHeapReader(
+                        new PropertyIdDecoder(
+                            new Int32Decoder())),
+                    new PropertyTypeMetadataProvider());
         }
 
-        public static IPropertiesFromPropertyContextLoader CreatePropertiesFromPropertyContextLoader()
+        public static IBTreeOnHeapReader<TKey> CreateBTreeOnHeapReader<TKey>(IDecoder<TKey> keyDecoder) where TKey : IComparable<TKey>
         {
             return
-                new PropertiesFromPropertyContextLoader(
-                    CreateHeapOnNodeLoader(),
-                    new HIDDecoder(
-                        new Int32Decoder()),
-                    new Int32Decoder(),
-                    CreatePropertyValueLoader(),
-                    new PropertyTypeDecoder(
-                        new Int32Decoder()),
-                    CreateBTreeOnHeapLeafKeyEnumerator());
-        }
-
-        public static IBTreeOnHeapLeafKeysEnumerator CreateBTreeOnHeapLeafKeyEnumerator()
-        {
-            return
-                new BTreeOnHeapLeafKeysEnumerator(
-                    CreateHeapOnNodeLoader(),
+                new BTreeOnHeapReader<TKey>(
+                    CreateHeapOnNodeReader(),
                     new BTHHEADERDecoder(
                         new Int32Decoder(),
                         new HIDDecoder(
                             new Int32Decoder())),
+                    keyDecoder,
                     new HIDDecoder(
                         new Int32Decoder()));
         }
 
-        public static IHeapOnNodeLoader CreateHeapOnNodeLoader()
+        public static IHeapOnNodeReader CreateHeapOnNodeReader()
         {
-            return new HeapOnNodeLoader(
+            return
+                new HeapOnNodeReader(
                     new HNHDRDecoder(
                         new Int32Decoder(),
                         new HIDDecoder(
@@ -183,6 +168,7 @@ namespace pst
                         new Int32Decoder()),
                     new HNPAGEMAPDecoder(
                         new Int32Decoder()),
+                    new PermutativeDecoder(false),
                     new HNBITMAPHDRDecoder(
                         new Int32Decoder()),
                     new HeapOnNodeItemsLoader(

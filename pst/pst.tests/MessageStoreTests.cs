@@ -15,7 +15,7 @@ namespace pst.tests
             var sut = PSTFile.Open(new MemoryStream(Resources.PST));
 
             //Act
-            var store = sut.GetMessageStore();
+            var store = sut.MessageStore;
 
             //Assert
             Assert.AreEqual("Test", store.DisplayName);
@@ -28,7 +28,7 @@ namespace pst.tests
             var sut = PSTFile.Open(new MemoryStream(Resources.PST));
 
             //Act
-            var topOfPSTDataFile = sut.GetRootFolder().GetSubFolders()[0];
+            var topOfPSTDataFile = sut.RootFolder.GetSubFolders().First(f => f.DisplayName == "Top of Outlook data file");
 
             //Assert
             Assert.IsTrue(topOfPSTDataFile.GetSubFolders().Any(f => f.DisplayName == "Inbox"));
