@@ -24,7 +24,6 @@ namespace pst.interfaces.ltp.tc
     interface IRowMatrixReader<TRowId>
     {
         Maybe<TableRow> GetRow(
-            IDataBlockReader<LBBTEntry> reader,
             IMapper<NID, SLEntry> nidToSLEntryMapping,
             IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             LBBTEntry blockEntry,

@@ -22,6 +22,7 @@ namespace pst.impl.ltp.tc
         private readonly IDecoder<TCINFO> tcinfoDecoder;
         private readonly IRowIndexReader<TRowId> rowIndexReader;
         private readonly IDecoder<HNID> hnidDecoder;
+        private readonly IDataBlockReader<LBBTEntry> dataBlockReader;
 
         public RowMatrixReader(
             IDataTreeLeafNodesEnumerator dataTreeLeafNodesEnumerator,
@@ -29,7 +30,8 @@ namespace pst.impl.ltp.tc
             IHeapOnNodeReader heapOnNodeReader,
             IDecoder<TCINFO> tcinfoDecoder,
             IRowIndexReader<TRowId> rowIndexReader,
-            IDecoder<HNID> hnidDecoder)
+            IDecoder<HNID> hnidDecoder,
+            IDataBlockReader<LBBTEntry> dataBlockReader)
         {
             this.dataTreeLeafNodesEnumerator = dataTreeLeafNodesEnumerator;
             this.rowValuesExtractor = rowValuesExtractor;
@@ -37,10 +39,10 @@ namespace pst.impl.ltp.tc
             this.rowIndexReader = rowIndexReader;
             this.tcinfoDecoder = tcinfoDecoder;
             this.hnidDecoder = hnidDecoder;
+            this.dataBlockReader = dataBlockReader;
         }
 
         public Maybe<TableRow> GetRow(
-            IDataBlockReader<LBBTEntry> reader,
             IMapper<NID, SLEntry> nidToSLEntryMapping,
             IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             LBBTEntry blockEntry,
@@ -48,13 +50,13 @@ namespace pst.impl.ltp.tc
         {
             var hnHeader =
                 heapOnNodeReader
-                .GetHeapOnNodeHeader(reader, blockIdToEntryMapping, blockEntry);
+                .GetHeapOnNodeHeader(blockIdToEntryMapping, blockEntry);
 
             var tcInfo =
                 tcinfoDecoder
                 .Decode(
                     heapOnNodeReader
-                    .GetHeapItem(reader, blockIdToEntryMapping, blockEntry, hnHeader.UserRoot));
+                    .GetHeapItem(blockIdToEntryMapping, blockEntry, hnHeader.UserRoot));
 
             var rowMatrixHnid = hnidDecoder.Decode(tcInfo.RowMatrix);
 
@@ -65,7 +67,7 @@ namespace pst.impl.ltp.tc
 
             var tcRowId =
                 rowIndexReader
-                .GetRowId(reader, blockIdToEntryMapping, blockEntry, rowId);
+                .GetRowId(blockIdToEntryMapping, blockEntry, rowId);
 
             if (tcRowId.HasNoValue)
             {
@@ -76,7 +78,7 @@ namespace pst.impl.ltp.tc
             {
                 var heapItem =
                     heapOnNodeReader
-                    .GetHeapItem(reader, blockIdToEntryMapping, blockEntry, rowMatrixHnid.HID);
+                    .GetHeapItem(blockIdToEntryMapping, blockEntry, rowMatrixHnid.HID);
 
                 var encodedRows =
                     heapItem.Slice(tcInfo.GroupsOffsets[3]);
@@ -101,7 +103,7 @@ namespace pst.impl.ltp.tc
 
                 var dataBlocks =
                     dataTreeLeafNodesEnumerator
-                    .Enumerate(reader, blockIdToEntryMapping, lbbtEntryForSubnode);
+                    .Enumerate(blockIdToEntryMapping, lbbtEntryForSubnode);
 
                 var numberOfRowsPerBlock =
                     Math.Floor((double)(8 * 1024 - 16) / tcInfo.GroupsOffsets[3]);
@@ -118,7 +120,7 @@ namespace pst.impl.ltp.tc
                     blockIdToEntryMapping.Map(dataBlockId);
 
                 var dataBlock =
-                    reader.Read(lbbEntryForDataBlock, lbbEntryForDataBlock.GetBlockSize());
+                    dataBlockReader.Read(lbbEntryForDataBlock, lbbEntryForDataBlock.GetBlockSize());
 
                 var tableRow =
                     new TableRow(

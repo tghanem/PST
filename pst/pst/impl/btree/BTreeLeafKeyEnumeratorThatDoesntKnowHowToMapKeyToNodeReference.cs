@@ -16,27 +16,29 @@ namespace pst.impl.btree
         private readonly IExtractor<TNode, int> nodeLevelFromNodeExtractor;
         private readonly IBTreeNodeLoader<TNode, TNodeReference> nodeLoader;
 
+        private readonly IDataBlockReader<TNodeReference> dataBlockReader;
+
         public BTreeLeafKeyEnumeratorThatDoesntKnowHowToMapKeyToNodeReference(
             IExtractor<TNode, TIntermediateKey[]> intermediateKeysExtractor,
             IExtractor<TNode, TLeafKey[]> leafKeysExtractor,
             IExtractor<TNode, int> nodeLevelFromNodeExtractor,
-            IBTreeNodeLoader<TNode, TNodeReference> nodeLoader)
+            IBTreeNodeLoader<TNode, TNodeReference> nodeLoader,
+            IDataBlockReader<TNodeReference> dataBlockReader)
         {
             this.intermediateKeysExtractor = intermediateKeysExtractor;
             this.leafKeysExtractor = leafKeysExtractor;
             this.nodeLevelFromNodeExtractor = nodeLevelFromNodeExtractor;
             this.nodeLoader = nodeLoader;
+            this.dataBlockReader = dataBlockReader;
         }
 
         public TLeafKey[] Enumerate(
-            IDataBlockReader<TNodeReference> reader,
             IMapper<TIntermediateKey, TNodeReference> keyToNodeReferenceMapping,
             TNodeReference rootNodeReference)
         {
             var leafKeys = new List<TLeafKey>();
 
             EnumerateAndAdd(
-                reader,
                 keyToNodeReferenceMapping,
                 rootNodeReference,
                 leafKeys);
@@ -45,13 +47,12 @@ namespace pst.impl.btree
         }
 
         private void EnumerateAndAdd(
-            IDataBlockReader<TNodeReference> reader,
             IMapper<TIntermediateKey, TNodeReference> keyToNodeReferenceMapping,
             TNodeReference nodeReference,
             List<TLeafKey> leafKeys)
         {
             var node =
-                nodeLoader.LoadNode(reader, nodeReference);
+                nodeLoader.LoadNode(nodeReference);
 
             if (nodeLevelFromNodeExtractor.Extract(node) > 0)
             {
@@ -61,7 +62,6 @@ namespace pst.impl.btree
                 foreach (var key in intermediateKeys)
                 {
                     EnumerateAndAdd(
-                        reader,
                         keyToNodeReferenceMapping,
                         keyToNodeReferenceMapping.Map(key),
                         leafKeys);

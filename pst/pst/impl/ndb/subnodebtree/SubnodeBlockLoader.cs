@@ -10,15 +10,20 @@ namespace pst.impl.ndb.subnodebtree
     {
         private readonly IDecoder<SubnodeBlock> subnodeBlockDecoder;
 
-        public SubnodeBlockLoader(IDecoder<SubnodeBlock> subnodeBlockDecoder)
+        private readonly IDataBlockReader<LBBTEntry> dataBlockReader;
+
+        public SubnodeBlockLoader(
+            IDecoder<SubnodeBlock> subnodeBlockDecoder,
+            IDataBlockReader<LBBTEntry> dataBlockReader)
         {
             this.subnodeBlockDecoder = subnodeBlockDecoder;
+            this.dataBlockReader = dataBlockReader;
         }
 
-        public SubnodeBlock LoadNode(IDataBlockReader<LBBTEntry> reader, LBBTEntry nodeReference)
+        public SubnodeBlock LoadNode(LBBTEntry nodeReference)
         {
             var encodedBlock =
-                reader.Read(nodeReference, nodeReference.GetBlockSize());
+                dataBlockReader.Read(nodeReference, nodeReference.GetBlockSize());
 
             return subnodeBlockDecoder.Decode(encodedBlock);
         }

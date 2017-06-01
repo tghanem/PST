@@ -3,7 +3,6 @@ using pst.encodables.ltp.hn;
 using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.interfaces;
-using pst.interfaces.io;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.hn;
@@ -33,14 +32,13 @@ namespace pst.impl.ltp.pc
         }
 
         public Maybe<PropertyValue> ReadProperty(
-            IDataBlockReader<LBBTEntry> reader,
             IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             LBBTEntry blockEntry,
             PropertyTag propertyTag)
         {
             var dataRecord =
                 bthReader
-                .ReadDataRecord(reader, blockIdToEntryMapping, blockEntry, propertyTag.Id);
+                .ReadDataRecord(blockIdToEntryMapping, blockEntry, propertyTag.Id);
 
             if (dataRecord.HasNoValue)
                 return Maybe<PropertyValue>.NoValue();
@@ -69,7 +67,6 @@ namespace pst.impl.ltp.pc
                         new PropertyValue(
                             heapOnNodeReader
                             .GetHeapItem(
-                                reader,
                                 blockIdToEntryMapping,
                                 blockEntry,
                                 hnid.HID));
@@ -96,7 +93,6 @@ namespace pst.impl.ltp.pc
                         new PropertyValue(
                             heapOnNodeReader
                             .GetHeapItem(
-                                reader,
                                 blockIdToEntryMapping,
                                 blockEntry,
                                 hnid.HID));

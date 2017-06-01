@@ -20,37 +20,39 @@ namespace pst.impl.ltp.tc
         private readonly IBTreeOnHeapReader<TRowId> bthReader;
         private readonly IHeapOnNodeReader heapOnNodeReader;
         private readonly IDecoder<TCINFO> tcinfoDecoder;
+        private readonly IDataBlockReader<LBBTEntry> dataBlockReader;
 
         public RowIndexReader(
             IConverter<DataRecord, TCROWID> dataRecordToTCROWIDConverter,
             IBTreeOnHeapReader<TRowId> bthReader,
             IHeapOnNodeReader heapOnNodeReader,
-            IDecoder<TCINFO> tcinfoDecoder)
+            IDecoder<TCINFO> tcinfoDecoder,
+            IDataBlockReader<LBBTEntry> dataBlockReader)
         {
             this.dataRecordToTCROWIDConverter = dataRecordToTCROWIDConverter;
             this.bthReader = bthReader;
             this.heapOnNodeReader = heapOnNodeReader;
             this.tcinfoDecoder = tcinfoDecoder;
+            this.dataBlockReader = dataBlockReader;
         }
 
         public Maybe<TCROWID> GetRowId(
-            IDataBlockReader<LBBTEntry> reader,
             IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             LBBTEntry blockEntry,
             TRowId rowId)
         {
             var hnHeader =
                 heapOnNodeReader
-                .GetHeapOnNodeHeader(reader, blockIdToEntryMapping, blockEntry);
+                .GetHeapOnNodeHeader(blockIdToEntryMapping, blockEntry);
 
             var tcinfo =
                 tcinfoDecoder
                 .Decode(
                     heapOnNodeReader
-                    .GetHeapItem(reader, blockIdToEntryMapping, blockEntry, hnHeader.UserRoot));
+                    .GetHeapItem(blockIdToEntryMapping, blockEntry, hnHeader.UserRoot));
 
             var tcRowId =
-                bthReader.ReadDataRecord(reader, blockIdToEntryMapping, blockEntry, tcinfo.RowIndex, rowId);
+                bthReader.ReadDataRecord(blockIdToEntryMapping, blockEntry, tcinfo.RowIndex, rowId);
 
             if (tcRowId.HasNoValue)
                 return Maybe<TCROWID>.NoValue();
@@ -59,23 +61,22 @@ namespace pst.impl.ltp.tc
         }
 
         public TCROWID[] GetAllRowIds(
-            IDataBlockReader<LBBTEntry> reader,
             IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             LBBTEntry blockEntry)
         {
             var hnHeader =
                 heapOnNodeReader
-                .GetHeapOnNodeHeader(reader, blockIdToEntryMapping, blockEntry);
+                .GetHeapOnNodeHeader(blockIdToEntryMapping, blockEntry);
 
             var tcinfo =
                 tcinfoDecoder
                 .Decode(
                     heapOnNodeReader
-                    .GetHeapItem(reader, blockIdToEntryMapping, blockEntry, hnHeader.UserRoot));
+                    .GetHeapItem(blockIdToEntryMapping, blockEntry, hnHeader.UserRoot));
 
             return
                 bthReader
-                .ReadAllDataRecords(reader, blockIdToEntryMapping, blockEntry, tcinfo.RowIndex)
+                .ReadAllDataRecords(blockIdToEntryMapping, blockEntry, tcinfo.RowIndex)
                 .Select(dataRecordToTCROWIDConverter.Convert)
                 .ToArray();
         }

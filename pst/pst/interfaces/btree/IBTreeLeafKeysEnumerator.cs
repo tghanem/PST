@@ -6,7 +6,7 @@ namespace pst.interfaces.btree
         where TNodeReference : class
         where TKey : class
     {
-        TKey[] Enumerate(IDataBlockReader<TNodeReference> reader, TNodeReference rootNodeReference);
+        TKey[] Enumerate(TNodeReference rootNodeReference);
     }
 
     interface IBTreeLeafKeysEnumeratorThatDoesntKnowHowToMapTheKeyToNodeReference<TLeafKey, TIntermediateKey, TNodeReference>
@@ -14,6 +14,6 @@ namespace pst.interfaces.btree
         where TNodeReference : class
         where TLeafKey : class
     {
-        TLeafKey[] Enumerate(IDataBlockReader<TNodeReference> reader, IMapper<TIntermediateKey, TNodeReference> keyToNodeReferenceMapping, TNodeReference rootNodeReference);
+        TLeafKey[] Enumerate(IMapper<TIntermediateKey, TNodeReference> keyToNodeReferenceMapping, TNodeReference rootNodeReference);
     }
 }

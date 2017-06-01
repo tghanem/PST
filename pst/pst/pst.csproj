@@ -175,7 +175,6 @@
     <Compile Include="PropertyValue.cs" />
     <Compile Include="PSTFile.cs" />
     <Compile Include="PSTFileFactory.cs" />
-    <Compile Include="PSTServiceFactory.cs" />
     <Compile Include="impl\ndb\subnodebtree\SIEntriesFromSubnodeBlockExtractor.cs" />
     <Compile Include="utilities\BinaryData.cs" />
     <Compile Include="interfaces\IDecoder.cs" />

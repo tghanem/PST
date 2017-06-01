@@ -1,12 +1,9 @@
-﻿using pst.core;
-using pst.interfaces.io;
-
-namespace pst.interfaces.btree
+﻿namespace pst.interfaces.btree
 {
     interface IBTreeNodeLoader<TNode, TNodeReference>
         where TNodeReference : class
         where TNode : class
     {
-        TNode LoadNode(IDataBlockReader<TNodeReference> reader, TNodeReference nodeReference);
+        TNode LoadNode(TNodeReference nodeReference);
     }
 }

@@ -1,11 +1,13 @@
-﻿using pst.interfaces.btree;
-using pst.interfaces;
-using System.Collections.Generic;
+﻿using pst.interfaces;
+using pst.interfaces.btree;
 using pst.interfaces.io;
+using System.Collections.Generic;
 
 namespace pst.impl.btree
 {
-    class BTreeLeafKeysEnumerator<TNode, TNodeReference, TIntermediateKey, TLeafKey> : IBTreeLeafKeysEnumerator<TLeafKey, TNodeReference>
+    class BTreeLeafKeysEnumerator<TNode, TNodeReference, TIntermediateKey, TLeafKey>
+        : IBTreeLeafKeysEnumerator<TLeafKey, TNodeReference>
+
         where TIntermediateKey : class
         where TNodeReference : class
         where TLeafKey : class
@@ -15,43 +17,42 @@ namespace pst.impl.btree
         private readonly IExtractor<TNode, TIntermediateKey[]> intermediateKeysExtractor;
         private readonly IExtractor<TNode, TLeafKey[]> leafKeysExtractor;
         private readonly IExtractor<TNode, int> nodeLevelFromNodeExtractor;
+
         private readonly IBTreeNodeLoader<TNode, TNodeReference> nodeLoader;
+
+        private readonly IDataBlockReader<TNodeReference> nodeDataBlockReader;
 
         public BTreeLeafKeysEnumerator(
             IExtractor<TIntermediateKey, TNodeReference> nodeReferenceFromIntermediateKeyExtractor,
             IExtractor<TNode, TIntermediateKey[]> intermediateKeysExtractor,
             IExtractor<TNode, TLeafKey[]> leafKeysExtractor,
             IExtractor<TNode, int> nodeLevelFromNodeExtractor,
-            IBTreeNodeLoader<TNode, TNodeReference> nodeLoader)
+            IBTreeNodeLoader<TNode, TNodeReference> nodeLoader,
+            IDataBlockReader<TNodeReference> nodeDataBlockReader)
         {
             this.nodeReferenceFromIntermediateKeyExtractor = nodeReferenceFromIntermediateKeyExtractor;
             this.intermediateKeysExtractor = intermediateKeysExtractor;
             this.leafKeysExtractor = leafKeysExtractor;
             this.nodeLevelFromNodeExtractor = nodeLevelFromNodeExtractor;
             this.nodeLoader = nodeLoader;
+            this.nodeDataBlockReader = nodeDataBlockReader;
         }
 
-        public TLeafKey[] Enumerate(
-            IDataBlockReader<TNodeReference> reader,
-            TNodeReference rootNodeReference)
+        public TLeafKey[] Enumerate(TNodeReference rootNodeReference)
         {
             var leafKeys = new List<TLeafKey>();
 
             EnumerateAndAdd(
-                reader,
                 rootNodeReference,
                 leafKeys);
 
             return leafKeys.ToArray();
         }
 
-        private void EnumerateAndAdd(
-            IDataBlockReader<TNodeReference> reader,
-            TNodeReference nodeReference,
-            List<TLeafKey> leafKeys)
+        private void EnumerateAndAdd(TNodeReference nodeReference, List<TLeafKey> leafKeys)
         {
             var node =
-                nodeLoader.LoadNode(reader, nodeReference);
+                nodeLoader.LoadNode(nodeReference);
 
             if (nodeLevelFromNodeExtractor.Extract(node) > 0)
             {
@@ -61,15 +62,13 @@ namespace pst.impl.btree
                 foreach (var key in intermediateKeys)
                 {
                     EnumerateAndAdd(
-                        reader,
                         nodeReferenceFromIntermediateKeyExtractor.Extract(key),
                         leafKeys);
                 }
             }
             else
             {
-                leafKeys.AddRange(
-                    leafKeysExtractor.Extract(node));
+                leafKeys.AddRange(leafKeysExtractor.Extract(node));
             }
         }
     }

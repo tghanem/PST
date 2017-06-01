@@ -10,14 +10,19 @@ namespace pst.impl.ndb
     {
         private readonly IDecoder<BTPage> pageDecoder;
 
-        public BTPageLoader(IDecoder<BTPage> pageDecoder)
+        private readonly IDataBlockReader<BREF> pageBlockReader;
+
+        public BTPageLoader(
+            IDecoder<BTPage> pageDecoder,
+            IDataBlockReader<BREF> pageBlockReader)
         {
             this.pageDecoder = pageDecoder;
+            this.pageBlockReader = pageBlockReader;
         }
 
-        public BTPage LoadNode(IDataBlockReader<BREF> reader, BREF pageReference)
+        public BTPage LoadNode(BREF pageReference)
         {
-            var encodedPage = reader.Read(pageReference, 512);
+            var encodedPage = pageBlockReader.Read(pageReference, 512);
 
             return pageDecoder.Decode(encodedPage);
         }

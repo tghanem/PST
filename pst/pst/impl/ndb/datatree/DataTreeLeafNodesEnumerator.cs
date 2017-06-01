@@ -1,11 +1,11 @@
-﻿using pst.interfaces.ndb;
-using System.Collections.Generic;
-using pst.encodables.ndb;
+﻿using pst.encodables.ndb;
 using pst.encodables.ndb.blocks.data;
 using pst.encodables.ndb.btree;
-using pst.interfaces.io;
-using pst.interfaces.btree;
 using pst.interfaces;
+using pst.interfaces.btree;
+using pst.interfaces.io;
+using pst.interfaces.ndb;
+using System.Collections.Generic;
 
 namespace pst.impl.ndb.datatree
 {
@@ -23,7 +23,6 @@ namespace pst.impl.ndb.datatree
         }
 
         public BID[] Enumerate(
-            IDataBlockReader<LBBTEntry> reader,
             IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             LBBTEntry blockEntry)
         {
@@ -40,7 +39,6 @@ namespace pst.impl.ndb.datatree
                 var bids =
                     dataTreeLeafKeysEnumerator
                     .Enumerate(
-                        reader,
                         blockIdToEntryMapping,
                         blockEntry);
 

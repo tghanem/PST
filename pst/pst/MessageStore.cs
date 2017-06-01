@@ -46,7 +46,7 @@ namespace pst
 
                 var propertyValue =
                     pcBasedPropertyReader
-                    .ReadProperty(dataBlockReader, blockIdToLBBTEntryMapping, bbtEntry, propertyTag);
+                    .ReadProperty(blockIdToLBBTEntryMapping, bbtEntry, propertyTag);
 
                 return Encoding.Unicode.GetString(propertyValue.Value.Value.Value);
             }

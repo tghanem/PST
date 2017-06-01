@@ -18,7 +18,6 @@ namespace pst
         private readonly IPCBasedPropertyReader pcBasedPropertyReader;
         private readonly IMapper<NID, LNBTEntry> nodeIdToLNBTEntryMapping;
         private readonly IMapper<BID, LBBTEntry> blockIdToLBBTEntryMapping;
-        private readonly IDataBlockReader<LBBTEntry> dataBlockReader;
 
         internal Folder(
             NID nodeId,
@@ -26,13 +25,11 @@ namespace pst
             IRowMatrixReader<NID> rowMatrixReader,
             IPCBasedPropertyReader pcBasedPropertyReader,
             IMapper<NID, LNBTEntry> nodeIdToLNBTEntryMapping,
-            IMapper<BID, LBBTEntry> blockIdToLBBTEntryMapping,
-            IDataBlockReader<LBBTEntry> dataBlockReader)
+            IMapper<BID, LBBTEntry> blockIdToLBBTEntryMapping)
         {
             this.nodeId = nodeId;
             this.rowIndexReader = rowIndexReader;
             this.rowMatrixReader = rowMatrixReader;
-            this.dataBlockReader = dataBlockReader;
             this.pcBasedPropertyReader = pcBasedPropertyReader;
             this.nodeIdToLNBTEntryMapping = nodeIdToLNBTEntryMapping;
             this.blockIdToLBBTEntryMapping = blockIdToLBBTEntryMapping;
@@ -47,7 +44,7 @@ namespace pst
                 blockIdToLBBTEntryMapping.Map(lnbtEntryForHierarchyTable.DataBlockId);
 
             var rowIds =
-                rowIndexReader.GetAllRowIds(dataBlockReader, blockIdToLBBTEntryMapping, bbtEntry);
+                rowIndexReader.GetAllRowIds(blockIdToLBBTEntryMapping, bbtEntry);
 
             return
                 rowIds
@@ -59,8 +56,7 @@ namespace pst
                         rowMatrixReader,
                         pcBasedPropertyReader,
                         nodeIdToLNBTEntryMapping,
-                        blockIdToLBBTEntryMapping,
-                        dataBlockReader))
+                        blockIdToLBBTEntryMapping))
                 .ToArray();
         }
 
@@ -76,7 +72,6 @@ namespace pst
                 var propertyValue =
                     pcBasedPropertyReader
                     .ReadProperty(
-                        dataBlockReader,
                         blockIdToLBBTEntryMapping,
                         blockIdToLBBTEntryMapping.Map(nodeIdToLNBTEntryMapping.Map(nodeId).DataBlockId),
                         propertyTag);

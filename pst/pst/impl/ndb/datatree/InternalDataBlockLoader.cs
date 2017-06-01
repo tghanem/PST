@@ -1,9 +1,8 @@
-﻿using pst.interfaces.btree;
-using pst.core;
-using pst.interfaces.io;
-using pst.interfaces;
-using pst.encodables.ndb.blocks.data;
+﻿using pst.encodables.ndb.blocks.data;
 using pst.encodables.ndb.btree;
+using pst.interfaces;
+using pst.interfaces.btree;
+using pst.interfaces.io;
 
 namespace pst.impl.ndb.datatree
 {
@@ -12,16 +11,20 @@ namespace pst.impl.ndb.datatree
     {
         private readonly IDecoder<InternalDataBlock> internalDataBlockDecoder;
 
+        private readonly IDataBlockReader<LBBTEntry> dataBlockReader;
+
         public InternalDataBlockLoader(
-            IDecoder<InternalDataBlock> internalDataBlockDecoder)
+            IDecoder<InternalDataBlock> internalDataBlockDecoder,
+            IDataBlockReader<LBBTEntry> dataBlockReader)
         {
             this.internalDataBlockDecoder = internalDataBlockDecoder;
+            this.dataBlockReader = dataBlockReader;
         }
 
-        public InternalDataBlock LoadNode(IDataBlockReader<LBBTEntry> reader, LBBTEntry nodeReference)
+        public InternalDataBlock LoadNode(LBBTEntry nodeReference)
         {
             var encodedBlock =
-                reader
+                dataBlockReader
                 .Read(
                     nodeReference,
                     nodeReference.GetBlockSize());
