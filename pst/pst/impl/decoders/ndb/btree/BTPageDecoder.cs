@@ -6,13 +6,10 @@ namespace pst.impl.decoders.ndb.btree
 {
     class BTPageDecoder : IDecoder<BTPage>
     {
-        private readonly IDecoder<int> int32Decoder;
-
         private readonly IDecoder<PageTrailer> pageTrailerDecoder;
 
-        public BTPageDecoder(IDecoder<int> int32Decoder, IDecoder<PageTrailer> pageTrailerDecoder)
+        public BTPageDecoder(IDecoder<PageTrailer> pageTrailerDecoder)
         {
-            this.int32Decoder = int32Decoder;
             this.pageTrailerDecoder = pageTrailerDecoder;
         }
 
@@ -23,10 +20,10 @@ namespace pst.impl.decoders.ndb.btree
             return
                 new BTPage(
                     parser.TakeAndSkip(488),
-                    parser.TakeAndSkip(1, int32Decoder),
-                    parser.TakeAndSkip(1, int32Decoder),
-                    parser.TakeAndSkip(1, int32Decoder),
-                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(1).ToInt32(),
+                    parser.TakeAndSkip(1).ToInt32(),
+                    parser.TakeAndSkip(1).ToInt32(),
+                    parser.TakeAndSkip(1).ToInt32(),
                     parser.TakeAndSkip(4),
                     parser.TakeAndSkip(16, pageTrailerDecoder));
         }

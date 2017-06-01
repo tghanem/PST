@@ -13,7 +13,6 @@ using pst.impl.decoders.ndb.blocks;
 using pst.impl.decoders.ndb.blocks.data;
 using pst.impl.decoders.ndb.blocks.subnode;
 using pst.impl.decoders.ndb.btree;
-using pst.impl.decoders.primitives;
 using pst.impl.io;
 using pst.impl.ltp;
 using pst.impl.ltp.bth;
@@ -72,25 +71,19 @@ namespace pst
 
         public static IDecoder<NID> CreateNIDDecoder()
         {
-            return
-                new NIDDecoder(
-                    new Int32Decoder());
+            return new NIDDecoder();
         }
 
         public static IDecoder<Header> CreateHeaderDecoder()
         {
             return
                 new HeaderDecoder(
-                    new Int32Decoder(),
                     new RootDecoder(
-                        new Int32Decoder(),
-                        new Int64Decoder(),
                         new BREFDecoder(
-                                new BIDDecoder(),
-                                new IBDecoder())),
+                            new BIDDecoder(),
+                            new IBDecoder())),
                     new BIDDecoder(),
-                    new NIDDecoder(
-                        new Int32Decoder()));
+                    new NIDDecoder());
         }
 
         public static IRowMatrixReader<TRowId> CreateRowMatrixReader<TRowId>(IDecoder<TRowId> rowIdDecoder) where TRowId : IComparable<TRowId>
@@ -101,29 +94,19 @@ namespace pst
                     new RowValuesExtractor(),
                     CreateHeapOnNodeReader(),
                     new TCINFODecoder(
-                        new Int32Decoder(),
-                        new HIDDecoder(
-                            new Int32Decoder()),
-                        new TCOLDESCDecoder(
-                            new Int32Decoder())),
+                        new HIDDecoder(),
+                        new TCOLDESCDecoder()),
                     new RowIndexReader<TRowId>(
                         new DataRecordToTCROWIDConverter(
-                            new NIDDecoder(
-                                new Int32Decoder()),
-                            new Int32Decoder()),
+                            new NIDDecoder()),
                         CreateBTreeOnHeapReader(rowIdDecoder),
                         CreateHeapOnNodeReader(),
                         new TCINFODecoder(
-                            new Int32Decoder(),
-                            new HIDDecoder(
-                                new Int32Decoder()),
-                            new TCOLDESCDecoder(
-                                new Int32Decoder()))),
+                            new HIDDecoder(),
+                            new TCOLDESCDecoder())),
                     new HNIDDecoder(
-                        new HIDDecoder(
-                            new Int32Decoder()),
-                        new NIDDecoder(
-                            new Int32Decoder())));
+                        new HIDDecoder(),
+                        new NIDDecoder()));
         }
 
         public static IPCBasedPropertyReader CreatePCBasedPropertyReader()
@@ -132,13 +115,10 @@ namespace pst
                 new PCBasedPropertyReader(
                     CreateHeapOnNodeReader(),
                     new HNIDDecoder(
-                        new HIDDecoder(
-                            new Int32Decoder()),
-                        new NIDDecoder(
-                            new Int32Decoder())),
+                        new HIDDecoder(),
+                        new NIDDecoder()),
                     CreateBTreeOnHeapReader(
-                        new PropertyIdDecoder(
-                            new Int32Decoder())),
+                        new PropertyIdDecoder()),
                     new PropertyTypeMetadataProvider());
         }
 
@@ -148,12 +128,9 @@ namespace pst
                 new BTreeOnHeapReader<TKey>(
                     CreateHeapOnNodeReader(),
                     new BTHHEADERDecoder(
-                        new Int32Decoder(),
-                        new HIDDecoder(
-                            new Int32Decoder())),
+                        new HIDDecoder()),
                     keyDecoder,
-                    new HIDDecoder(
-                        new Int32Decoder()));
+                    new HIDDecoder());
         }
 
         public static IHeapOnNodeReader CreateHeapOnNodeReader()
@@ -161,18 +138,12 @@ namespace pst
             return
                 new HeapOnNodeReader(
                     new HNHDRDecoder(
-                        new Int32Decoder(),
-                        new HIDDecoder(
-                            new Int32Decoder())),
-                    new HNPAGEHDRDecoder(
-                        new Int32Decoder()),
-                    new HNPAGEMAPDecoder(
-                        new Int32Decoder()),
+                        new HIDDecoder()),
+                    new HNPAGEHDRDecoder(),
+                    new HNPAGEMAPDecoder(),
                     new PermutativeDecoder(false),
-                    new HNBITMAPHDRDecoder(
-                        new Int32Decoder()),
-                    new HeapOnNodeItemsLoader(
-                        new Int32Decoder()),
+                    new HNBITMAPHDRDecoder(),
+                    new HeapOnNodeItemsLoader(),
                     new DataTreeLeafNodesEnumerator(
                         new BTreeLeafKeyEnumeratorThatDoesntKnowHowToMapKeyToNodeReference<InternalDataBlock, LBBTEntry, BID, BID>(
                             new BIDsFromInternalDataBlockExtractor(
@@ -182,14 +153,11 @@ namespace pst
                             new NodeLevelFromInternalDataBlockExtractor(),
                             new InternalDataBlockLoader(
                                 new InternalDataBlockDecoder(
-                                    new Int32Decoder(),
                                     new BlockTrailerDecoder(
-                                        new BIDDecoder(),
-                                        new Int32Decoder())))),
+                                        new BIDDecoder())))),
                         new ExternalDataBlockDecoder(
                             new BlockTrailerDecoder(
-                                new BIDDecoder(),
-                                new Int32Decoder()),
+                                new BIDDecoder()),
                             new PermutativeDecoder(false))));
         }
 
@@ -205,14 +173,11 @@ namespace pst
                         new NodeLevelFromInternalDataBlockExtractor(),
                         new InternalDataBlockLoader(
                             new InternalDataBlockDecoder(
-                                new Int32Decoder(),
                                 new BlockTrailerDecoder(
-                                    new BIDDecoder(),
-                                    new Int32Decoder())))),
+                                    new BIDDecoder())))),
                     new ExternalDataBlockDecoder(
                         new BlockTrailerDecoder(
-                            new BIDDecoder(),
-                            new Int32Decoder()),
+                            new BIDDecoder()),
                         new PermutativeDecoder(false)));
         }
 
@@ -222,21 +187,17 @@ namespace pst
                 new BTreeLeafKeyEnumeratorThatDoesntKnowHowToMapKeyToNodeReference<SubnodeBlock, LBBTEntry, SIEntry, SLEntry>(
                     new SIEntriesFromSubnodeBlockExtractor(
                         new SIEntryDecoder(
-                            new NIDDecoder(
-                                new Int32Decoder()),
+                            new NIDDecoder(),
                             new BIDDecoder())),
                     new SLEntriesFromSubnodeBlockExtractor(
                         new SLEntryDecoder(
-                            new NIDDecoder(
-                                new Int32Decoder()),
+                            new NIDDecoder(),
                             new BIDDecoder())),
                     new NodeLevelFromSubnodeBlockExtractor(),
                     new SubnodeBlockLoader(
                         new SubnodeBlockDecoder(
-                            new Int32Decoder(),
                             new BlockTrailerDecoder(
-                                new BIDDecoder(),
-                                new Int32Decoder()))));
+                                new BIDDecoder()))));
         }
 
         public static IBTreeLeafKeysEnumerator<LNBTEntry, BREF> CreateNodeBTreeLeafKeysEnumerator()
@@ -246,22 +207,18 @@ namespace pst
                     new BREFFromINBTEntryExtractor(),
                     new INBTEntriesFromBTPageExtractor(
                         new INBTEntryDecoder(
-                            new NIDDecoder(
-                                new Int32Decoder()),
+                            new NIDDecoder(),
                             new BREFDecoder(
                                 new BIDDecoder(),
                                 new IBDecoder()))),
                     new LNBTEntriesFromBTPageExtractor(
                         new LNBTEntryDecoder(
-                            new NIDDecoder(
-                                new Int32Decoder()),
+                            new NIDDecoder(),
                             new BIDDecoder())),
                     new PageLevelFromBTPageExtractor(),
                     new BTPageLoader(
                         new BTPageDecoder(
-                            new Int32Decoder(),
                             new PageTrailerDecoder(
-                                new Int32Decoder(),
                                 new BIDDecoder()))));
         }
 
@@ -280,14 +237,11 @@ namespace pst
                         new LBBTEntryDecoder(
                             new BREFDecoder(
                                 new BIDDecoder(),
-                                new IBDecoder()),
-                            new Int32Decoder())),
+                                new IBDecoder()))),
                     new PageLevelFromBTPageExtractor(),
                     new BTPageLoader(
                         new BTPageDecoder(
-                            new Int32Decoder(),
                             new PageTrailerDecoder(
-                                new Int32Decoder(),
                                 new BIDDecoder()))));
         }
     }

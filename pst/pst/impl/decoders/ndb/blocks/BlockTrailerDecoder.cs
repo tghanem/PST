@@ -8,12 +8,10 @@ namespace pst.impl.decoders.ndb.blocks
     class BlockTrailerDecoder : IDecoder<BlockTrailer>
     {
         private readonly IDecoder<BID> bidDecoder;
-        private readonly IDecoder<int> int32Decoder;
 
-        public BlockTrailerDecoder(IDecoder<BID> bidDecoder, IDecoder<int> int32Decoder)
+        public BlockTrailerDecoder(IDecoder<BID> bidDecoder)
         {
             this.bidDecoder = bidDecoder;
-            this.int32Decoder = int32Decoder;
         }
 
         public BlockTrailer Decode(BinaryData encodedData)
@@ -22,9 +20,9 @@ namespace pst.impl.decoders.ndb.blocks
 
             return
                 new BlockTrailer(
-                    parser.TakeAndSkip(2, int32Decoder),
-                    parser.TakeAndSkip(2, int32Decoder),
-                    parser.TakeAndSkip(4, int32Decoder),
+                    parser.TakeAndSkip(2).ToInt32(),
+                    parser.TakeAndSkip(2).ToInt32(),
+                    parser.TakeAndSkip(4).ToInt32(),
                     parser.TakeAndSkip(8, bidDecoder));
         }
     }

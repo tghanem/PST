@@ -6,18 +6,11 @@ namespace pst.impl.decoders.ltp.hn
 {
     class HIDDecoder : IDecoder<HID>
     {
-        private readonly IDecoder<int> int32Decoder;
-
-        public HIDDecoder(IDecoder<int> int32Decoder)
-        {
-            this.int32Decoder = int32Decoder;
-        }
-
         public HID Decode(BinaryData encodedData)
         {
             var parser = BinaryDataParser.OfValue(encodedData);
 
-            var value = parser.TakeAndSkip(4, int32Decoder);
+            var value = parser.TakeAndSkip(4).ToInt32();
 
             return
                 new HID(

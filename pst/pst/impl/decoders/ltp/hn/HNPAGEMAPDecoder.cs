@@ -6,19 +6,12 @@ namespace pst.impl.decoders.ltp.hn
 {
     class HNPAGEMAPDecoder : IDecoder<HNPAGEMAP>
     {
-        private readonly IDecoder<int> int32Decoder;
-
-        public HNPAGEMAPDecoder(IDecoder<int> int32Decoder)
-        {
-            this.int32Decoder = int32Decoder;
-        }
-
         public HNPAGEMAP Decode(BinaryData encodedData)
         {
             var parser = BinaryDataParser.OfValue(encodedData);
 
-            var allocationCount = parser.TakeAndSkip(2, int32Decoder);
-            var freeCount = parser.TakeAndSkip(2, int32Decoder);
+            var allocationCount = parser.TakeAndSkip(2).ToInt32();
+            var freeCount = parser.TakeAndSkip(2).ToInt32();
             var allocationTable = parser.TakeAndSkip((allocationCount + 1) * 2);
 
             return

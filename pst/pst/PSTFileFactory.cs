@@ -4,9 +4,6 @@ using pst.impl.converters;
 using pst.impl.decoders.ltp.hn;
 using pst.impl.decoders.ltp.tc;
 using pst.impl.decoders.ndb;
-using pst.impl.decoders.ndb.blocks;
-using pst.impl.decoders.ndb.blocks.data;
-using pst.impl.decoders.primitives;
 using pst.impl.io;
 using pst.impl.ltp.tc;
 using pst.utilities;
@@ -57,22 +54,15 @@ namespace pst
                         Globals.NID_ROOT_FOLDER,
                         new RowIndexReader<NID>(
                             new DataRecordToTCROWIDConverter(
-                                new NIDDecoder(
-                                    new Int32Decoder()),
-                                new Int32Decoder()),
-                            PSTServiceFactory.CreateBTreeOnHeapReader<NID>(
-                                new NIDDecoder(
-                                    new Int32Decoder())),
+                                new NIDDecoder()),
+                            PSTServiceFactory.CreateBTreeOnHeapReader(
+                                new NIDDecoder()),
                             PSTServiceFactory.CreateHeapOnNodeReader(),
                             new TCINFODecoder(
-                                new Int32Decoder(),
-                                new HIDDecoder(
-                                    new Int32Decoder()),
-                                new TCOLDESCDecoder(
-                                    new Int32Decoder()))),
-                        PSTServiceFactory.CreateRowMatrixReader<NID>(
-                            new NIDDecoder(
-                                new Int32Decoder())),
+                                new HIDDecoder(),
+                                new TCOLDESCDecoder())),
+                        PSTServiceFactory.CreateRowMatrixReader(
+                            new NIDDecoder()),
                         PSTServiceFactory.CreatePCBasedPropertyReader(),
                         new DictionaryBasedMapper<NID, LNBTEntry>(nodeBTree),
                         new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree),

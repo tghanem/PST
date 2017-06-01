@@ -7,13 +7,10 @@ namespace pst.impl.decoders.ltp.bth
 {
     class BTHHEADERDecoder : IDecoder<BTHHEADER>
     {
-        private readonly IDecoder<int> int32Decoder;
-
         private readonly IDecoder<HID> hidDecoder;
 
-        public BTHHEADERDecoder(IDecoder<int> int32Decoder, IDecoder<HID> hidDecoder)
+        public BTHHEADERDecoder(IDecoder<HID> hidDecoder)
         {
-            this.int32Decoder = int32Decoder;
             this.hidDecoder = hidDecoder;
         }
 
@@ -23,10 +20,10 @@ namespace pst.impl.decoders.ltp.bth
 
             return
                 new BTHHEADER(
-                    parser.TakeAndSkip(1, int32Decoder),
-                    parser.TakeAndSkip(1, int32Decoder),
-                    parser.TakeAndSkip(1, int32Decoder),
-                    parser.TakeAndSkip(1, int32Decoder),
+                    parser.TakeAndSkip(1).ToInt32(),
+                    parser.TakeAndSkip(1).ToInt32(),
+                    parser.TakeAndSkip(1).ToInt32(),
+                    parser.TakeAndSkip(1).ToInt32(),
                     parser.TakeAndSkip(4, hidDecoder));
         }
     }

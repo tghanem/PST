@@ -7,13 +7,10 @@ namespace pst.impl.decoders.ndb.blocks.data
 {
     class InternalDataBlockDecoder : IDecoder<InternalDataBlock>
     {
-        private readonly IDecoder<int> int32Decoder;
-
         private readonly IDecoder<BlockTrailer> trailerDecoder;
 
-        public InternalDataBlockDecoder(IDecoder<int> int32Decoder, IDecoder<BlockTrailer> trailerDecoder)
+        public InternalDataBlockDecoder(IDecoder<BlockTrailer> trailerDecoder)
         {
-            this.int32Decoder = int32Decoder;
             this.trailerDecoder = trailerDecoder;
         }
 
@@ -21,10 +18,10 @@ namespace pst.impl.decoders.ndb.blocks.data
         {
             var parser = BinaryDataParser.OfValue(encodedData);
 
-            var blockType = parser.TakeAndSkip(1, int32Decoder);
-            var blockLevel = parser.TakeAndSkip(1, int32Decoder);
-            var numberOfEntries = parser.TakeAndSkip(2, int32Decoder);
-            var totalByteCount = parser.TakeAndSkip(4, int32Decoder);
+            var blockType = parser.TakeAndSkip(1).ToInt32();
+            var blockLevel = parser.TakeAndSkip(1).ToInt32();
+            var numberOfEntries = parser.TakeAndSkip(2).ToInt32();
+            var totalByteCount = parser.TakeAndSkip(4).ToInt32();
             var entries = parser.TakeAndSkip(numberOfEntries * 8);
             var padding = BinaryData.Empty();
 

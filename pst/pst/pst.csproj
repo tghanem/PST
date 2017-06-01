@@ -98,7 +98,6 @@
     <Compile Include="impl\decoders\ndb\blocks\subnode\SubnodeBlockDecoder.cs" />
     <Compile Include="impl\decoders\ndb\HeaderDecoder.cs" />
     <Compile Include="impl\decoders\ndb\RootDecoder.cs" />
-    <Compile Include="impl\decoders\primitives\Int64Decoder.cs" />
     <Compile Include="impl\encoders\ndb\blocks\BlockTrailerEncoder.cs" />
     <Compile Include="impl\encoders\ndb\RootEncoder.cs" />
     <Compile Include="impl\encoders\primitives\Int64Encoder.cs" />
@@ -109,7 +108,6 @@
     <Compile Include="impl\decoders\ndb\btree\IBBTEntryDecoder.cs" />
     <Compile Include="impl\decoders\ndb\btree\INBTEntryDecoder.cs" />
     <Compile Include="impl\decoders\ndb\btree\PageTrailerDecoder.cs" />
-    <Compile Include="impl\decoders\primitives\Int32Decoder.cs" />
     <Compile Include="impl\decoders\ndb\btree\LBBTEntryDecoder.cs" />
     <Compile Include="impl\decoders\ndb\btree\LNBTEntryDecoder.cs" />
     <Compile Include="impl\decoders\ndb\NIDDecoder.cs" />

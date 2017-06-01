@@ -41,10 +41,23 @@ namespace pst.utilities
         {
             if (Value.Length < 4)
             {
-                return BitConverter.ToInt32(Pad(4 - Value.Length).Value, 0);
-            }
+                var paddedData = Pad(4 - Value.Length);
 
-            return BitConverter.ToInt32(Value, 0);            
+                return BitConverter.ToInt32(paddedData.Value, 0);
+            }
+            else if (Value.Length == 4)
+            {
+                return BitConverter.ToInt32(Value, 0);
+            }
+            else
+            {
+                throw new InvalidOperationException("Invalid data length");
+            }
+        }
+
+        public long ToInt64()
+        {
+            return BitConverter.ToInt64(Value, 0);
         }
 
         public BinaryData[] Slice(int itemLength)

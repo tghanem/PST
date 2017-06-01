@@ -8,13 +8,6 @@ namespace pst.impl.ltp.hn
 {
     class HeapOnNodeItemsLoader : IHeapOnNodeItemsLoader
     {
-        private readonly IDecoder<int> int32Decoder;
-
-        public HeapOnNodeItemsLoader(IDecoder<int> int32Decoder)
-        {
-            this.int32Decoder = int32Decoder;
-        }
-
         public IDictionary<HID, BinaryData> Load(int pageIndex, HNPAGEMAP pageMap, BinaryData pageData)
         {
             var items = new Dictionary<HID, BinaryData>();
@@ -45,7 +38,7 @@ namespace pst.impl.ltp.hn
             {
                 var offset = pageMap.AllocationTable.TakeAt(i * 2, 2);
 
-                offsets.Add(int32Decoder.Decode(offset));
+                offsets.Add(offset.ToInt32());
             }
 
             return offsets.ToArray();

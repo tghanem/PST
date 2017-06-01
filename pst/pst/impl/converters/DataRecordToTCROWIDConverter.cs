@@ -8,14 +8,11 @@ namespace pst.impl.converters
     class DataRecordToTCROWIDConverter : IConverter<DataRecord, TCROWID>
     {
         private readonly IDecoder<NID> nidDecoder;
-        private readonly IDecoder<int> int32Decoder;
 
         public DataRecordToTCROWIDConverter(
-            IDecoder<NID> nidDecoder,
-            IDecoder<int> int32Decoder)
+            IDecoder<NID> nidDecoder)
         {
             this.nidDecoder = nidDecoder;
-            this.int32Decoder = int32Decoder;
         }
 
         public TCROWID Convert(DataRecord parameter)
@@ -23,7 +20,7 @@ namespace pst.impl.converters
             return
                 new TCROWID(
                     nidDecoder.Decode(parameter.Key),
-                    int32Decoder.Decode(parameter.Data));
+                    parameter.Data.ToInt32());
         }
     }
 }

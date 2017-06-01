@@ -9,12 +9,9 @@ namespace pst.impl.decoders.ndb
     {
         private readonly IDecoder<BREF> brefDecoder;
 
-        private readonly IDecoder<int> int32Decoder;
-
-        public LBBTEntryDecoder(IDecoder<BREF> brefDecoder, IDecoder<int> int32Decoder)
+        public LBBTEntryDecoder(IDecoder<BREF> brefDecoder)
         {
             this.brefDecoder = brefDecoder;
-            this.int32Decoder = int32Decoder;
         }
 
         public LBBTEntry Decode(BinaryData encodedData)
@@ -24,8 +21,8 @@ namespace pst.impl.decoders.ndb
             return
                 new LBBTEntry(
                     parser.TakeAndSkip(16, brefDecoder),
-                    parser.TakeAndSkip(2, int32Decoder),
-                    parser.TakeAndSkip(2, int32Decoder),
+                    parser.TakeAndSkip(2).ToInt32(),
+                    parser.TakeAndSkip(2).ToInt32(),
                     parser.TakeAndSkip(4));
         }
     }
