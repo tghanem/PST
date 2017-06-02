@@ -1,7 +1,6 @@
 ﻿using pst.core;
 using pst.encodables.ltp.bth;
 using pst.encodables.ltp.hn;
-using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.interfaces;
 using pst.interfaces.io;
@@ -13,8 +12,7 @@ using System.Collections.Generic;
 
 namespace pst.impl.ltp.bth
 {
-    class BTreeOnHeapReader<TKey>
-        : IBTreeOnHeapReader<TKey> where TKey : IComparable<TKey>
+    class BTreeOnHeapReader<TKey> : IBTreeOnHeapReader<TKey> where TKey : IComparable<TKey>
     {
         private readonly IHeapOnNodeReader heapOnNodeReader;
         private readonly IDecoder<BTHHEADER> bthHeaderDecoder;
@@ -36,41 +34,25 @@ namespace pst.impl.ltp.bth
             this.dataBlockReader = dataBlockReader;
         }
 
-        public Maybe<DataRecord> ReadDataRecord(
-            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
-            LBBTEntry blockEntry,
-            TKey key)
+        public Maybe<DataRecord> ReadDataRecord(LBBTEntry blockEntry, TKey key)
         {
-            var hnHeader =
-                heapOnNodeReader
-                .GetHeapOnNodeHeader(blockIdToEntryMapping, blockEntry);
+            var hnHeader = heapOnNodeReader.GetHeapOnNodeHeader(blockEntry);
 
-            return
-                ReadDataRecord(
-                    blockIdToEntryMapping,
-                    blockEntry,
-                    hnHeader.UserRoot,
-                    key);
+            return ReadDataRecord(blockEntry, hnHeader.UserRoot, key);
         }
 
-        public Maybe<DataRecord> ReadDataRecord(
-            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
-            LBBTEntry blockEntry,
-            HID userRoot,
-            TKey key)
+        public Maybe<DataRecord> ReadDataRecord(LBBTEntry blockEntry, HID userRoot, TKey key)
         {
+            var userRootHeapItem = heapOnNodeReader.GetHeapItem(blockEntry, userRoot);
+
             var bthHeader =
-                bthHeaderDecoder
-                .Decode(
-                    heapOnNodeReader
-                    .GetHeapItem(blockIdToEntryMapping, blockEntry, userRoot));
+                bthHeaderDecoder.Decode(userRootHeapItem);
 
             if (bthHeader.Root.Value == 0)
                 return Maybe<DataRecord>.NoValue();
 
             return
                 FindDataRecord(
-                    blockIdToEntryMapping,
                     blockEntry,
                     bthHeader.Root,
                     key,
@@ -79,10 +61,7 @@ namespace pst.impl.ltp.bth
                     bthHeader.IndexDepth);
         }
 
-        public DataRecord[] ReadAllDataRecords(
-            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
-            LBBTEntry blockEntry,
-            Maybe<HID> userRoot)
+        public DataRecord[] ReadAllDataRecords(LBBTEntry blockEntry, Maybe<HID> userRoot)
         {
             var bthHeader = (BTHHEADER)null;
 
@@ -90,17 +69,16 @@ namespace pst.impl.ltp.bth
             {
                 bthHeader =
                     bthHeaderDecoder
-                    .Decode(heapOnNodeReader.GetHeapItem(blockIdToEntryMapping, blockEntry, userRoot.Value));
+                    .Decode(heapOnNodeReader.GetHeapItem(blockEntry, userRoot.Value));
             }
             else
             {
                 var hnHeader =
-                    heapOnNodeReader
-                    .GetHeapOnNodeHeader(blockIdToEntryMapping, blockEntry);
+                    heapOnNodeReader.GetHeapOnNodeHeader(blockEntry);
 
                 bthHeader =
                     bthHeaderDecoder
-                    .Decode(heapOnNodeReader.GetHeapItem(blockIdToEntryMapping, blockEntry, hnHeader.UserRoot));
+                    .Decode(heapOnNodeReader.GetHeapItem(blockEntry, hnHeader.UserRoot));
             }
 
             if (bthHeader.Root.Value == 0)
@@ -109,7 +87,6 @@ namespace pst.impl.ltp.bth
             var dataRecords = new List<DataRecord>();
 
             Enumerate(
-                blockIdToEntryMapping,
                 blockEntry,
                 bthHeader.Root,
                 bthHeader.Key,
@@ -121,7 +98,6 @@ namespace pst.impl.ltp.bth
         }
 
         public void Enumerate(
-            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             LBBTEntry blockEntry,
             HID nodeId,
             int keySize,
@@ -130,8 +106,7 @@ namespace pst.impl.ltp.bth
             List<DataRecord> dataRecords)
         {
             var node =
-                heapOnNodeReader
-                .GetHeapItem(blockIdToEntryMapping, blockEntry, nodeId);
+                heapOnNodeReader.GetHeapItem(blockEntry, nodeId);
 
             if (currentDepth > 0)
             {
@@ -145,7 +120,6 @@ namespace pst.impl.ltp.bth
                     var hid = parser.TakeAndSkip(4, hidDecoder);
 
                     Enumerate(
-                        blockIdToEntryMapping,
                         blockEntry,
                         hid,
                         keySize,
@@ -171,7 +145,6 @@ namespace pst.impl.ltp.bth
         }
 
         private Maybe<DataRecord> FindDataRecord(
-            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             LBBTEntry blockEntry,
             HID nodeId,
             TKey keyToFind,
@@ -180,8 +153,7 @@ namespace pst.impl.ltp.bth
             int currentDepth)
         {
             var node =
-                heapOnNodeReader
-                .GetHeapItem(blockIdToEntryMapping, blockEntry, nodeId);
+                heapOnNodeReader.GetHeapItem(blockEntry, nodeId);
 
             if (currentDepth > 0)
             {
@@ -200,7 +172,6 @@ namespace pst.impl.ltp.bth
                     {
                         return
                             FindDataRecord(
-                                blockIdToEntryMapping,
                                 blockEntry,
                                 nodeId,
                                 keyToFind,
@@ -216,7 +187,6 @@ namespace pst.impl.ltp.bth
                 {
                     return
                         FindDataRecord(
-                            blockIdToEntryMapping,
                             blockEntry,
                             nodeId,
                             keyToFind,

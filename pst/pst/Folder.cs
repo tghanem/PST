@@ -44,7 +44,7 @@ namespace pst
                 blockIdToLBBTEntryMapping.Map(lnbtEntryForHierarchyTable.DataBlockId);
 
             var rowIds =
-                rowIndexReader.GetAllRowIds(blockIdToLBBTEntryMapping, bbtEntry);
+                rowIndexReader.GetAllRowIds(bbtEntry);
 
             return
                 rowIds
@@ -69,12 +69,11 @@ namespace pst
                         new PropertyId(0x3001),
                         new PropertyType(0x001F));
 
+                var lBBTEntry =
+                    blockIdToLBBTEntryMapping.Map(nodeIdToLNBTEntryMapping.Map(nodeId).DataBlockId);
+
                 var propertyValue =
-                    pcBasedPropertyReader
-                    .ReadProperty(
-                        blockIdToLBBTEntryMapping,
-                        blockIdToLBBTEntryMapping.Map(nodeIdToLNBTEntryMapping.Map(nodeId).DataBlockId),
-                        propertyTag);
+                    pcBasedPropertyReader.ReadProperty(lBBTEntry, propertyTag);
 
                 return Encoding.Unicode.GetString(propertyValue.Value.Value.Value);
             }

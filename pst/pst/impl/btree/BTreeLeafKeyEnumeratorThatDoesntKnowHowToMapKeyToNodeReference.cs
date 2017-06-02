@@ -1,7 +1,7 @@
-﻿using pst.interfaces.btree;
-using System.Collections.Generic;
+﻿using pst.interfaces;
+using pst.interfaces.btree;
 using pst.interfaces.io;
-using pst.interfaces;
+using System.Collections.Generic;
 
 namespace pst.impl.btree
 {
@@ -16,6 +16,7 @@ namespace pst.impl.btree
         private readonly IExtractor<TNode, int> nodeLevelFromNodeExtractor;
         private readonly IBTreeNodeLoader<TNode, TNodeReference> nodeLoader;
 
+        private readonly IMapper<TIntermediateKey, TNodeReference> keyToNodeReferenceMapping;
         private readonly IDataBlockReader<TNodeReference> dataBlockReader;
 
         public BTreeLeafKeyEnumeratorThatDoesntKnowHowToMapKeyToNodeReference(
@@ -23,54 +24,42 @@ namespace pst.impl.btree
             IExtractor<TNode, TLeafKey[]> leafKeysExtractor,
             IExtractor<TNode, int> nodeLevelFromNodeExtractor,
             IBTreeNodeLoader<TNode, TNodeReference> nodeLoader,
+            IMapper<TIntermediateKey, TNodeReference> keyToNodeReferenceMapping,
             IDataBlockReader<TNodeReference> dataBlockReader)
         {
             this.intermediateKeysExtractor = intermediateKeysExtractor;
             this.leafKeysExtractor = leafKeysExtractor;
             this.nodeLevelFromNodeExtractor = nodeLevelFromNodeExtractor;
             this.nodeLoader = nodeLoader;
+            this.keyToNodeReferenceMapping = keyToNodeReferenceMapping;
             this.dataBlockReader = dataBlockReader;
         }
 
-        public TLeafKey[] Enumerate(
-            IMapper<TIntermediateKey, TNodeReference> keyToNodeReferenceMapping,
-            TNodeReference rootNodeReference)
+        public TLeafKey[] Enumerate(TNodeReference rootNodeReference)
         {
             var leafKeys = new List<TLeafKey>();
 
-            EnumerateAndAdd(
-                keyToNodeReferenceMapping,
-                rootNodeReference,
-                leafKeys);
+            EnumerateAndAdd(rootNodeReference, leafKeys);
 
             return leafKeys.ToArray();
         }
 
-        private void EnumerateAndAdd(
-            IMapper<TIntermediateKey, TNodeReference> keyToNodeReferenceMapping,
-            TNodeReference nodeReference,
-            List<TLeafKey> leafKeys)
+        private void EnumerateAndAdd(TNodeReference nodeReference, List<TLeafKey> leafKeys)
         {
-            var node =
-                nodeLoader.LoadNode(nodeReference);
+            var node = nodeLoader.LoadNode(nodeReference);
 
             if (nodeLevelFromNodeExtractor.Extract(node) > 0)
             {
-                var intermediateKeys =
-                    intermediateKeysExtractor.Extract(node);
+                var intermediateKeys = intermediateKeysExtractor.Extract(node);
 
                 foreach (var key in intermediateKeys)
                 {
-                    EnumerateAndAdd(
-                        keyToNodeReferenceMapping,
-                        keyToNodeReferenceMapping.Map(key),
-                        leafKeys);
+                    EnumerateAndAdd(keyToNodeReferenceMapping.Map(key), leafKeys);
                 }
             }
             else
             {
-                leafKeys.AddRange(
-                    leafKeysExtractor.Extract(node));
+                leafKeys.AddRange(leafKeysExtractor.Extract(node));
             }
         }
     }

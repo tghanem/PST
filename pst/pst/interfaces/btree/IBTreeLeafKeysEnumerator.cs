@@ -1,6 +1,4 @@
-﻿using pst.interfaces.io;
-
-namespace pst.interfaces.btree
+﻿namespace pst.interfaces.btree
 {
     interface IBTreeLeafKeysEnumerator<TKey, TNodeReference>
         where TNodeReference : class
@@ -14,6 +12,6 @@ namespace pst.interfaces.btree
         where TNodeReference : class
         where TLeafKey : class
     {
-        TLeafKey[] Enumerate(IMapper<TIntermediateKey, TNodeReference> keyToNodeReferenceMapping, TNodeReference rootNodeReference);
+        TLeafKey[] Enumerate(TNodeReference rootNodeReference);
     }
 }

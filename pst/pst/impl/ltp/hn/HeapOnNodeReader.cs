@@ -9,8 +9,7 @@ using pst.utilities;
 
 namespace pst.impl.ltp.hn
 {
-    class HeapOnNodeReader
-        : IHeapOnNodeReader
+    class HeapOnNodeReader : IHeapOnNodeReader
     {
         private readonly IDecoder<HNHDR> hnHDRDecoder;
         private readonly IDecoder<HNPAGEHDR> hnPageHDRDecoder;
@@ -19,6 +18,8 @@ namespace pst.impl.ltp.hn
         private readonly IDecoder<HNBITMAPHDR> hnBitmapHDRDecoder;
         private readonly IHeapOnNodeItemsLoader heapOnNodeItemsLoader;
         private readonly IDataTreeLeafNodesEnumerator externalDataBlockIdsLoader;
+
+        private readonly IMapper<BID, LBBTEntry> blockIdToEntryMapping;
         private readonly IDataBlockReader<LBBTEntry> dataBlockReader;
 
         public HeapOnNodeReader(
@@ -29,6 +30,7 @@ namespace pst.impl.ltp.hn
             IDecoder<HNBITMAPHDR> hnBitmapHDRDecoder,
             IHeapOnNodeItemsLoader heapOnNodeItemsLoader,
             IDataTreeLeafNodesEnumerator externalDataBlockIdsLoader,
+            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             IDataBlockReader<LBBTEntry> dataBlockReader)
         {
             this.hnHDRDecoder = hnHDRDecoder;
@@ -38,26 +40,22 @@ namespace pst.impl.ltp.hn
             this.hnBitmapHDRDecoder = hnBitmapHDRDecoder;
             this.heapOnNodeItemsLoader = heapOnNodeItemsLoader;
             this.externalDataBlockIdsLoader = externalDataBlockIdsLoader;
+            this.blockIdToEntryMapping = blockIdToEntryMapping;
             this.dataBlockReader = dataBlockReader;
         }
 
-        public HNHDR GetHeapOnNodeHeader(
-            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
-            LBBTEntry blockEntry)
+        public HNHDR GetHeapOnNodeHeader(LBBTEntry blockEntry)
         {
             var externalBlock =
-                ReadExternalDataBlock(blockIdToEntryMapping, blockEntry, 0);
+                ReadExternalDataBlock(blockEntry, 0);
 
             return hnHDRDecoder.Decode(externalBlock.Take(12));
         }
 
-        public BinaryData GetHeapItem(
-            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
-            LBBTEntry blockEntry,
-            HID hid)
+        public BinaryData GetHeapItem(LBBTEntry blockEntry, HID hid)
         {
             var externalBlock =
-                ReadExternalDataBlock(blockIdToEntryMapping, blockEntry, hid.BlockIndex);
+                ReadExternalDataBlock(blockEntry, hid.BlockIndex);
 
             var parser = BinaryDataParser.OfValue(externalBlock);
 
@@ -91,22 +89,16 @@ namespace pst.impl.ltp.hn
             return items[hid];
         }
 
-        private BinaryData ReadExternalDataBlock(
-            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
-            LBBTEntry blockEntry,
-            int blockIndex)
+        private BinaryData ReadExternalDataBlock(LBBTEntry blockEntry, int blockIndex)
         {
             var externalDataBlockIds =
-                externalDataBlockIdsLoader
-                .Enumerate(blockIdToEntryMapping, blockEntry);
+                externalDataBlockIdsLoader.Enumerate(blockEntry);
 
             var externalBlockLbbtEntry =
-                blockIdToEntryMapping
-                .Map(externalDataBlockIds[blockIndex]);
+                blockIdToEntryMapping.Map(externalDataBlockIds[blockIndex]);
 
             var externalDataBlock =
-                dataBlockReader
-                .Read(externalBlockLbbtEntry, externalBlockLbbtEntry.GetBlockSize());
+                dataBlockReader.Read(externalBlockLbbtEntry, externalBlockLbbtEntry.GetBlockSize());
 
             return blockDataDecoder.Decode(externalDataBlock);
         }
@@ -117,10 +109,7 @@ namespace pst.impl.ltp.hn
 
             return
                 parser
-                .TakeAtWithoutChangingStreamPosition(
-                    pageMapOffset,
-                    block.Length - pageMapOffset,
-                    hnPageMapDecoder);
+                .TakeAtWithoutChangingStreamPosition(pageMapOffset, block.Length - pageMapOffset, hnPageMapDecoder);
         }
     }
 }

@@ -45,8 +45,7 @@ namespace pst
                         new PropertyType(0x001F));
 
                 var propertyValue =
-                    pcBasedPropertyReader
-                    .ReadProperty(blockIdToLBBTEntryMapping, bbtEntry, propertyTag);
+                    pcBasedPropertyReader.ReadProperty(bbtEntry, propertyTag);
 
                 return Encoding.Unicode.GetString(propertyValue.Value.Value.Value);
             }

@@ -5,8 +5,6 @@ namespace pst.interfaces.ndb
 {
     interface IDataTreeLeafNodesEnumerator
     {
-        BID[] Enumerate(
-            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
-            LBBTEntry blockEntry);
+        BID[] Enumerate(LBBTEntry blockEntry);
     }
 }

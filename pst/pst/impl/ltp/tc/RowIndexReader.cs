@@ -13,8 +13,7 @@ using System.Linq;
 
 namespace pst.impl.ltp.tc
 {
-    class RowIndexReader<TRowId>
-        : IRowIndexReader<TRowId> where TRowId : IComparable<TRowId>
+    class RowIndexReader<TRowId> : IRowIndexReader<TRowId> where TRowId : IComparable<TRowId>
     {
         private readonly IConverter<DataRecord, TCROWID> dataRecordToTCROWIDConverter;
         private readonly IBTreeOnHeapReader<TRowId> bthReader;
@@ -36,23 +35,18 @@ namespace pst.impl.ltp.tc
             this.dataBlockReader = dataBlockReader;
         }
 
-        public Maybe<TCROWID> GetRowId(
-            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
-            LBBTEntry blockEntry,
-            TRowId rowId)
+        public Maybe<TCROWID> GetRowId(LBBTEntry blockEntry, TRowId rowId)
         {
             var hnHeader =
-                heapOnNodeReader
-                .GetHeapOnNodeHeader(blockIdToEntryMapping, blockEntry);
+                heapOnNodeReader.GetHeapOnNodeHeader(blockEntry);
+
+            var heapItem = heapOnNodeReader.GetHeapItem(blockEntry, hnHeader.UserRoot);
 
             var tcinfo =
-                tcinfoDecoder
-                .Decode(
-                    heapOnNodeReader
-                    .GetHeapItem(blockIdToEntryMapping, blockEntry, hnHeader.UserRoot));
+                tcinfoDecoder.Decode(heapItem);
 
             var tcRowId =
-                bthReader.ReadDataRecord(blockIdToEntryMapping, blockEntry, tcinfo.RowIndex, rowId);
+                bthReader.ReadDataRecord(blockEntry, tcinfo.RowIndex, rowId);
 
             if (tcRowId.HasNoValue)
                 return Maybe<TCROWID>.NoValue();
@@ -60,23 +54,19 @@ namespace pst.impl.ltp.tc
             return dataRecordToTCROWIDConverter.Convert(tcRowId.Value);
         }
 
-        public TCROWID[] GetAllRowIds(
-            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
-            LBBTEntry blockEntry)
+        public TCROWID[] GetAllRowIds(LBBTEntry blockEntry)
         {
             var hnHeader =
-                heapOnNodeReader
-                .GetHeapOnNodeHeader(blockIdToEntryMapping, blockEntry);
+                heapOnNodeReader.GetHeapOnNodeHeader(blockEntry);
+
+            var heapItem = heapOnNodeReader.GetHeapItem(blockEntry, hnHeader.UserRoot);
 
             var tcinfo =
-                tcinfoDecoder
-                .Decode(
-                    heapOnNodeReader
-                    .GetHeapItem(blockIdToEntryMapping, blockEntry, hnHeader.UserRoot));
+                tcinfoDecoder.Decode(heapItem);
 
             return
                 bthReader
-                .ReadAllDataRecords(blockIdToEntryMapping, blockEntry, tcinfo.RowIndex)
+                .ReadAllDataRecords(blockEntry, tcinfo.RowIndex)
                 .Select(dataRecordToTCROWIDConverter.Convert)
                 .ToArray();
         }

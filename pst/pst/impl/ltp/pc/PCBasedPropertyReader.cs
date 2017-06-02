@@ -1,6 +1,5 @@
 ﻿using pst.core;
 using pst.encodables.ltp.hn;
-using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.interfaces;
 using pst.interfaces.ltp;
@@ -11,8 +10,7 @@ using pst.utilities;
 
 namespace pst.impl.ltp.pc
 {
-    class PCBasedPropertyReader
-        : IPCBasedPropertyReader
+    class PCBasedPropertyReader : IPCBasedPropertyReader
     {
         private readonly IHeapOnNodeReader heapOnNodeReader;
         private readonly IDecoder<HNID> hnidDecoder;
@@ -31,14 +29,10 @@ namespace pst.impl.ltp.pc
             this.propertyTypeMetadataProvider = propertyTypeMetadataProvider;
         }
 
-        public Maybe<PropertyValue> ReadProperty(
-            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
-            LBBTEntry blockEntry,
-            PropertyTag propertyTag)
+        public Maybe<PropertyValue> ReadProperty(LBBTEntry blockEntry, PropertyTag propertyTag)
         {
             var dataRecord =
-                bthReader
-                .ReadDataRecord(blockIdToEntryMapping, blockEntry, propertyTag.Id);
+                bthReader.ReadDataRecord(blockEntry, propertyTag.Id);
 
             if (dataRecord.HasNoValue)
                 return Maybe<PropertyValue>.NoValue();
@@ -46,8 +40,7 @@ namespace pst.impl.ltp.pc
             if (propertyTypeMetadataProvider.IsFixedLength(propertyTag.Type))
             {
                 var size =
-                    propertyTypeMetadataProvider
-                    .GetFixedLengthTypeSize(propertyTag.Type);
+                    propertyTypeMetadataProvider.GetFixedLengthTypeSize(propertyTag.Type);
 
                 if (size <= 4)
                 {
@@ -63,13 +56,9 @@ namespace pst.impl.ltp.pc
 
                     var hnid = hnidDecoder.Decode(encodedHNID);
 
-                    return
-                        new PropertyValue(
-                            heapOnNodeReader
-                            .GetHeapItem(
-                                blockIdToEntryMapping,
-                                blockEntry,
-                                hnid.HID));
+                    var heapItem = heapOnNodeReader.GetHeapItem(blockEntry, hnid.HID);
+
+                    return new PropertyValue(heapItem);
                 }
             }
             else if (propertyTypeMetadataProvider.IsVariableLength(propertyTag.Type))
@@ -89,13 +78,9 @@ namespace pst.impl.ltp.pc
                         return Maybe<PropertyValue>.NoValue();
                     }
 
-                    return
-                        new PropertyValue(
-                            heapOnNodeReader
-                            .GetHeapItem(
-                                blockIdToEntryMapping,
-                                blockEntry,
-                                hnid.HID));
+                    var heapItem = heapOnNodeReader.GetHeapItem(blockEntry, hnid.HID);
+
+                    return new PropertyValue(heapItem);
                 }
             }
 
