@@ -71,10 +71,12 @@
     <Compile Include="encodables\ndb\btree\LNBTEntry.cs" />
     <Compile Include="encodables\ndb\NID.cs" />
     <Compile Include="encodables\ndb\btree\PageTrailer.cs" />
+    <Compile Include="encodables\EntryId.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="impl\btree\BTreeLeafKeyEnumeratorThatDoesntKnowHowToMapKeyToNodeReference.cs" />
     <Compile Include="impl\btree\BTreeLeafKeysEnumerator.cs" />
     <Compile Include="impl\converters\DataRecordToTCROWIDConverter.cs" />
+    <Compile Include="impl\decoders\EntryIdDecoder.cs" />
     <Compile Include="impl\decoders\ltp\bth\BTHHEADERDecoder.cs" />
     <Compile Include="impl\decoders\ltp\bth\DataRecordDecoder.cs" />
     <Compile Include="impl\decoders\ltp\bth\IndexRecordDecoder.cs" />
@@ -168,6 +170,7 @@
     <Compile Include="interfaces\ltp\tc\IRowValuesExtractor.cs" />
     <Compile Include="interfaces\messaging\IPropertyTypeMetadataProvider.cs" />
     <Compile Include="interfaces\ndb\IDataTreeLeafNodesEnumerator.cs" />
+    <Compile Include="MAPIProperties.cs" />
     <Compile Include="MessageStore.cs" />
     <Compile Include="PropertyId.cs" />
     <Compile Include="PropertyTag.cs" />

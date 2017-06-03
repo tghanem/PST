@@ -25,6 +25,9 @@ namespace pst.utilities
         public static BinaryData OfValue(byte[] value)
             => new BinaryData(value);
 
+        public static implicit operator byte[](BinaryData data)
+            => data.Value;
+
         public BinaryData Take(int count)
             => new BinaryData(Value.Take(count).ToArray());
 

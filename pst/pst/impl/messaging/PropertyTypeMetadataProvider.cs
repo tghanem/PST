@@ -54,7 +54,8 @@ namespace pst.impl.ltp
         {
             return
                 propertyType.Value == Globals.PtypString ||
-                propertyType.Value == Globals.PtypString8;
+                propertyType.Value == Globals.PtypString8 ||
+                propertyType.Value == Globals.PtypBinary;
         }
     }
 }

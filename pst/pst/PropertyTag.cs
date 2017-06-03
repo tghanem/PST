@@ -8,7 +8,7 @@ namespace pst
 
         public PropertyType Type { get; }
 
-        public int Value => (Id.Value << 32) | Type.Value;
+        public int Value => (Id.Value << 16) | Type.Value;
 
         public PropertyTag(PropertyId id, PropertyType type)
         {

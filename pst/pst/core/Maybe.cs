@@ -1,6 +1,6 @@
 ﻿namespace pst.core
 {
-    struct Maybe<T> where T : class
+    public struct Maybe<T> where T : class
     {
         public T Value {get; }
 

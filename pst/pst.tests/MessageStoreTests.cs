@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using pst.tests.Properties;
 using System.IO;
-using System.Linq;
+using System.Text;
 
 namespace pst.tests
 {
@@ -9,29 +9,68 @@ namespace pst.tests
     public class MessageStoreTests
     {
         [Test]
-        public void ShouldCorrectlyReadThePSTDisplayName()
+        public void ForMessageStore_ShouldFindProperty_PidTagRecordKey()
         {
             //Arrange
             var sut = PSTFile.Open(new MemoryStream(Resources.PST));
 
             //Act
-            var store = sut.MessageStore;
+            var result = sut.MessageStore.GetProperty(MAPIProperties.PidTagRecordKey);
 
             //Assert
-            Assert.AreEqual("Test", store.DisplayName);
+            Assert.IsTrue(result.HasValue);
         }
 
         [Test]
-        public void ShouldDetectInboxFolder()
+        public void ForMessageStore_ShouldFindProperty_PidTagDisplayName()
         {
             //Arrange
             var sut = PSTFile.Open(new MemoryStream(Resources.PST));
 
             //Act
-            var topOfPSTDataFile = sut.RootFolder.GetSubFolders().First(f => f.DisplayName == "Top of Outlook data file");
+            var result = sut.MessageStore.GetProperty(MAPIProperties.PidTagDisplayName);
 
             //Assert
-            Assert.IsTrue(topOfPSTDataFile.GetSubFolders().Any(f => f.DisplayName == "Inbox"));
+            Assert.AreEqual("Test", Encoding.Unicode.GetString(result.Value.Value));
+        }
+
+        [Test]
+        public void ForMessageStore_ShouldFindProperty_PidTagIpmSubTreeEntryId()
+        {
+            //Arrange
+            var sut = PSTFile.Open(new MemoryStream(Resources.PST));
+
+            //Act
+            var result = sut.MessageStore.GetProperty(MAPIProperties.PidTagIpmSubTreeEntryId);
+
+            //Assert
+            Assert.IsTrue(result.HasValue);
+        }
+
+        [Test]
+        public void ForMessageStore_ShouldFindProperty_PidTagIpmWastebasketEntryId()
+        {
+            //Arrange
+            var sut = PSTFile.Open(new MemoryStream(Resources.PST));
+
+            //Act
+            var result = sut.MessageStore.GetProperty(MAPIProperties.PidTagIpmWastebasketEntryId);
+
+            //Assert
+            Assert.IsTrue(result.HasValue);
+        }
+
+        [Test]
+        public void ForMessageStore_ShouldFindProperty_PidTagFinderEntryId()
+        {
+            //Arrange
+            var sut = PSTFile.Open(new MemoryStream(Resources.PST));
+
+            //Act
+            var result = sut.MessageStore.GetProperty(MAPIProperties.PidTagFinderEntryId);
+
+            //Assert
+            Assert.IsTrue(result.HasValue);
         }
     }
 }

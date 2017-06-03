@@ -2,6 +2,7 @@
 using pst.encodables.ndb.blocks.data;
 using pst.encodables.ndb.blocks.subnode;
 using pst.encodables.ndb.btree;
+using pst.impl;
 using pst.impl.btree;
 using pst.impl.converters;
 using pst.impl.decoders.ltp.bth;
@@ -72,7 +73,6 @@ namespace pst
             return
                 new PSTFile(
                     new MessageStore(
-                        Globals.NID_MESSAGE_STORE,
                         CreatePCBasedPropertyReader(
                             dataBlockReader,
                             new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree)),
