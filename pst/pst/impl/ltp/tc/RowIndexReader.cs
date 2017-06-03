@@ -1,7 +1,6 @@
 ﻿using pst.core;
 using pst.encodables.ltp.bth;
 using pst.encodables.ltp.tc;
-using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.interfaces;
 using pst.interfaces.io;
@@ -40,7 +39,8 @@ namespace pst.impl.ltp.tc
             var hnHeader =
                 heapOnNodeReader.GetHeapOnNodeHeader(blockEntry);
 
-            var heapItem = heapOnNodeReader.GetHeapItem(blockEntry, hnHeader.UserRoot);
+            var heapItem =
+                heapOnNodeReader.GetHeapItem(blockEntry, hnHeader.UserRoot);
 
             var tcinfo =
                 tcinfoDecoder.Decode(heapItem);
@@ -59,7 +59,8 @@ namespace pst.impl.ltp.tc
             var hnHeader =
                 heapOnNodeReader.GetHeapOnNodeHeader(blockEntry);
 
-            var heapItem = heapOnNodeReader.GetHeapItem(blockEntry, hnHeader.UserRoot);
+            var heapItem =
+                heapOnNodeReader.GetHeapItem(blockEntry, hnHeader.UserRoot);
 
             var tcinfo =
                 tcinfoDecoder.Decode(heapItem);
