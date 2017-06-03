@@ -2,7 +2,6 @@
 using pst.encodables.ndb.blocks.data;
 using pst.encodables.ndb.blocks.subnode;
 using pst.encodables.ndb.btree;
-using pst.impl;
 using pst.impl.btree;
 using pst.impl.converters;
 using pst.impl.decoders.ltp.bth;
@@ -79,30 +78,47 @@ namespace pst
                             new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree))),
                     new Folder(
                         Globals.NID_ROOT_FOLDER,
-                        new RowIndexReader<NID>(
-                            new DataRecordToTCROWIDConverter(
-                                new NIDDecoder()),
-                            CreateBTreeOnHeapReader(
-                                new NIDDecoder(),
-                                dataBlockReader,
-                                new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree)),
-                            CreateHeapOnNodeReader(
-                                dataBlockReader,
-                                new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree)),
-                            new TCINFODecoder(
-                                new HIDDecoder(),
-                                new TCOLDESCDecoder()),
-                            dataBlockReader),
-                        CreateRowMatrixReader(
-                            new NIDDecoder(),
-                            dataBlockReader,
-                            new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree)),
                         CreatePCBasedPropertyReader(
                             dataBlockReader,
                             new DictionaryBasedMapper<NID, LNBTEntry>(nodeBTree),
                             new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree)),
-                        new DictionaryBasedMapper<NID, LNBTEntry>(nodeBTree),
-                        new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree)));
+                        CreateTCReader(
+                            dataBlockReader,
+                            new DictionaryBasedMapper<NID, LNBTEntry>(nodeBTree),
+                            new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree),
+                            new NIDDecoder())));
+        }
+
+        private static TCReader<TRowId> CreateTCReader<TRowId>(
+            IDataBlockReader<LBBTEntry> dataBlockReader,
+            IMapper<NID, LNBTEntry> nidToLNBTEntryMapper,
+            IMapper<BID, LBBTEntry> bidToLBBTEntryMapper,
+            IDecoder<TRowId> rowIdDecoder)
+
+            where TRowId : IComparable<TRowId>
+        {
+            return
+                new TCReader<TRowId>(
+                    new RowIndexReader<TRowId>(
+                        new DataRecordToTCROWIDConverter(
+                            new NIDDecoder()),
+                        CreateBTreeOnHeapReader(
+                            rowIdDecoder,
+                            dataBlockReader,
+                            bidToLBBTEntryMapper),
+                        CreateHeapOnNodeReader(
+                            dataBlockReader,
+                            bidToLBBTEntryMapper),
+                        new TCINFODecoder(
+                            new HIDDecoder(),
+                            new TCOLDESCDecoder()),
+                        dataBlockReader),
+                    CreateRowMatrixReader(
+                        rowIdDecoder,
+                        dataBlockReader,
+                        bidToLBBTEntryMapper),
+                    nidToLNBTEntryMapper,
+                    bidToLBBTEntryMapper);
         }
 
         private static IPCBasedPropertyReader CreatePCBasedPropertyReader(
