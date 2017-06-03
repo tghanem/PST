@@ -73,9 +73,9 @@ namespace pst.impl.ltp.pc
 
                 if (hnid.IsHID)
                 {
-                    if (hnid.HID.Value == 0)
+                    if (hnid.HID.Index == 0)
                     {
-                        return Maybe<PropertyValue>.NoValue();
+                        return Maybe<PropertyValue>.OfValue(PropertyValue.Empty);
                     }
 
                     var heapItem = heapOnNodeReader.GetHeapItem(blockEntry, hnid.HID);

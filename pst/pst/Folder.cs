@@ -1,12 +1,11 @@
-﻿using pst.encodables.ndb;
+﻿using pst.core;
+using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.interfaces;
-using pst.interfaces.io;
 using pst.interfaces.ltp.pc;
 using pst.interfaces.ltp.tc;
 using pst.utilities;
 using System.Linq;
-using System.Text;
 
 namespace pst
 {
@@ -60,28 +59,15 @@ namespace pst
                 .ToArray();
         }
 
-        public string DisplayName
+        public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
-            get
-            {
-                var propertyTag =
-                    new PropertyTag(
-                        new PropertyId(0x3001),
-                        new PropertyType(0x001F));
+            var nbtEntry =
+                nodeIdToLNBTEntryMapping.Map(nodeId);
 
-                var lBBTEntry =
-                    blockIdToLBBTEntryMapping.Map(nodeIdToLNBTEntryMapping.Map(nodeId).DataBlockId);
+            var bbtEntry =
+                blockIdToLBBTEntryMapping.Map(nbtEntry.DataBlockId);
 
-                var propertyValue =
-                    pcBasedPropertyReader.ReadProperty(lBBTEntry, propertyTag);
-
-                return Encoding.Unicode.GetString(propertyValue.Value.Value.Value);
-            }
-        }
-
-        public override string ToString()
-        {
-            return DisplayName;
+            return pcBasedPropertyReader.ReadProperty(bbtEntry, propertyTag);
         }
     }
 }

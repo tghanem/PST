@@ -97,7 +97,7 @@ namespace pst.impl.ltp.bth
             return dataRecords.ToArray();
         }
 
-        public void Enumerate(
+        private void Enumerate(
             LBBTEntry blockEntry,
             HID nodeId,
             int keySize,
