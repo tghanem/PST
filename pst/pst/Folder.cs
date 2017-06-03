@@ -61,13 +61,7 @@ namespace pst
 
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
-            var nbtEntry =
-                nodeIdToLNBTEntryMapping.Map(nodeId);
-
-            var bbtEntry =
-                blockIdToLBBTEntryMapping.Map(nbtEntry.DataBlockId);
-
-            return pcBasedPropertyReader.ReadProperty(bbtEntry, propertyTag);
+            return pcBasedPropertyReader.ReadProperty(nodeId, propertyTag);
         }
     }
 }

@@ -75,10 +75,8 @@ namespace pst
                     new MessageStore(
                         CreatePCBasedPropertyReader(
                             dataBlockReader,
-                            new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree)),
-                        new DictionaryBasedMapper<NID, LNBTEntry>(nodeBTree),
-                        new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree),
-                        new LBBTEntryBlockReaderAdapter(streamReader)),
+                            new DictionaryBasedMapper<NID, LNBTEntry>(nodeBTree),
+                            new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree))),
                     new Folder(
                         Globals.NID_ROOT_FOLDER,
                         new RowIndexReader<NID>(
@@ -101,6 +99,7 @@ namespace pst
                             new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree)),
                         CreatePCBasedPropertyReader(
                             dataBlockReader,
+                            new DictionaryBasedMapper<NID, LNBTEntry>(nodeBTree),
                             new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree)),
                         new DictionaryBasedMapper<NID, LNBTEntry>(nodeBTree),
                         new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree)));
@@ -108,6 +107,7 @@ namespace pst
 
         private static IPCBasedPropertyReader CreatePCBasedPropertyReader(
             IDataBlockReader<LBBTEntry> dataBlockReader,
+            IMapper<NID, LNBTEntry> nidToLNBTEntryMapper,
             IMapper<BID, LBBTEntry> bidToLBBTEntryMapper)
         {
             return
@@ -122,7 +122,9 @@ namespace pst
                         new PropertyIdDecoder(),
                         dataBlockReader,
                         bidToLBBTEntryMapper),
-                    new PropertyTypeMetadataProvider());
+                    new PropertyTypeMetadataProvider(),
+                    nidToLNBTEntryMapper,
+                    bidToLBBTEntryMapper);
         }
 
         private static IDecoder<Header> CreateHeaderDecoder()

@@ -1,10 +1,10 @@
 ﻿using pst.core;
-using pst.encodables.ndb.btree;
+using pst.encodables.ndb;
 
 namespace pst.interfaces.ltp.pc
 {
     interface IPCBasedPropertyReader
     {
-        Maybe<PropertyValue> ReadProperty(LBBTEntry blockEntry, PropertyTag propertyTag);
+        Maybe<PropertyValue> ReadProperty(NID nodeId, PropertyTag propertyTag);
     }
 }
