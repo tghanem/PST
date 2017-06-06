@@ -12,7 +12,7 @@ namespace pst.tests
         public void ForMessageStore_ShouldFindProperty_PidTagRecordKey()
         {
             //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.PST));
+            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 
             //Act
             var result = sut.MessageStore.GetProperty(MAPIProperties.PidTagRecordKey);
@@ -25,20 +25,20 @@ namespace pst.tests
         public void ForMessageStore_ShouldFindProperty_PidTagDisplayName()
         {
             //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.PST));
+            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 
             //Act
             var result = sut.MessageStore.GetProperty(MAPIProperties.PidTagDisplayName);
 
             //Assert
-            Assert.AreEqual("Test", Encoding.Unicode.GetString(result.Value.Value));
+            Assert.AreEqual("user1@test.lab", Encoding.Unicode.GetString(result.Value.Value));
         }
 
         [Test]
         public void ForMessageStore_ShouldFindProperty_PidTagIpmSubTreeEntryId()
         {
             //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.PST));
+            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 
             //Act
             var result = sut.MessageStore.GetProperty(MAPIProperties.PidTagIpmSubTreeEntryId);
@@ -51,7 +51,7 @@ namespace pst.tests
         public void ForMessageStore_ShouldFindProperty_PidTagIpmWastebasketEntryId()
         {
             //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.PST));
+            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 
             //Act
             var result = sut.MessageStore.GetProperty(MAPIProperties.PidTagIpmWastebasketEntryId);
@@ -64,7 +64,7 @@ namespace pst.tests
         public void ForMessageStore_ShouldFindProperty_PidTagFinderEntryId()
         {
             //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.PST));
+            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 
             //Act
             var result = sut.MessageStore.GetProperty(MAPIProperties.PidTagFinderEntryId);

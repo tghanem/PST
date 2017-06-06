@@ -63,9 +63,9 @@ namespace pst.tests.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] PST {
+        internal static byte[] user1_test_lab {
             get {
-                object obj = ResourceManager.GetObject("PST", resourceCulture);
+                object obj = ResourceManager.GetObject("user1_test_lab", resourceCulture);
                 return ((byte[])(obj));
             }
         }

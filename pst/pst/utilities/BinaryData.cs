@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace pst.utilities
 {
@@ -39,6 +40,11 @@ namespace pst.utilities
 
         public BinaryData Reverse()
             => new BinaryData(Value.Reverse().ToArray());
+
+        public string ToUnicode()
+        {
+            return Encoding.Unicode.GetString(Value);
+        }
 
         public int ToInt32()
         {

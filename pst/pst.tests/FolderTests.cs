@@ -11,7 +11,7 @@ namespace pst.tests
         public void ForFolder_ShouldFindProperty_PidTagDisplayName()
         {
             //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.PST));
+            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 
             //Act
             var result = sut.RootFolder.GetProperty(MAPIProperties.PidTagDisplayName);
@@ -24,7 +24,7 @@ namespace pst.tests
         public void ForFolder_ShouldFindProperty_PidTagContentCount()
         {
             //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.PST));
+            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 
             //Act
             var result = sut.RootFolder.GetProperty(MAPIProperties.PidTagContentCount);
@@ -37,7 +37,7 @@ namespace pst.tests
         public void ForFolder_ShouldFindProperty_PidTagContentUnreadCount()
         {
             //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.PST));
+            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 
             //Act
             var result = sut.RootFolder.GetProperty(MAPIProperties.PidTagContentUnreadCount);
@@ -50,7 +50,7 @@ namespace pst.tests
         public void ForFolder_ShouldFindProperty_PidTagSubfolders()
         {
             //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.PST));
+            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 
             //Act
             var result = sut.RootFolder.GetProperty(MAPIProperties.PidTagSubfolders);

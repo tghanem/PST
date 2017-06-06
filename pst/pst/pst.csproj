@@ -173,6 +173,7 @@
     <Compile Include="interfaces\messaging\IPropertyTypeMetadataProvider.cs" />
     <Compile Include="interfaces\ndb\IDataTreeLeafNodesEnumerator.cs" />
     <Compile Include="MAPIProperties.cs" />
+    <Compile Include="Message.cs" />
     <Compile Include="MessageStore.cs" />
     <Compile Include="PropertyId.cs" />
     <Compile Include="PropertyTag.cs" />

@@ -11,29 +11,43 @@ namespace pst
     {
         private readonly NID nodeId;
         private readonly IPCBasedPropertyReader pcBasedPropertyReader;
-        private readonly ITCReader<NID> hierarchyTableReader;
+        private readonly ITCReader<NID> tableContextReader;
 
         internal Folder(
             NID nodeId,
             IPCBasedPropertyReader pcBasedPropertyReader,
-            ITCReader<NID> hierarchyTableReader)
+            ITCReader<NID> tableContextReader)
         {
             this.nodeId = nodeId;
             this.pcBasedPropertyReader = pcBasedPropertyReader;
-            this.hierarchyTableReader = hierarchyTableReader;
+            this.tableContextReader = tableContextReader;
         }
 
         public Folder[] GetSubFolders()
         {
             var rowIds =
-                hierarchyTableReader.GetAllRowIds(
+                tableContextReader.GetAllRowIds(
                     nodeId.ChangeType(Globals.NID_TYPE_HIERARCHY_TABLE));
 
             return
                 rowIds
                 .Select(
                     r =>
-                    new Folder(r.RowId, pcBasedPropertyReader, hierarchyTableReader))
+                    new Folder(r.RowId, pcBasedPropertyReader, tableContextReader))
+                .ToArray();
+        }
+
+        public Message[] GetMessages()
+        {
+            var rowIds =
+                tableContextReader.GetAllRowIds(
+                    nodeId.ChangeType(Globals.NID_TYPE_CONTENTS_TABLE));
+
+            return
+                rowIds
+                .Select(
+                    r =>
+                    new Message(r.RowId, pcBasedPropertyReader))
                 .ToArray();
         }
 
