@@ -8,7 +8,6 @@ namespace pst.impl.decoders.ndb.blocks.subnode
     class SLEntryDecoder : IDecoder<SLEntry>
     {
         private readonly IDecoder<NID> nidDecoder;
-
         private readonly IDecoder<BID> bidDecoder;
 
         public SLEntryDecoder(IDecoder<NID> nidDecoder, IDecoder<BID> bidDecoder)
@@ -21,11 +20,17 @@ namespace pst.impl.decoders.ndb.blocks.subnode
         {
             var parser = BinaryDataParser.OfValue(encodedData);
 
+            var localNID = parser.TakeAndSkip(8);
+
+            var subnodeBID = parser.TakeAndSkip(8);
+
+            var subnodeNID = parser.TakeAndSkip(8);
+
             return
                 new SLEntry(
-                    parser.TakeAndSkip(8, nidDecoder),
-                    parser.TakeAndSkip(8, bidDecoder),
-                    parser.TakeAndSkip(8, nidDecoder));
+                    nidDecoder.Decode(localNID.Take(4)),
+                    bidDecoder.Decode(subnodeBID),
+                    bidDecoder.Decode(subnodeNID));
         }
     }
 }

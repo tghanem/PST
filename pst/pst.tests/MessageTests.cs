@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using pst.tests.Properties;
 using System.IO;
+using System.Text;
 
 namespace pst.tests
 {
@@ -47,16 +48,18 @@ namespace pst.tests
         }
 
         [Test]
-        public void ForMessage_ShouldFindProperty_PidTagMessageStatus()
+        public void ForMessage_ShouldCorrectlyReadProperty_PidTagEmailAddress()
         {
             //Arrange
             var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 
             //Act
-            var result = sut.GetRootMailboxFolder().GetMessages()[0].GetProperty(MAPIProperties.PidTagMessageStatus);
+            var result = sut.GetRootMailboxFolder().GetMessages()[0];
 
             //Assert
-            Assert.IsTrue(result.HasValue);
+            var emailAddressPropertyValue = result.Recipients[0].GetProperty(MAPIProperties.PidTagEmailAddress).Value;
+
+            Assert.AreEqual("user1@test.lab", Encoding.Unicode.GetString(emailAddressPropertyValue.Value));
         }
 
         [Test]

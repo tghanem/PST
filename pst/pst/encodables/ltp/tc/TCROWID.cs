@@ -1,16 +1,16 @@
-﻿using pst.encodables.ndb;
+﻿using pst.utilities;
 
 namespace pst.encodables.ltp.tc
 {
     class TCROWID
     {
         ///4
-        public NID RowId { get; }
+        public BinaryData RowId { get; }
 
         ///4
         public int RowIndex { get; }
 
-        public TCROWID(NID rowId, int rowIndex)
+        public TCROWID(BinaryData rowId, int rowIndex)
         {
             RowId = rowId;
             RowIndex = rowIndex;

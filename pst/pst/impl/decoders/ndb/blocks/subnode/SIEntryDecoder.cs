@@ -21,9 +21,11 @@ namespace pst.impl.decoders.ndb.blocks.subnode
         {
             var parser = BinaryDataParser.OfValue(encodedData);
 
+            var nodeId = parser.TakeAndSkip(8);
+
             return
                 new SIEntry(
-                    parser.TakeAndSkip(8, nidDecoder),
+                    nidDecoder.Decode(nodeId.Take(4)),
                     parser.TakeAndSkip(8, bidDecoder));
         }
     }

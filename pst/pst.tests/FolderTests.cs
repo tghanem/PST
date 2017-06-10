@@ -14,7 +14,7 @@ namespace pst.tests
             var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 
             //Act
-            var result = sut.RootFolder.GetProperty(MAPIProperties.PidTagDisplayName);
+            var result = sut.GetRootMailboxFolder().GetProperty(MAPIProperties.PidTagDisplayName);
 
             //Assert
             Assert.IsTrue(result.HasValue);
@@ -27,7 +27,7 @@ namespace pst.tests
             var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 
             //Act
-            var result = sut.RootFolder.GetProperty(MAPIProperties.PidTagContentCount);
+            var result = sut.GetRootMailboxFolder().GetProperty(MAPIProperties.PidTagContentCount);
 
             //Assert
             Assert.IsTrue(result.HasValue);
@@ -40,7 +40,7 @@ namespace pst.tests
             var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 
             //Act
-            var result = sut.RootFolder.GetProperty(MAPIProperties.PidTagContentUnreadCount);
+            var result = sut.GetRootMailboxFolder().GetProperty(MAPIProperties.PidTagContentUnreadCount);
 
             //Assert
             Assert.IsTrue(result.HasValue);
@@ -53,7 +53,7 @@ namespace pst.tests
             var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 
             //Act
-            var result = sut.RootFolder.GetProperty(MAPIProperties.PidTagSubfolders);
+            var result = sut.GetRootMailboxFolder().GetProperty(MAPIProperties.PidTagSubfolders);
 
             //Assert
             Assert.IsTrue(result.HasValue);

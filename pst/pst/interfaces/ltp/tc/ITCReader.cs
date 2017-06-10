@@ -6,8 +6,12 @@ namespace pst.interfaces.ltp.tc
 {
     interface ITCReader<TRowId>
     {
-        Maybe<TableRow> GetRow(NID nodeId, TRowId rowId);
+        TCROWID[] GetAllRowIds(BID nodeBlockId);
 
-        TCROWID[] GetAllRowIds(NID nodeId);
+        TableRow[] GetAllRows(BID nodeBlockId, BID subnodeBlockId);
+
+        Maybe<TableRow> GetRow(BID nodeBlockId, BID subnodeBlockId, TRowId rowId);
+
+        Maybe<PropertyValue> ReadProperty(BID nodeBlockId, BID subnodeBlockId, TRowId rowId, PropertyTag propertyTag);
     }
 }

@@ -4,6 +4,8 @@ namespace pst.encodables.ndb
 {
     class BID : IComparable<BID>, IEquatable<BID>
     {
+        public static readonly BID Zero = new BID(0);
+
         public long Value { get; }
 
         private BID(long value)

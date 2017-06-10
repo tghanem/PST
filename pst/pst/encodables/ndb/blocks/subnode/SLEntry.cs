@@ -9,13 +9,13 @@
         public BID DataBlockId { get; }
 
         ///8
-        public NID SubnodeId { get; }
+        public BID SubnodeBlockId { get; }
 
-        public SLEntry(NID localSubnodeId, BID dataBlockid, NID subnodeId)
+        public SLEntry(NID localSubnodeId, BID dataBlockid, BID subnodeDataBlockId)
         {
             LocalSubnodeId = localSubnodeId;
             DataBlockId = dataBlockid;
-            SubnodeId = subnodeId;
+            SubnodeBlockId = subnodeDataBlockId;
         }
     }
 }

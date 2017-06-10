@@ -9,6 +9,7 @@ namespace pst.utilities
 
         public static readonly int NID_TYPE_HIERARCHY_TABLE = 0x0D;
         public static readonly int NID_TYPE_CONTENTS_TABLE = 0x0E;
+        public static readonly int NID_TYPE_RECIPIENT_TABLE = 0x12;
 
         public const int NID_TYPE_HID = 0x00;
 

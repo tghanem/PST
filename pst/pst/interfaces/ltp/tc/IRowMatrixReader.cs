@@ -1,7 +1,5 @@
 ﻿using pst.core;
 using pst.encodables.ndb;
-using pst.encodables.ndb.blocks.subnode;
-using pst.encodables.ndb.btree;
 using pst.utilities;
 using System.Collections.Generic;
 
@@ -9,11 +7,11 @@ namespace pst.interfaces.ltp.tc
 {
     class TableRow
     {
-        public NID RowId { get; }
+        public BinaryData RowId { get; }
 
         public IReadOnlyDictionary<int, BinaryData> Values { get; }
 
-        public TableRow(NID rowId, IReadOnlyDictionary<int, BinaryData> values)
+        public TableRow(BinaryData rowId, IReadOnlyDictionary<int, BinaryData> values)
         {
             RowId = rowId;
             Values = values;
@@ -22,9 +20,6 @@ namespace pst.interfaces.ltp.tc
 
     interface IRowMatrixReader<TRowId>
     {
-        Maybe<TableRow> GetRow(
-            IMapper<NID, SLEntry> nidToSLEntryMapping,
-            LBBTEntry blockEntry,
-            TRowId rowId);
+        Maybe<TableRow> GetRow(BID nodeDataBlockId, BID subnodeDataBlockId, TRowId rowId);
     }
 }

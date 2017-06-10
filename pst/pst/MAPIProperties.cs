@@ -19,5 +19,7 @@
         public static readonly PropertyTag PidTagCreationTime = new PropertyTag(new PropertyId(0x3007), PropertyType.PtypTime);
         public static readonly PropertyTag PidTagLastModificationTime = new PropertyTag(new PropertyId(0x3008), PropertyType.PtypTime);
         public static readonly PropertyTag PidTagSearchKey = new PropertyTag(new PropertyId(0x300B), PropertyType.PtypBinary);
+
+        public static readonly PropertyTag PidTagEmailAddress = new PropertyTag(new PropertyId(0x3003), PropertyType.PtypString);
     }
 }

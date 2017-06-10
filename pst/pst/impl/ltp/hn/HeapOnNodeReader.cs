@@ -17,7 +17,7 @@ namespace pst.impl.ltp.hn
         private readonly IDecoder<BinaryData> blockDataDecoder;
         private readonly IDecoder<HNBITMAPHDR> hnBitmapHDRDecoder;
         private readonly IHeapOnNodeItemsLoader heapOnNodeItemsLoader;
-        private readonly IDataTreeLeafNodesEnumerator externalDataBlockIdsLoader;
+        private readonly IDataTreeLeafBIDsEnumerator externalDataBlockIdsLoader;
 
         private readonly IMapper<BID, LBBTEntry> blockIdToEntryMapping;
         private readonly IDataBlockReader<LBBTEntry> dataBlockReader;
@@ -29,7 +29,7 @@ namespace pst.impl.ltp.hn
             IDecoder<BinaryData> blockDataDecoder,
             IDecoder<HNBITMAPHDR> hnBitmapHDRDecoder,
             IHeapOnNodeItemsLoader heapOnNodeItemsLoader,
-            IDataTreeLeafNodesEnumerator externalDataBlockIdsLoader,
+            IDataTreeLeafBIDsEnumerator externalDataBlockIdsLoader,
             IMapper<BID, LBBTEntry> blockIdToEntryMapping,
             IDataBlockReader<LBBTEntry> dataBlockReader)
         {
@@ -44,18 +44,18 @@ namespace pst.impl.ltp.hn
             this.dataBlockReader = dataBlockReader;
         }
 
-        public HNHDR GetHeapOnNodeHeader(LBBTEntry blockEntry)
+        public HNHDR GetHeapOnNodeHeader(BID blockId)
         {
             var externalBlock =
-                ReadExternalDataBlock(blockEntry, 0);
+                ReadExternalDataBlock(blockId, 0);
 
             return hnHDRDecoder.Decode(externalBlock.Take(12));
         }
 
-        public BinaryData GetHeapItem(LBBTEntry blockEntry, HID hid)
+        public BinaryData GetHeapItem(BID blockId, HID hid)
         {
             var externalBlock =
-                ReadExternalDataBlock(blockEntry, hid.BlockIndex);
+                ReadExternalDataBlock(blockId, hid.BlockIndex);
 
             var parser = BinaryDataParser.OfValue(externalBlock);
 
@@ -69,7 +69,7 @@ namespace pst.impl.ltp.hn
             }
             else if (hid.BlockIndex == 8 || (hid.BlockIndex - 8) % 128 == 0)
             {
-                var hnBitmapHDR = parser .TakeAndSkip(66, hnBitmapHDRDecoder);
+                var hnBitmapHDR = parser.TakeAndSkip(66, hnBitmapHDRDecoder);
 
                 pageMapOffset = hnBitmapHDR.PageMapOffset;
             }
@@ -89,10 +89,10 @@ namespace pst.impl.ltp.hn
             return items[hid];
         }
 
-        private BinaryData ReadExternalDataBlock(LBBTEntry blockEntry, int blockIndex)
+        private BinaryData ReadExternalDataBlock(BID blockId, int blockIndex)
         {
             var externalDataBlockIds =
-                externalDataBlockIdsLoader.Enumerate(blockEntry);
+                externalDataBlockIdsLoader.Enumerate(blockId);
 
             var externalBlockLbbtEntry =
                 blockIdToEntryMapping.Map(externalDataBlockIds[blockIndex]);

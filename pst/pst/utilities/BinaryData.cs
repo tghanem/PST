@@ -104,6 +104,18 @@ namespace pst.utilities
             return bits.ToArray();
         }
 
+        public override bool Equals(object obj)
+        {
+            var data = obj as BinaryData;
+
+            return data?.Value.SequenceEqual(Value) ?? false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
+        }
+
         public int Length => Value.Length;
     }
 }

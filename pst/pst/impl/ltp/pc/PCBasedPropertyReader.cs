@@ -45,8 +45,11 @@ namespace pst.impl.ltp.pc
             var bbtEntry =
                 blockIdToLBBTEntryMapping.Map(nbtEntry.DataBlockId);
 
+            var dataBlockId =
+                bbtEntry.BlockReference.BlockId;
+
             var dataRecord =
-                bthReader.ReadDataRecord(bbtEntry, propertyTag.Id);
+                bthReader.ReadDataRecord(dataBlockId, propertyTag.Id);
 
             if (dataRecord.HasNoValue)
                 return Maybe<PropertyValue>.NoValue();
@@ -70,7 +73,7 @@ namespace pst.impl.ltp.pc
 
                     var hnid = hnidDecoder.Decode(encodedHNID);
 
-                    var heapItem = heapOnNodeReader.GetHeapItem(bbtEntry, hnid.HID);
+                    var heapItem = heapOnNodeReader.GetHeapItem(dataBlockId, hnid.HID);
 
                     return new PropertyValue(heapItem);
                 }
@@ -92,7 +95,7 @@ namespace pst.impl.ltp.pc
                         return Maybe<PropertyValue>.OfValue(PropertyValue.Empty);
                     }
 
-                    var heapItem = heapOnNodeReader.GetHeapItem(bbtEntry, hnid.HID);
+                    var heapItem = heapOnNodeReader.GetHeapItem(dataBlockId, hnid.HID);
 
                     return new PropertyValue(heapItem);
                 }

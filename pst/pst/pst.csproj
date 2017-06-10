@@ -100,6 +100,7 @@
     <Compile Include="impl\decoders\ndb\blocks\subnode\SubnodeBlockDecoder.cs" />
     <Compile Include="impl\decoders\ndb\HeaderDecoder.cs" />
     <Compile Include="impl\decoders\ndb\RootDecoder.cs" />
+    <Compile Include="impl\decoders\TagDecoder.cs" />
     <Compile Include="impl\encoders\ndb\blocks\BlockTrailerEncoder.cs" />
     <Compile Include="impl\encoders\ndb\RootEncoder.cs" />
     <Compile Include="impl\encoders\primitives\Int64Encoder.cs" />
@@ -140,7 +141,7 @@
     <Compile Include="impl\ndb\bbt\IBBTEntriesFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\bbt\LBBTEntriesFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\datatree\BIDsFromInternalDataBlockExtractor.cs" />
-    <Compile Include="impl\ndb\datatree\DataTreeLeafNodesEnumerator.cs" />
+    <Compile Include="impl\ndb\datatree\DataTreeLeafBIDsEnumerator.cs" />
     <Compile Include="impl\ndb\datatree\InternalDataBlockLoader.cs" />
     <Compile Include="impl\ndb\datatree\NodeLevelFromInternalDataBlockExtractor.cs" />
     <Compile Include="impl\ndb\nbt\BREFFromINBTEntryExtractor.cs" />
@@ -154,6 +155,7 @@
     <Compile Include="impl\ndb\subnodebtree\SIEntryToLBBTEntryMapper.cs" />
     <Compile Include="impl\ndb\subnodebtree\SLEntriesFromSubnodeBlockExtractor.cs" />
     <Compile Include="impl\ndb\subnodebtree\SubnodeBlockLoader.cs" />
+    <Compile Include="impl\ndb\subnodebtree\SubNodesEnumerator.cs" />
     <Compile Include="interfaces\btree\IBTreeLeafKeysEnumerator.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
     <Compile Include="interfaces\IConverter.cs" />
@@ -171,7 +173,8 @@
     <Compile Include="interfaces\ltp\tc\IRowValuesExtractor.cs" />
     <Compile Include="interfaces\ltp\tc\ITCReader.cs" />
     <Compile Include="interfaces\messaging\IPropertyTypeMetadataProvider.cs" />
-    <Compile Include="interfaces\ndb\IDataTreeLeafNodesEnumerator.cs" />
+    <Compile Include="interfaces\ndb\IDataTreeLeafBIDsEnumerator.cs" />
+    <Compile Include="interfaces\ndb\ISubNodesEnumerator.cs" />
     <Compile Include="MAPIProperties.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="MessageStore.cs" />
@@ -182,6 +185,7 @@
     <Compile Include="PSTFile.cs" />
     <Compile Include="PSTFileFactory.cs" />
     <Compile Include="impl\ndb\subnodebtree\SIEntriesFromSubnodeBlockExtractor.cs" />
+    <Compile Include="Recipient.cs" />
     <Compile Include="utilities\BinaryData.cs" />
     <Compile Include="interfaces\IDecoder.cs" />
     <Compile Include="interfaces\IEncoder.cs" />
@@ -193,6 +197,7 @@
     <Compile Include="utilities\Globals.cs" />
     <Compile Include="utilities\PermutativeDecoder.cs" />
     <Compile Include="impl\messaging\PropertyTypeMetadataProvider.cs" />
+    <Compile Include="encodables\Tag.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

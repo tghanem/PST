@@ -1,13 +1,13 @@
 ﻿using pst.core;
 using pst.encodables.ltp.tc;
-using pst.encodables.ndb.btree;
+using pst.encodables.ndb;
 
 namespace pst.interfaces.ltp.tc
 {
     interface IRowIndexReader<TRowId>
     {
-        Maybe<TCROWID> GetRowId(LBBTEntry blockEntry, TRowId rowId);
+        Maybe<TCROWID> GetRowId(BID blockId, TRowId rowId);
 
-        TCROWID[] GetAllRowIds(LBBTEntry blockEntry);
+        TCROWID[] GetAllRowIds(BID blockId);
     }
 }

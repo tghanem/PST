@@ -1,35 +1,51 @@
 ﻿using pst.encodables;
 using pst.encodables.ndb;
+using pst.encodables.ndb.btree;
 using pst.interfaces;
 using pst.interfaces.ltp.pc;
 using pst.interfaces.ltp.tc;
+using pst.interfaces.ndb;
+using pst.utilities;
 
 namespace pst
 {
     public partial class PSTFile
     {
-        private readonly IPCBasedPropertyReader pcBasedPropertyReader;
-        private readonly ITCReader<NID> tableContextReader;
         private readonly IDecoder<EntryId> entryIdDecoder;
+        private readonly IDecoder<NID> nidDecoder;
+
+        private readonly ITCReader<NID> tableContextReader;
+        private readonly ITCReader<Tag> tagBasedTableContextReader;
+
+        private readonly ISubNodesEnumerator subnodesEnumerator;
+        private readonly IPCBasedPropertyReader pcBasedPropertyReader;
+        private readonly IMapper<NID, LNBTEntry> nidToLNBTEntryMapper;
 
         private PSTFile(
-            IPCBasedPropertyReader pcBasedPropertyReader,
             ITCReader<NID> tableContextReader,
+            ITCReader<Tag> tagBasedTableContextReader,
             IDecoder<EntryId> entryIdDecoder,
-            MessageStore messageStore,
-            Folder rootFolder)
+            IDecoder<NID> nidDecoder,
+            ISubNodesEnumerator subnodesEnumerator,
+            IPCBasedPropertyReader pcBasedPropertyReader,
+            IMapper<NID, LNBTEntry> nidToLNBTEntryMapper)
         {
-            this.pcBasedPropertyReader = pcBasedPropertyReader;
-            this.tableContextReader = tableContextReader;
             this.entryIdDecoder = entryIdDecoder;
-
-            MessageStore = messageStore;
-            RootFolder = rootFolder;
+            this.nidDecoder = nidDecoder;
+            this.subnodesEnumerator = subnodesEnumerator;
+            this.tableContextReader = tableContextReader;
+            this.tagBasedTableContextReader = tagBasedTableContextReader;
+            this.pcBasedPropertyReader = pcBasedPropertyReader;
+            this.nidToLNBTEntryMapper = nidToLNBTEntryMapper;
         }
 
-        public MessageStore MessageStore { get; }
-
-        public Folder RootFolder { get; }
+        public MessageStore MessageStore
+        {
+            get
+            {
+                return new MessageStore(pcBasedPropertyReader);
+            }
+        }
 
         public Folder GetRootMailboxFolder()
         {
@@ -42,8 +58,12 @@ namespace pst
             return
                 new Folder(
                     entryId.NID,
+                    tableContextReader,
+                    tagBasedTableContextReader,
+                    subnodesEnumerator,
                     pcBasedPropertyReader,
-                    tableContextReader);
+                    nidDecoder,
+                    nidToLNBTEntryMapper);
         }
     }
 }
