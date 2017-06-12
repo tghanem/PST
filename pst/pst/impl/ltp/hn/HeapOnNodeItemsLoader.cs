@@ -17,7 +17,7 @@ namespace pst.impl.ltp.hn
             for (int i = 0; i < offsets.Length - 1; i++)
             {
                 var itemData =
-                    pageData.TakeAt(offsets[i], offsets[i + 1] - offsets[i]);
+                    pageData.Take(offsets[i], offsets[i + 1] - offsets[i]);
 
                 var hid =
                     new HID(Globals.NID_TYPE_HID, i + 1, pageIndex);
@@ -36,7 +36,7 @@ namespace pst.impl.ltp.hn
 
             for (int i = 0; i <= pageMap.AllocationCount; i++)
             {
-                var offset = pageMap.AllocationTable.TakeAt(i * 2, 2);
+                var offset = pageMap.AllocationTable.Take(i * 2, 2);
 
                 offsets.Add(offset.ToInt32());
             }

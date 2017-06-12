@@ -42,7 +42,7 @@ namespace pst
         public Folder[] GetSubFolders()
         {
             var lnbtEntry =
-                nidToLNBTEntryMapper.Map(nodeId);
+                nidToLNBTEntryMapper.Map(nodeId.ChangeType(Globals.NID_TYPE_HIERARCHY_TABLE));
 
             var rowIds =
                 tcReader.GetAllRowIds(lnbtEntry.DataBlockId);

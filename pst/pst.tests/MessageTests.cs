@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using pst.tests.Properties;
 using System.IO;
-using System.Text;
+using System.Linq;
 
 namespace pst.tests
 {
@@ -9,96 +9,62 @@ namespace pst.tests
     public class MessageTests
     {
         [Test]
-        public void ForMessage_ShouldFindProperty_PidTagMessageClass()
+        public void ShouldCorrectlyReadMessageClass()
         {
             //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
+            var sut = GetFolderSut();
 
             //Act
-            var result = sut.GetRootMailboxFolder().GetMessages()[0].GetProperty(MAPIProperties.PidTagMessageClass);
+            var result = sut.GetMessages()[0].GetProperty(MAPIProperties.PidTagMessageClass);
 
             //Assert
             Assert.AreEqual("IPM.Note", result.Value.Value.ToUnicode());
         }
 
         [Test]
-        public void ForMessage_ShouldFindProperty_PidTagMessageFlags()
+        public void ShouldCorrectlyReadMessageSubject()
         {
             //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
+            var sut = GetFolderSut();
 
             //Act
-            var result = sut.GetRootMailboxFolder().GetMessages()[0].GetProperty(MAPIProperties.PidTagMessageFlags);
+            var result = sut.GetMessages()[0].GetProperty(MAPIProperties.PidTagSubject);
 
             //Assert
-            Assert.IsTrue(result.HasValue);
+            Assert.AreEqual("Test1", result.Value.Value.ToUnicode());
         }
 
         [Test]
-        public void ForMessage_ShouldFindProperty_PidTagMessageSize()
+        public void ShouldCorrectlyReadMessageSenderEmailAddress()
         {
             //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
+            var sut = GetFolderSut();
 
             //Act
-            var result = sut.GetRootMailboxFolder().GetMessages()[0].GetProperty(MAPIProperties.PidTagMessageSize);
+            var result = sut.GetMessages()[0].GetProperty(MAPIProperties.PidTagSenderEmailAddress);
 
             //Assert
-            Assert.IsTrue(result.HasValue);
+            Assert.AreEqual("user1@test.lab", result.Value.Value.ToUnicode());
         }
 
         [Test]
-        public void ForMessage_ShouldCorrectlyReadProperty_PidTagEmailAddress()
+        public void ShouldCorrectlyReadMessageBody()
         {
             //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
+            var sut = GetFolderSut();
 
             //Act
-            var result = sut.GetRootMailboxFolder().GetMessages()[0];
+            var result = sut.GetMessages()[0].GetProperty(MAPIProperties.PidTagBody);
 
             //Assert
-            var emailAddressPropertyValue = result.Recipients[0].GetProperty(MAPIProperties.PidTagEmailAddress).Value;
-
-            Assert.AreEqual("user1@test.lab", Encoding.Unicode.GetString(emailAddressPropertyValue.Value));
+            Assert.AreEqual("Test1", result.Value.Value.ToUnicode().Trim());
         }
 
-        [Test]
-        public void ForMessage_ShouldFindProperty_PidTagCreationTime()
+        private Folder GetFolderSut()
         {
-            //Arrange
             var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 
-            //Act
-            var result = sut.GetRootMailboxFolder().GetMessages()[0].GetProperty(MAPIProperties.PidTagCreationTime);
-
-            //Assert
-            Assert.IsTrue(result.HasValue);
-        }
-
-        [Test]
-        public void ForMessage_ShouldFindProperty_PidTagLastModificationTime()
-        {
-            //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
-
-            //Act
-            var result = sut.GetRootMailboxFolder().GetMessages()[0].GetProperty(MAPIProperties.PidTagLastModificationTime);
-
-            //Assert
-            Assert.IsTrue(result.HasValue);
-        }
-
-        [Test]
-        public void ForMessage_ShouldFindProperty_PidTagSearchKey()
-        {
-            //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
-
-            //Act
-            var result = sut.GetRootMailboxFolder().GetMessages()[0].GetProperty(MAPIProperties.PidTagSearchKey);
-
-            //Assert
-            Assert.IsTrue(result.HasValue);
+            return sut.GetRootMailboxFolder().GetSubFolders().First(f => f.GetDisplayNameUnicode() == "FolderWithSingleMessage");
         }
     }
 }

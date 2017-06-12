@@ -35,35 +35,32 @@ namespace pst
             this.tagBasedTableContextReader = tagBasedTableContextReader;
         }
 
-        public Recipient[] Recipients
+        public Recipient[] GetRecipients()
         {
-            get
-            {
-                var subnodes = 
-                    subnodesEnumerator.Enumerate(subnodeBlockId);
+            var subnodes =
+                subnodesEnumerator.Enumerate(subnodeBlockId);
 
-                var recipientTableEntry =
-                    subnodes.First(s => s.LocalSubnodeId.Type == Globals.NID_TYPE_RECIPIENT_TABLE);
+            var recipientTableEntry =
+                subnodes.First(s => s.LocalSubnodeId.Type == Globals.NID_TYPE_RECIPIENT_TABLE);
 
-                var rows =
-                    nidBasedTableContextReader.GetAllRows(
-                        recipientTableEntry.DataBlockId,
-                        recipientTableEntry.SubnodeBlockId);
+            var rows =
+                nidBasedTableContextReader.GetAllRows(
+                    recipientTableEntry.DataBlockId,
+                    recipientTableEntry.SubnodeBlockId);
 
-                return
-                    rows
-                    .Select(
-                        r =>
-                        {
-                            return
-                                new Recipient(
-                                    recipientTableEntry.DataBlockId,
-                                    recipientTableEntry.SubnodeBlockId,
-                                    Tag.OfValue(r.RowId),
-                                    tagBasedTableContextReader);
-                        })
-                    .ToArray();
-            }
+            return
+                rows
+                .Select(
+                    r =>
+                    {
+                        return
+                            new Recipient(
+                                recipientTableEntry.DataBlockId,
+                                recipientTableEntry.SubnodeBlockId,
+                                Tag.OfValue(r.RowId),
+                                tagBasedTableContextReader);
+                    })
+                .ToArray();
         }
 
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)

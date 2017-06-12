@@ -32,7 +32,7 @@ namespace pst.utilities
         public BinaryData Take(int count)
             => new BinaryData(Value.Take(count).ToArray());
 
-        public BinaryData TakeAt(int offset, int count)
+        public BinaryData Take(int offset, int count)
             => new BinaryData(Value.Skip(offset).Take(count).ToArray());
 
         public BinaryData Pad(int count)
@@ -64,6 +64,11 @@ namespace pst.utilities
             }
         }
 
+        public bool ToBoolean()
+        {
+            return BitConverter.ToBoolean(Value, 0);
+        }
+
         public long ToInt64()
         {
             return BitConverter.ToInt64(Value, 0);
@@ -79,7 +84,7 @@ namespace pst.utilities
 
             for (int i = 0; i < numberOfItems; i++)
             {
-                slices.Add(TakeAt(i * itemLength, itemLength));
+                slices.Add(Take(i * itemLength, itemLength));
             }
 
             return slices.ToArray();

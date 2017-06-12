@@ -17,18 +17,20 @@ namespace pst.impl.ltp.tc
                 Math.Ceiling((double)columnDescriptors.Length / 8);
 
             var ceb =
-                rowData.TakeAt(rowData.Length - cebSize, cebSize)
+                rowData.Take(rowData.Length - cebSize, cebSize)
                 .ToBits();
 
             var values = new Dictionary<int, BinaryData>();
 
             for (int i = 0; i < columnDescriptors.Length; i++)
             {
-                if (ceb[i] == 1)
+                var iBit = columnDescriptors[i].CellExistenceBitmapIndex;
+
+                if (ceb[iBit] == 1)
                 {
                     values.Add(
                         columnDescriptors[i].Tag,
-                        rowData.TakeAt(
+                        rowData.Take(
                             columnDescriptors[i].DataOffset,
                             columnDescriptors[i].DataSize));
                 }

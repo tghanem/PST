@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using pst.tests.Properties;
 using System.IO;
+using System.Linq;
 
 namespace pst.tests
 {
@@ -8,7 +9,7 @@ namespace pst.tests
     public class FolderTests
     {
         [Test]
-        public void ForFolder_ShouldFindProperty_PidTagDisplayName()
+        public void ShouldCorrectlyReadFolderDisplayName()
         {
             //Arrange
             var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
@@ -17,46 +18,53 @@ namespace pst.tests
             var result = sut.GetRootMailboxFolder().GetProperty(MAPIProperties.PidTagDisplayName);
 
             //Assert
-            Assert.IsTrue(result.HasValue);
+            Assert.AreEqual("Top of Outlook data file", result.Value.Value.ToUnicode());
         }
 
         [Test]
-        public void ForFolder_ShouldFindProperty_PidTagContentCount()
+        public void ShouldCorrectlyReadFolderContentCount()
         {
             //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
+            var sut = GetFolderSut("FolderWithSingleMessage");
 
             //Act
-            var result = sut.GetRootMailboxFolder().GetProperty(MAPIProperties.PidTagContentCount);
+            var result = sut.GetProperty(MAPIProperties.PidTagContentCount);
 
             //Assert
-            Assert.IsTrue(result.HasValue);
+            Assert.AreEqual(1, result.Value.Value.ToInt32());
         }
 
         [Test]
-        public void ForFolder_ShouldFindProperty_PidTagContentUnreadCount()
+        public void ShouldCorrectlyReadFolderContentUnreadCount()
         {
             //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
+            var sut = GetFolderSut("FolderWithSingleUnreadMessage");
 
             //Act
-            var result = sut.GetRootMailboxFolder().GetProperty(MAPIProperties.PidTagContentUnreadCount);
+            var result = sut.GetProperty(MAPIProperties.PidTagContentUnreadCount);
 
             //Assert
-            Assert.IsTrue(result.HasValue);
+            Assert.AreEqual(1, result.Value.Value.ToInt32());
         }
 
         [Test]
-        public void ForFolder_ShouldFindProperty_PidTagSubfolders()
+        public void ShouldCorrectlyDetectIfFolderHasSubfolders()
         {
             //Arrange
-            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
+            var sut = GetFolderSut("FolderWithTwoSubFolders");
 
             //Act
-            var result = sut.GetRootMailboxFolder().GetProperty(MAPIProperties.PidTagSubfolders);
+            var result = sut.GetProperty(MAPIProperties.PidTagSubfolders);
 
             //Assert
-            Assert.IsTrue(result.HasValue);
+            Assert.IsTrue(result.Value.Value.ToBoolean());
+        }
+
+        private Folder GetFolderSut(string folderName)
+        {
+            var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
+
+            return sut.GetRootMailboxFolder().GetSubFolders().First(f => f.GetDisplayNameUnicode() == folderName);
         }
     }
 }

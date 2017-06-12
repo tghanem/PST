@@ -72,6 +72,7 @@
     <Compile Include="encodables\ndb\NID.cs" />
     <Compile Include="encodables\ndb\btree\PageTrailer.cs" />
     <Compile Include="encodables\EntryId.cs" />
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="impl\btree\BTreeLeafKeyEnumeratorThatDoesntKnowHowToMapKeyToNodeReference.cs" />
     <Compile Include="impl\btree\BTreeLeafKeysEnumerator.cs" />

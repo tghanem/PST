@@ -61,17 +61,11 @@ namespace pst.impl.ltp.pc
 
                 if (size <= 4)
                 {
-                    return new PropertyValue(dataRecord.Value.Data);
+                    return new PropertyValue(dataRecord.Value.Data.Take(2, 4));
                 }
                 else
                 {
-                    var encodedHNID =
-                        BinaryDataParser
-                        .OfValue(dataRecord.Value.Data)
-                        .TakeAndSkip(2)
-                        .Take(4);
-
-                    var hnid = hnidDecoder.Decode(encodedHNID);
+                    var hnid = hnidDecoder.Decode(dataRecord.Value.Data.Take(2, 4));
 
                     var heapItem = heapOnNodeReader.GetHeapItem(dataBlockId, hnid.HID);
 
@@ -80,13 +74,7 @@ namespace pst.impl.ltp.pc
             }
             else if (propertyTypeMetadataProvider.IsVariableLength(propertyTag.Type))
             {
-                var encodedHNID =
-                    BinaryDataParser
-                    .OfValue(dataRecord.Value.Data)
-                    .Skip(2)
-                    .TakeAndSkip(4);
-
-                var hnid = hnidDecoder.Decode(encodedHNID);
+                var hnid = hnidDecoder.Decode(dataRecord.Value.Data.Take(2, 4));
 
                 if (hnid.IsHID)
                 {
