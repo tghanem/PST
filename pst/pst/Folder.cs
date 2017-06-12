@@ -14,28 +14,28 @@ namespace pst
     public class Folder
     {
         private readonly NID nodeId;
+        private readonly IDecoder<NID> nidDecoder;
         private readonly ITCReader<NID> tcReader;
         private readonly ITCReader<Tag> tagBasedTableContextReader;
         private readonly ISubNodesEnumerator subnodesEnumerator;
-        private readonly IPCBasedPropertyReader pcBasedPropertyReader;
-        private readonly IDecoder<NID> nidDecoder;
+        private readonly IPCBasedPropertyReader pcBasedPropertyReader;        
         private readonly IMapper<NID, LNBTEntry> nidToLNBTEntryMapper;
 
         internal Folder(
             NID nodeId,
+            IDecoder<NID> nidDecoder,
             ITCReader<NID> tcReader,
             ITCReader<Tag> tagBasedTableContextReader,
             ISubNodesEnumerator subnodesEnumerator,
             IPCBasedPropertyReader pcBasedPropertyReader,
-            IDecoder<NID> nidDecoder,
             IMapper<NID, LNBTEntry> nidToLNBTEntryMapper)
         {
             this.nodeId = nodeId;
             this.tcReader = tcReader;
+            this.nidDecoder = nidDecoder;
             this.tagBasedTableContextReader = tagBasedTableContextReader;
             this.subnodesEnumerator = subnodesEnumerator;
-            this.pcBasedPropertyReader = pcBasedPropertyReader;
-            this.nidDecoder = nidDecoder;
+            this.pcBasedPropertyReader = pcBasedPropertyReader;            
             this.nidToLNBTEntryMapper = nidToLNBTEntryMapper;
         }
 
@@ -53,11 +53,11 @@ namespace pst
                     r =>
                     new Folder(
                         nidDecoder.Decode(r.RowId),
-                        tcReader,
+                        nidDecoder,
+                        tcReader,                        
                         tagBasedTableContextReader,
                         subnodesEnumerator,
-                        pcBasedPropertyReader,
-                        nidDecoder,
+                        pcBasedPropertyReader,                        
                         nidToLNBTEntryMapper))
                 .ToArray();
         }
@@ -81,8 +81,9 @@ namespace pst
 
                         return
                             new Message(
-                                messageNodeId,
+                                lnbtEntryForMessage.DataBlockId,
                                 lnbtEntryForMessage.SubnodeBlockId,
+                                nidDecoder,
                                 tcReader,
                                 tagBasedTableContextReader,
                                 subnodesEnumerator,
@@ -93,7 +94,14 @@ namespace pst
 
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
-            return pcBasedPropertyReader.ReadProperty(nodeId, propertyTag);
+            var lnbtEntry =
+                nidToLNBTEntryMapper.Map(nodeId);
+
+            return
+                pcBasedPropertyReader.ReadProperty(
+                    lnbtEntry.DataBlockId,
+                    lnbtEntry.SubnodeBlockId,
+                    propertyTag);
         }
     }
 }

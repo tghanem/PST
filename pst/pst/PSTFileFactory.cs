@@ -168,9 +168,7 @@ namespace pst
                         new PropertyIdDecoder(),
                         dataBlockReader,
                         bidToLBBTEntryMapper),
-                    new PropertyTypeMetadataProvider(),
-                    nidToLNBTEntryMapper,
-                    bidToLBBTEntryMapper);
+                    new PropertyTypeMetadataProvider());
         }
 
         private static IDecoder<Header> CreateHeaderDecoder()

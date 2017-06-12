@@ -43,7 +43,10 @@ namespace pst
         {
             get
             {
-                return new MessageStore(pcBasedPropertyReader);
+                return
+                    new MessageStore(
+                        nidToLNBTEntryMapper,
+                        pcBasedPropertyReader);
             }
         }
 
@@ -58,11 +61,11 @@ namespace pst
             return
                 new Folder(
                     entryId.NID,
+                    nidDecoder,
                     tableContextReader,
                     tagBasedTableContextReader,
                     subnodesEnumerator,
                     pcBasedPropertyReader,
-                    nidDecoder,
                     nidToLNBTEntryMapper);
         }
     }

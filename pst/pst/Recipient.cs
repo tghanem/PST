@@ -11,23 +11,28 @@ namespace pst
         private readonly BID recipientTableSubnodeBlockId;
         private readonly Tag recipientRowId;
 
-        private readonly ITCReader<Tag> tcReader;
+        private readonly ITCReader<Tag> tableContextReader;
 
         internal Recipient(
             BID recipientTableBlockId,
             BID recipientTableSubnodeBlockId,
             Tag recipientRowId,
-            ITCReader<Tag> tcReader)
+            ITCReader<Tag> tableContextReader)
         {
             this.recipientTableBlockId = recipientTableBlockId;
             this.recipientTableSubnodeBlockId = recipientTableSubnodeBlockId;
             this.recipientRowId = recipientRowId;
-            this.tcReader = tcReader;
+            this.tableContextReader = tableContextReader;
         }
 
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
-            return tcReader.ReadProperty(recipientTableBlockId, recipientTableSubnodeBlockId, recipientRowId, propertyTag);
+            return
+                tableContextReader.ReadProperty(
+                    recipientTableBlockId,
+                    recipientTableSubnodeBlockId,
+                    recipientRowId,
+                    propertyTag);
         }
     }
 }

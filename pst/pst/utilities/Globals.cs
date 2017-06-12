@@ -7,9 +7,11 @@ namespace pst.utilities
         public static readonly NID NID_MESSAGE_STORE = new NID(0x21);
         public static readonly NID NID_ROOT_FOLDER = new NID(0x122);
 
-        public static readonly int NID_TYPE_HIERARCHY_TABLE = 0x0D;
-        public static readonly int NID_TYPE_CONTENTS_TABLE = 0x0E;
-        public static readonly int NID_TYPE_RECIPIENT_TABLE = 0x12;
+        public const int NID_TYPE_HIERARCHY_TABLE = 0x0D;
+        public const int NID_TYPE_CONTENTS_TABLE = 0x0E;
+        public const int NID_TYPE_RECIPIENT_TABLE = 0x12;
+        public const int NID_TYPE_ATTACHMENT_TABLE = 0x11;
+        public const int NID_TYPE_ATTACHMENT = 0x05;
 
         public const int NID_TYPE_HID = 0x00;
 

@@ -1,13 +1,11 @@
 ﻿using pst.core;
 using pst.encodables.ltp.hn;
 using pst.encodables.ndb;
-using pst.encodables.ndb.btree;
 using pst.interfaces;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.ltp.pc;
-using pst.utilities;
 
 namespace pst.impl.ltp.pc
 {
@@ -18,38 +16,22 @@ namespace pst.impl.ltp.pc
         private readonly IBTreeOnHeapReader<PropertyId> bthReader;
         private readonly IPropertyTypeMetadataProvider propertyTypeMetadataProvider;
 
-        private readonly IMapper<NID, LNBTEntry> nodeIdToLNBTEntryMapping;
-        private readonly IMapper<BID, LBBTEntry> blockIdToLBBTEntryMapping;
-
         public PCBasedPropertyReader(
             IHeapOnNodeReader heapOnNodeReader,
             IDecoder<HNID> hnidDecoder,
             IBTreeOnHeapReader<PropertyId> bthReader,
-            IPropertyTypeMetadataProvider propertyTypeMetadataProvider,
-            IMapper<NID, LNBTEntry> nodeIdToLNBTEntryMapping,
-            IMapper<BID, LBBTEntry> blockIdToLBBTEntryMapping)
+            IPropertyTypeMetadataProvider propertyTypeMetadataProvider)
         {
             this.heapOnNodeReader = heapOnNodeReader;
             this.hnidDecoder = hnidDecoder;
             this.bthReader = bthReader;
             this.propertyTypeMetadataProvider = propertyTypeMetadataProvider;
-            this.nodeIdToLNBTEntryMapping = nodeIdToLNBTEntryMapping;
-            this.blockIdToLBBTEntryMapping = blockIdToLBBTEntryMapping;
         }
 
-        public Maybe<PropertyValue> ReadProperty(NID nodeId, PropertyTag propertyTag)
+        public Maybe<PropertyValue> ReadProperty(BID nodeDataBlockId, BID subnodeDataBlockId, PropertyTag propertyTag)
         {
-            var nbtEntry =
-                nodeIdToLNBTEntryMapping.Map(nodeId);
-
-            var bbtEntry =
-                blockIdToLBBTEntryMapping.Map(nbtEntry.DataBlockId);
-
-            var dataBlockId =
-                bbtEntry.BlockReference.BlockId;
-
             var dataRecord =
-                bthReader.ReadDataRecord(dataBlockId, propertyTag.Id);
+                bthReader.ReadDataRecord(nodeDataBlockId, propertyTag.Id);
 
             if (dataRecord.HasNoValue)
                 return Maybe<PropertyValue>.NoValue();
@@ -67,7 +49,7 @@ namespace pst.impl.ltp.pc
                 {
                     var hnid = hnidDecoder.Decode(dataRecord.Value.Data.Take(2, 4));
 
-                    var heapItem = heapOnNodeReader.GetHeapItem(dataBlockId, hnid.HID);
+                    var heapItem = heapOnNodeReader.GetHeapItem(nodeDataBlockId, hnid.HID);
 
                     return new PropertyValue(heapItem);
                 }
@@ -83,7 +65,7 @@ namespace pst.impl.ltp.pc
                         return Maybe<PropertyValue>.OfValue(PropertyValue.Empty);
                     }
 
-                    var heapItem = heapOnNodeReader.GetHeapItem(dataBlockId, hnid.HID);
+                    var heapItem = heapOnNodeReader.GetHeapItem(nodeDataBlockId, hnid.HID);
 
                     return new PropertyValue(heapItem);
                 }

@@ -46,6 +46,11 @@ namespace pst.utilities
             return Encoding.Unicode.GetString(Value);
         }
 
+        public string ToAnsi()
+        {
+            return Encoding.ASCII.GetString(Value);
+        }
+
         public int ToInt32()
         {
             if (Value.Length < 4)

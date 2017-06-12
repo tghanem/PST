@@ -60,11 +60,29 @@ namespace pst.tests
             Assert.AreEqual("Test1", result.Value.Value.ToUnicode().Trim());
         }
 
+        [Test]
+        public void ShouldCorrectlyDetectThatTheMessageHasAttachmentsUsingPidTagMessageFlagsProperty()
+        {
+            //Arrange
+            var sut = GetFolderSut("FolderWithMessagesWithAttachments");
+
+            //Act
+            var result = sut.GetMessages()[0].GetProperty(MAPIProperties.PidTagMessageFlags);
+
+            //Assert
+            Assert.AreEqual(MAPIProperties.mfHasAttach, result.Value.Value.ToInt32() & MAPIProperties.mfHasAttach);
+        }
+
         private Folder GetFolderSut()
+        {
+            return GetFolderSut("FolderWithSingleMessage");
+        }
+
+        private Folder GetFolderSut(string folderName)
         {
             var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 
-            return sut.GetRootMailboxFolder().GetSubFolders().First(f => f.GetDisplayNameUnicode() == "FolderWithSingleMessage");
+            return sut.GetRootMailboxFolder().GetSubFolders().First(f => f.GetDisplayNameUnicode() == folderName);
         }
     }
 }

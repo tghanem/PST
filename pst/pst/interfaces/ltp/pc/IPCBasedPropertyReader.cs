@@ -5,6 +5,6 @@ namespace pst.interfaces.ltp.pc
 {
     interface IPCBasedPropertyReader
     {
-        Maybe<PropertyValue> ReadProperty(NID nodeId, PropertyTag propertyTag);
+        Maybe<PropertyValue> ReadProperty(BID nodeDataBlockId, BID subnodeDataBlockId, PropertyTag propertyTag);
     }
 }

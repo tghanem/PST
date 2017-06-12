@@ -15,5 +15,12 @@
 
             return displayNamePropertyValue.Value.Value.ToUnicode();
         }
+
+        public static string GetSubjectUnicode(this Message message)
+        {
+            var subjectPropertyValue = message.GetProperty(MAPIProperties.PidTagSubject);
+
+            return subjectPropertyValue.Value.Value.ToUnicode();
+        }
     }
 }
