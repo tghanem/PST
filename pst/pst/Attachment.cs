@@ -17,7 +17,7 @@ namespace pst
         private readonly IDecoder<NID> nidDecoder;
         private readonly ITCReader<NID> nidBasedTableContextReader;
         private readonly ITCReader<Tag> tagBasedTableContextReader;
-        private readonly ISubNodesEnumerator subnodesEnumerator;
+        private readonly ISubnodesEnumerator subnodesEnumerator;
         private readonly IPCBasedPropertyReader pcBasedPropertyReader;
 
         internal Attachment(
@@ -26,7 +26,7 @@ namespace pst
             IDecoder<NID> nidDecoder,
             ITCReader<NID> nidBasedTableContextReader,
             ITCReader<Tag> tagBasedTableContextReader,
-            ISubNodesEnumerator subnodesEnumerator,
+            ISubnodesEnumerator subnodesEnumerator,
             IPCBasedPropertyReader pcBasedPropertyReader)
         {
             this.attachmentDataBlockId = attachmentDataBlockId;

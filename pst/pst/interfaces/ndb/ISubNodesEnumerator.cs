@@ -3,7 +3,7 @@ using pst.encodables.ndb.blocks.subnode;
 
 namespace pst.interfaces.ndb
 {
-    interface ISubNodesEnumerator
+    interface ISubnodesEnumerator
     {
         SLEntry[] Enumerate(BID subnodeDataBlockId);
     }

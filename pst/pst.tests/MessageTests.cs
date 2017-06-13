@@ -73,6 +73,26 @@ namespace pst.tests
             Assert.AreEqual(MAPIProperties.mfHasAttach, result.Value.Value.ToInt32() & MAPIProperties.mfHasAttach);
         }
 
+        [Test]
+        public void ShouldCorrectlyReadMessageSubjectOfSize4K()
+        {
+            //Arrange
+            var sut = GetMessageSut("FolderWithSampleMessages", "TestWithBodyOf4KCharacters");
+
+            //Act
+            var result = sut.GetProperty(MAPIProperties.PidTagBody);
+
+            //Assert
+            Assert.AreEqual(new string('a', 4 * 1028), result.Value.Value.ToUnicode().Trim());
+        }
+
+        private Message GetMessageSut(string folderName, string messageSubject)
+        {
+            var folder = GetFolderSut(folderName);
+
+            return folder.GetMessages().First(m => m.GetSubjectUnicode() == messageSubject);
+        }
+
         private Folder GetFolderSut()
         {
             return GetFolderSut("FolderWithSingleMessage");

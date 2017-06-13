@@ -1,32 +1,56 @@
 ﻿using pst.core;
 using pst.encodables.ltp.hn;
 using pst.encodables.ndb;
+using pst.encodables.ndb.blocks.data;
+using pst.encodables.ndb.btree;
 using pst.interfaces;
+using pst.interfaces.io;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.ltp.pc;
+using pst.interfaces.ndb;
 using pst.utilities;
+using System;
+using System.IO;
+using System.Linq;
 
 namespace pst.impl.ltp.pc
 {
     class PCBasedPropertyReader : IPCBasedPropertyReader
     {
-        private readonly IHeapOnNodeReader heapOnNodeReader;
         private readonly IDecoder<HNID> hnidDecoder;
+        private readonly IHeapOnNodeReader heapOnNodeReader;
         private readonly IBTreeOnHeapReader<PropertyId> bthReader;
+        private readonly ISubnodesEnumerator subnodesEnumerator;
+        private readonly IDataTreeLeafBIDsEnumerator dataTreeLeafBlockIdsEnumerator;
         private readonly IPropertyTypeMetadataProvider propertyTypeMetadataProvider;
 
+        private readonly IMapper<BID, LBBTEntry> bidToLBBTEntryMapping;
+        private readonly IDataBlockReader<LBBTEntry> dataBlockReader;
+        private readonly IDecoder<ExternalDataBlock> externalDataBlockDecoder;
+
         public PCBasedPropertyReader(
-            IHeapOnNodeReader heapOnNodeReader,
             IDecoder<HNID> hnidDecoder,
+            IHeapOnNodeReader heapOnNodeReader,
             IBTreeOnHeapReader<PropertyId> bthReader,
-            IPropertyTypeMetadataProvider propertyTypeMetadataProvider)
+            ISubnodesEnumerator subnodesEnumerator,
+            IDataTreeLeafBIDsEnumerator dataTreeLeafBlockIdsEnumerator,
+            IPropertyTypeMetadataProvider propertyTypeMetadataProvider,
+            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
+            IDataBlockReader<LBBTEntry> dataBlockReader,
+            IDecoder<ExternalDataBlock> externalDataBlockDecoder)
         {
-            this.heapOnNodeReader = heapOnNodeReader;
-            this.hnidDecoder = hnidDecoder;
             this.bthReader = bthReader;
+            this.hnidDecoder = hnidDecoder;
+            this.heapOnNodeReader = heapOnNodeReader;
+            this.subnodesEnumerator = subnodesEnumerator;
+            this.dataTreeLeafBlockIdsEnumerator = dataTreeLeafBlockIdsEnumerator;
             this.propertyTypeMetadataProvider = propertyTypeMetadataProvider;
+
+            this.bidToLBBTEntryMapping = blockIdToEntryMapping;
+            this.dataBlockReader = dataBlockReader;
+            this.externalDataBlockDecoder = externalDataBlockDecoder;
         }
 
         public Maybe<PropertyValue> ReadProperty(BID nodeDataBlockId, BID subnodeDataBlockId, PropertyTag propertyTag)
@@ -69,6 +93,37 @@ namespace pst.impl.ltp.pc
                     var heapItem = heapOnNodeReader.GetHeapItem(nodeDataBlockId, hnid.HID);
 
                     return new PropertyValue(heapItem);
+                }
+                else if (hnid.IsNID)
+                {
+                    var subnodes =
+                        subnodesEnumerator.Enumerate(subnodeDataBlockId);
+
+                    var subnodeEntry =
+                        subnodes.First(s => s.LocalSubnodeId.Value == hnid.NID.Value);
+
+                    var dataBlockIds =
+                        dataTreeLeafBlockIdsEnumerator.Enumerate(subnodeEntry.DataBlockId);
+
+                    var stream = new MemoryStream();
+
+                    Array.ForEach(
+                        dataBlockIds,
+                        id =>
+                        {
+                            var lbbtEntryForBlock =
+                                bidToLBBTEntryMapping.Map(id);
+
+                            var externalDataBlock =
+                                dataBlockReader.Read(lbbtEntryForBlock, lbbtEntryForBlock.GetBlockSize());
+
+                            var decodedExternalDataBlock =
+                                externalDataBlockDecoder.Decode(externalDataBlock);
+
+                            stream.Write(decodedExternalDataBlock.Data, 0, decodedExternalDataBlock.Data.Length);
+                        });
+
+                    return new PropertyValue(BinaryData.OfValue(stream.ToArray()));
                 }
             }
             else if (propertyTag.Type.Value == Globals.PtypObject)

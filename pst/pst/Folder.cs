@@ -17,7 +17,7 @@ namespace pst
         private readonly IDecoder<NID> nidDecoder;
         private readonly ITCReader<NID> tcReader;
         private readonly ITCReader<Tag> tagBasedTableContextReader;
-        private readonly ISubNodesEnumerator subnodesEnumerator;
+        private readonly ISubnodesEnumerator subnodesEnumerator;
         private readonly IPCBasedPropertyReader pcBasedPropertyReader;        
         private readonly IMapper<NID, LNBTEntry> nidToLNBTEntryMapper;
 
@@ -26,7 +26,7 @@ namespace pst
             IDecoder<NID> nidDecoder,
             ITCReader<NID> tcReader,
             ITCReader<Tag> tagBasedTableContextReader,
-            ISubNodesEnumerator subnodesEnumerator,
+            ISubnodesEnumerator subnodesEnumerator,
             IPCBasedPropertyReader pcBasedPropertyReader,
             IMapper<NID, LNBTEntry> nidToLNBTEntryMapper)
         {

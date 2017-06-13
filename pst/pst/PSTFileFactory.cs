@@ -1,6 +1,4 @@
 ﻿using pst.encodables.ndb;
-using pst.encodables.ndb.blocks.data;
-using pst.encodables.ndb.blocks.subnode;
 using pst.encodables.ndb.btree;
 using pst.impl.btree;
 using pst.impl.converters;
@@ -85,12 +83,9 @@ namespace pst
                     new EntryIdDecoder(
                         new NIDDecoder()),
                     new NIDDecoder(),
-                    new SubNodesEnumerator(
-                        new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree),
-                        CreateSubnodeBTreeLeafKeysEnumerator(
-                            dataBlockReader,
-                            new SIEntryToLBBTEntryMapper(
-                                new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree)))),
+                    CreateSubnodeEnumerator(
+                        dataBlockReader,
+                        new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree)),
                     CreatePCBasedPropertyReader(
                         dataBlockReader,
                         new DictionaryBasedMapper<NID, LNBTEntry>(nodeBTree),
@@ -158,17 +153,29 @@ namespace pst
         {
             return
                 new PCBasedPropertyReader(
-                    CreateHeapOnNodeReader(
-                        dataBlockReader,
-                        bidToLBBTEntryMapper),
                     new HNIDDecoder(
                         new HIDDecoder(),
                         new NIDDecoder()),
+                    CreateHeapOnNodeReader(
+                        dataBlockReader,
+                        bidToLBBTEntryMapper),
                     CreateBTreeOnHeapReader(
                         new PropertyIdDecoder(),
                         dataBlockReader,
                         bidToLBBTEntryMapper),
-                    new PropertyTypeMetadataProvider());
+                    CreateSubnodeEnumerator(
+                        dataBlockReader,
+                        bidToLBBTEntryMapper),
+                    CreateDataTreeLeafNodesEnumerator(
+                        dataBlockReader,
+                        bidToLBBTEntryMapper),
+                    new PropertyTypeMetadataProvider(),
+                    bidToLBBTEntryMapper,
+                    dataBlockReader,
+                    new ExternalDataBlockDecoder(
+                        new BlockTrailerDecoder(
+                            new BIDDecoder()),
+                        new PermutativeDecoder(false)));
         }
 
         private static IDecoder<Header> CreateHeaderDecoder()
@@ -197,12 +204,9 @@ namespace pst
                         dataBlockReader,
                         bidToLBBTEntryMapper),
                     new RowValuesExtractor(),
-                    new SubNodesEnumerator(
-                        bidToLBBTEntryMapper,
-                        CreateSubnodeBTreeLeafKeysEnumerator(
-                            dataBlockReader,
-                            new SIEntryToLBBTEntryMapper(
-                                bidToLBBTEntryMapper))),
+                    CreateSubnodeEnumerator(
+                        dataBlockReader,
+                        bidToLBBTEntryMapper),
                     new RowIndexReader<TRowId>(
                         new TCINFODecoder(
                             new HIDDecoder(),
@@ -228,6 +232,31 @@ namespace pst
                     bidToLBBTEntryMapper,
                     nidToLNBTEntryMapper,
                     dataBlockReader);
+        }
+
+        private static SubnodesEnumerator CreateSubnodeEnumerator(
+            IDataBlockReader<LBBTEntry> dataBlockReader,
+            IMapper<BID, LBBTEntry> bidToLBBTEntryMapper)
+        {
+            return
+                new SubnodesEnumerator(
+                    new SubnodeBTreeBlockLevelDecider(
+                        dataBlockReader,
+                        bidToLBBTEntryMapper),
+                    new SubnodeBlockLoader(
+                        new SubnodeBlockDecoder(
+                            new BlockTrailerDecoder(
+                                new BIDDecoder())),
+                        bidToLBBTEntryMapper,
+                        dataBlockReader),
+                    new SIEntriesFromSubnodeBlockExtractor(
+                        new SIEntryDecoder(
+                            new NIDDecoder(),
+                            new BIDDecoder())),
+                    new SLEntriesFromSubnodeBlockExtractor(
+                        new SLEntryDecoder(
+                            new NIDDecoder(),
+                            new BIDDecoder())));
         }
 
         private static IBTreeOnHeapReader<TKey> CreateBTreeOnHeapReader<TKey>(
@@ -262,24 +291,8 @@ namespace pst
                     new PermutativeDecoder(false),
                     new HNBITMAPHDRDecoder(),
                     new HeapOnNodeItemsLoader(),
-                    new DataTreeLeafBIDsEnumerator(
-                        new BTreeLeafKeyEnumeratorThatDoesntKnowHowToMapKeyToNodeReference<InternalDataBlock, LBBTEntry, BID, BID>(
-                            new BIDsFromInternalDataBlockExtractor(
-                                new BIDDecoder()),
-                            new BIDsFromInternalDataBlockExtractor(
-                                new BIDDecoder()),
-                            new NodeLevelFromInternalDataBlockExtractor(),
-                            new InternalDataBlockLoader(
-                                new InternalDataBlockDecoder(
-                                    new BlockTrailerDecoder(
-                                        new BIDDecoder())),
-                                dataBlockReader),
-                            bidToLBBTEntryMapper,
-                            dataBlockReader),
-                        new ExternalDataBlockDecoder(
-                            new BlockTrailerDecoder(
-                                new BIDDecoder()),
-                            new PermutativeDecoder(false)),
+                    CreateDataTreeLeafNodesEnumerator(
+                        dataBlockReader,
                         bidToLBBTEntryMapper),
                     bidToLBBTEntryMapper,
                     dataBlockReader);
@@ -291,48 +304,17 @@ namespace pst
         {
             return
                 new DataTreeLeafBIDsEnumerator(
-                    new BTreeLeafKeyEnumeratorThatDoesntKnowHowToMapKeyToNodeReference<InternalDataBlock, LBBTEntry, BID, BID>(
-                        new BIDsFromInternalDataBlockExtractor(
-                            new BIDDecoder()),
-                        new BIDsFromInternalDataBlockExtractor(
-                            new BIDDecoder()),
-                        new NodeLevelFromInternalDataBlockExtractor(),
-                        new InternalDataBlockLoader(
-                            new InternalDataBlockDecoder(
-                                new BlockTrailerDecoder(
-                                    new BIDDecoder())),
-                            dataBlockReader),
-                        bidToLBBTEntryMapper,
-                        dataBlockReader),
-                    new ExternalDataBlockDecoder(
-                        new BlockTrailerDecoder(
-                            new BIDDecoder()),
-                        new PermutativeDecoder(false)),
-                    bidToLBBTEntryMapper);
-        }
-
-        private static IBTreeLeafKeysEnumeratorThatDoesntKnowHowToMapTheKeyToNodeReference<SLEntry, SIEntry, LBBTEntry> CreateSubnodeBTreeLeafKeysEnumerator(
-            IDataBlockReader<LBBTEntry> dataBlockReader,
-            IMapper<SIEntry, LBBTEntry> siEntryToLBBTEntryMapper)
-        {
-            return
-                new BTreeLeafKeyEnumeratorThatDoesntKnowHowToMapKeyToNodeReference<SubnodeBlock, LBBTEntry, SIEntry, SLEntry>(
-                    new SIEntriesFromSubnodeBlockExtractor(
-                        new SIEntryDecoder(
-                            new NIDDecoder(),
-                            new BIDDecoder())),
-                    new SLEntriesFromSubnodeBlockExtractor(
-                        new SLEntryDecoder(
-                            new NIDDecoder(),
-                            new BIDDecoder())),
-                    new NodeLevelFromSubnodeBlockExtractor(),
-                    new SubnodeBlockLoader(
-                        new SubnodeBlockDecoder(
+                    new DataTreeBlockLevelDecider(
+                        dataBlockReader,
+                        bidToLBBTEntryMapper),
+                    new InternalDataBlockLoader(
+                        new InternalDataBlockDecoder(
                             new BlockTrailerDecoder(
                                 new BIDDecoder())),
+                        bidToLBBTEntryMapper,
                         dataBlockReader),
-                    siEntryToLBBTEntryMapper,
-                    dataBlockReader);
+                    new BIDsFromInternalDataBlockExtractor(
+                        new BIDDecoder()));
         }
 
         private static IBTreeLeafKeysEnumerator<LNBTEntry, BREF> CreateNodeBTreeLeafKeysEnumerator(

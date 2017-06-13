@@ -1,6 +1,5 @@
 ﻿using pst.encodables.ndb;
 using pst.encodables.ndb.blocks.data;
-using pst.encodables.ndb.btree;
 using pst.interfaces;
 using pst.interfaces.btree;
 using pst.interfaces.ndb;
@@ -10,44 +9,55 @@ namespace pst.impl.ndb.datatree
 {
     class DataTreeLeafBIDsEnumerator : IDataTreeLeafBIDsEnumerator
     {
-        private readonly IBTreeLeafKeysEnumeratorThatDoesntKnowHowToMapTheKeyToNodeReference<BID, BID, LBBTEntry> dataTreeLeafKeysEnumerator;
-        private readonly IDecoder<ExternalDataBlock> externalDataBlockDecoder;
-
-        private readonly IMapper<BID, LBBTEntry> bidToLBBTEntryMapper;
+        private readonly IDataTreeBlockLevelDecider dataTreeBlockLevelDecider;
+        private readonly IBTreeNodeLoader<InternalDataBlock, BID> internalDataBlockLoader;
+        private readonly IExtractor<InternalDataBlock, BID[]> blockIdsFromInternalDataBlockExtractor;
 
         public DataTreeLeafBIDsEnumerator(
-            IBTreeLeafKeysEnumeratorThatDoesntKnowHowToMapTheKeyToNodeReference<BID, BID, LBBTEntry> dataTreeLeafKeysEnumerator,
-            IDecoder<ExternalDataBlock> externalDataBlockDecoder,
-            IMapper<BID, LBBTEntry> bidToLBBTEntryMapper)
+            IDataTreeBlockLevelDecider dataTreeBlockLevelDecider,
+            IBTreeNodeLoader<InternalDataBlock, BID> internalDataBlockLoader,
+            IExtractor<InternalDataBlock, BID[]> blockIdsFromInternalDataBlockExtractor)
         {
-            this.dataTreeLeafKeysEnumerator = dataTreeLeafKeysEnumerator;
-            this.externalDataBlockDecoder = externalDataBlockDecoder;
-            this.bidToLBBTEntryMapper = bidToLBBTEntryMapper;
+            this.dataTreeBlockLevelDecider = dataTreeBlockLevelDecider;
+            this.internalDataBlockLoader = internalDataBlockLoader;
+            this.blockIdsFromInternalDataBlockExtractor = blockIdsFromInternalDataBlockExtractor;
         }
 
         public BID[] Enumerate(BID blockId)
         {
-            var lbbtEntry = bidToLBBTEntryMapper.Map(blockId);
+            return
+                EnumerateAndAdd(
+                    blockId,
+                    dataTreeBlockLevelDecider.GetBlockLevel(blockId));
+        }
 
-            var blockSize = lbbtEntry.GetBlockSize();
-
-            if (blockSize <= 8 * 1024)
+        private BID[] EnumerateAndAdd(BID blockId, int currentDepth)
+        {
+            if (currentDepth == 2)
             {
-                return new[] { lbbtEntry.BlockReference.BlockId };
-            }
-            else
-            {
-                var blockIds = new List<BID>();
+                var internalDataBlock = internalDataBlockLoader.LoadNode(blockId);
 
-                var bids = dataTreeLeafKeysEnumerator.Enumerate(lbbtEntry);
+                var intermediateKeys = blockIdsFromInternalDataBlockExtractor.Extract(internalDataBlock);
 
-                foreach (var bid in bids)
+                var allLeafKeys = new List<BID>();
+
+                foreach (var key in intermediateKeys)
                 {
-                    blockIds.Add(bid);
+                    var leafKeys = EnumerateAndAdd(key, currentDepth - 1);
+
+                    allLeafKeys.AddRange(leafKeys);
                 }
 
-                return blockIds.ToArray();
+                return allLeafKeys.ToArray();
             }
+            else if (currentDepth == 1)
+            {
+                var internalDataBlock = internalDataBlockLoader.LoadNode(blockId);
+
+                return blockIdsFromInternalDataBlockExtractor.Extract(internalDataBlock);
+            }
+
+            return new[] { blockId };
         }
     }
 }
