@@ -37,7 +37,7 @@ namespace pst.impl.ltp.pc
             ISubnodesEnumerator subnodesEnumerator,
             IDataTreeLeafBIDsEnumerator dataTreeLeafBlockIdsEnumerator,
             IPropertyTypeMetadataProvider propertyTypeMetadataProvider,
-            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
+            IMapper<BID, LBBTEntry> bidToLBBTEntryMapping,
             IDataBlockReader<LBBTEntry> dataBlockReader,
             IDecoder<ExternalDataBlock> externalDataBlockDecoder)
         {
@@ -48,7 +48,7 @@ namespace pst.impl.ltp.pc
             this.dataTreeLeafBlockIdsEnumerator = dataTreeLeafBlockIdsEnumerator;
             this.propertyTypeMetadataProvider = propertyTypeMetadataProvider;
 
-            this.bidToLBBTEntryMapping = blockIdToEntryMapping;
+            this.bidToLBBTEntryMapping = bidToLBBTEntryMapping;
             this.dataBlockReader = dataBlockReader;
             this.externalDataBlockDecoder = externalDataBlockDecoder;
         }

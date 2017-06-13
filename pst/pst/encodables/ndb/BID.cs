@@ -18,7 +18,7 @@ namespace pst.encodables.ndb
 
         public bool Equals(BID other)
         {
-            return other.Value == Value;
+            return other?.Value == Value;
         }
 
         public int CompareTo(BID other)
@@ -30,7 +30,7 @@ namespace pst.encodables.ndb
         {
             var bid = obj as BID;
 
-            return bid.Value == Value;
+            return bid?.Value == Value;
         }
 
         public override int GetHashCode()
@@ -40,7 +40,7 @@ namespace pst.encodables.ndb
 
         public override string ToString()
         {
-            return $"0x{Value.ToString("x")}".ToLower();
+            return $"0x{Value:x}".ToLower();
         }
     }
 }

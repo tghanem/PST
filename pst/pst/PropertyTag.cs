@@ -35,7 +35,7 @@ namespace pst
 
         public override string ToString()
         {
-            return $"0x{Value.ToString("x")}".ToLower();
+            return $"0x{Value:x}".ToLower();
         }
     }
 }

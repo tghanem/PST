@@ -110,9 +110,6 @@ namespace pst.impl.ltp.tc
                 var slEntry =
                     subnodeIds.First(e => e.LocalSubnodeId.Value == rowMatrixHnid.NID.Value);
 
-                var lbbtEntryForSubnode =
-                    bidToLBBTEntryMapper.Map(slEntry.DataBlockId);
-
                 var dataBlocks =
                     dataTreeLeafNodesEnumerator.Enumerate(slEntry.DataBlockId);
 
@@ -121,9 +118,6 @@ namespace pst.impl.ltp.tc
 
                 var blockIndex =
                     (int)(tcRowId.Value.RowIndex / numberOfRowsPerBlock);
-
-                var rowIndex =
-                    tcRowId.Value.RowIndex % numberOfRowsPerBlock;
 
                 var lbbEntryForDataBlock =
                     bidToLBBTEntryMapper.Map(dataBlocks[blockIndex]);

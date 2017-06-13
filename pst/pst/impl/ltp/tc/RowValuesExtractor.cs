@@ -30,9 +30,7 @@ namespace pst.impl.ltp.tc
                 {
                     values.Add(
                         columnDescriptors[i].Tag,
-                        rowData.Take(
-                            columnDescriptors[i].DataOffset,
-                            columnDescriptors[i].DataSize));
+                        rowData.Take(columnDescriptors[i].DataOffset, columnDescriptors[i].DataSize));
                 }
             }
 

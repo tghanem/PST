@@ -64,7 +64,7 @@ namespace pst.impl.ltp.bth
 
         public DataRecord[] ReadAllDataRecords(BID blockId, Maybe<HID> userRoot)
         {
-            var bthHeader = (BTHHEADER)null;
+            BTHHEADER bthHeader;
 
             if (userRoot.HasValue)
             {

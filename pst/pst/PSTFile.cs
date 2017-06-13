@@ -5,7 +5,6 @@ using pst.interfaces;
 using pst.interfaces.ltp.pc;
 using pst.interfaces.ltp.tc;
 using pst.interfaces.ndb;
-using pst.utilities;
 
 namespace pst
 {
@@ -40,15 +39,7 @@ namespace pst
         }
 
         public MessageStore MessageStore
-        {
-            get
-            {
-                return
-                    new MessageStore(
-                        nidToLNBTEntryMapper,
-                        pcBasedPropertyReader);
-            }
-        }
+            => new MessageStore(nidToLNBTEntryMapper, pcBasedPropertyReader);
 
         public Folder GetRootMailboxFolder()
         {

@@ -88,7 +88,6 @@ namespace pst
                         new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree)),
                     CreatePCBasedPropertyReader(
                         dataBlockReader,
-                        new DictionaryBasedMapper<NID, LNBTEntry>(nodeBTree),
                         new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree)),
                     new DictionaryBasedMapper<NID, LNBTEntry>(nodeBTree));
         }
@@ -148,7 +147,6 @@ namespace pst
 
         private static IPCBasedPropertyReader CreatePCBasedPropertyReader(
             IDataBlockReader<LBBTEntry> dataBlockReader,
-            IMapper<NID, LNBTEntry> nidToLNBTEntryMapper,
             IMapper<BID, LBBTEntry> bidToLBBTEntryMapper)
         {
             return

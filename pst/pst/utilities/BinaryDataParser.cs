@@ -1,5 +1,4 @@
 ﻿using pst.interfaces;
-using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -47,12 +46,6 @@ namespace pst.utilities
             valueStream.Read(buffer, 0, count);
 
             return BinaryData.OfValue(buffer);
-        }
-
-        public BinaryDataParser Skip(int count)
-        {
-            TakeAndSkip(count);
-            return this;
         }
 
         public TType TakeAndSkip<TType>(int count, IDecoder<TType> typeDecoder)

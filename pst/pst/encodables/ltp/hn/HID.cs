@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace pst.encodables.ltp.hn
+﻿namespace pst.encodables.ltp.hn
 {
     class HID
     {
@@ -40,7 +38,7 @@ namespace pst.encodables.ltp.hn
 
         public override string ToString()
         {
-            return $"0x{Value.ToString("x")}".ToLower();
+            return $"0x{Value:x}".ToLower();
         }
     }
 }

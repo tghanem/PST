@@ -59,7 +59,7 @@ namespace pst.impl.ltp.hn
 
             var parser = BinaryDataParser.OfValue(externalBlock);
 
-            var pageMapOffset = 0;
+            int pageMapOffset;
 
             if (hid.BlockIndex == 0)
             {
