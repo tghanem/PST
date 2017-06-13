@@ -92,6 +92,10 @@ namespace pst
                             new Attachment(
                                 attachmentSubnodeEntry.DataBlockId,
                                 attachmentSubnodeEntry.SubnodeBlockId,
+                                nidDecoder,
+                                nidBasedTableContextReader,
+                                tagBasedTableContextReader,
+                                subnodesEnumerator,
                                 pcBasedPropertyReader);
                     })
                 .ToArray();

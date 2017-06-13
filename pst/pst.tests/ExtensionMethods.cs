@@ -1,4 +1,4 @@
-﻿namespace pst
+﻿namespace pst.tests
 {
     public static class ExtensionMethods
     {

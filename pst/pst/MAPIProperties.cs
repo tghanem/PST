@@ -9,6 +9,8 @@
 
         public const int mfHasAttach = 0x00000010;
 
+        public const int afEmbeddedMessage = 0x00000005;
+
         public static readonly PropertyTag PidTagRecordKey = new PropertyTag(new PropertyId(0x0FF9), PropertyType.PtypBinary);
         public static readonly PropertyTag PidTagDisplayName = new PropertyTag(new PropertyId(0x3001), PropertyType.PtypString);
         public static readonly PropertyTag PidTagIpmSubTreeEntryId = new PropertyTag(new PropertyId(0x35E0), PropertyType.PtypBinary);
@@ -36,5 +38,8 @@
 
         public static readonly PropertyTag PidTagAttachLongFilename = new PropertyTag(new PropertyId(0x3707), PropertyType.PtypString);
         public static readonly PropertyTag PidTagAttachDataBinary = new PropertyTag(new PropertyId(0x3701), PropertyType.PtypBinary);
+
+        public static readonly PropertyTag PidTagAttachMethod = new PropertyTag(new PropertyId(0x3705), PropertyType.PtypInteger32);
+        public static readonly PropertyTag PidTagAttachDataObject = new PropertyTag(new PropertyId(0x3701), PropertyType.PtypObject);
     }
 }

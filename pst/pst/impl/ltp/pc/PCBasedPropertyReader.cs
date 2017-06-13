@@ -6,6 +6,7 @@ using pst.interfaces.ltp;
 using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.ltp.pc;
+using pst.utilities;
 
 namespace pst.impl.ltp.pc
 {
@@ -69,6 +70,14 @@ namespace pst.impl.ltp.pc
 
                     return new PropertyValue(heapItem);
                 }
+            }
+            else if (propertyTag.Type.Value == Globals.PtypObject)
+            {
+                var hnid = hnidDecoder.Decode(dataRecord.Value.Data.Take(2, 4));
+
+                var heapItem = heapOnNodeReader.GetHeapItem(nodeDataBlockId, hnid.HID);
+
+                return new PropertyValue(heapItem);
             }
 
             return Maybe<PropertyValue>.NoValue();

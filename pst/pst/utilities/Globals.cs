@@ -31,5 +31,6 @@ namespace pst.utilities
         public const int PtypString8 = 0x001e;
 
         public const int PtypBinary = 0x0102;
+        public const int PtypObject = 0x000D;
     }
 }

@@ -69,6 +69,11 @@ namespace pst.utilities
             }
         }
 
+        public bool HasFlag(int value)
+        {
+            return (value & ToInt32()) == value;
+        }
+
         public bool ToBoolean()
         {
             return BitConverter.ToBoolean(Value, 0);

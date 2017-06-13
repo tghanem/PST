@@ -12,7 +12,7 @@ namespace pst.tests
         public void ShouldCorrectlyReadAttachmentFileName()
         {
             //Arrange
-            var sut = GetMessageSut();
+            var sut = GetMessageSut("TestWithTextFileAttachment");
 
             //Act
             var result = sut.GetAttachments()[0].GetProperty(MAPIProperties.PidTagAttachLongFilename);
@@ -25,7 +25,7 @@ namespace pst.tests
         public void ShouldCorrectlyReadAttachmentContent()
         {
             //Arrange
-            var sut = GetMessageSut();
+            var sut = GetMessageSut("TestWithTextFileAttachment");
 
             //Act
             var result = sut.GetAttachments()[0].GetProperty(MAPIProperties.PidTagAttachDataBinary);
@@ -35,7 +35,33 @@ namespace pst.tests
             Assert.AreEqual("Test", result.Value.Value.ToAnsi());
         }
 
-        private Message GetMessageSut()
+        [Test]
+        public void ShouldCorrectlyDetectThatTheMessageContainsEmbeddedMessages()
+        {
+            //Arrange
+            var sut = GetMessageSut("TestWithEmbeddedMessage");
+
+            //Act
+            var result = sut.GetAttachments()[0].GetEmbeddedMessage();
+
+            //Assert
+            Assert.IsTrue(result.HasValue);
+        }
+
+        [Test]
+        public void ShouldCorrectlyReadEmbeddedMessageSubject()
+        {
+            //Arrange
+            var sut = GetMessageSut("TestWithEmbeddedMessage");
+
+            //Act
+            var result = sut.GetAttachments()[0].GetEmbeddedMessage();
+
+            //Assert
+            Assert.AreEqual("Test1", result.Value.GetSubjectUnicode());
+        }
+
+        private Message GetMessageSut(string messageSubject)
         {
             var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 
@@ -45,7 +71,7 @@ namespace pst.tests
                 .GetSubFolders()
                 .First(f => f.GetDisplayNameUnicode() == "FolderWithMessagesWithAttachments")
                 .GetMessages()
-                .First(m => m.GetSubjectUnicode() == "TestWithTextFileAttachment");
+                .First(m => m.GetSubjectUnicode() == messageSubject);
         }
     }
 }
