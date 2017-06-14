@@ -151,7 +151,7 @@
     <Compile Include="impl\ndb\subnodebtree\SIEntryToLBBTEntryMapper.cs" />
     <Compile Include="impl\ndb\subnodebtree\SLEntriesFromSubnodeBlockExtractor.cs" />
     <Compile Include="impl\ndb\subnodebtree\SubnodeBlockLoader.cs" />
-    <Compile Include="impl\ndb\subnodebtree\SubnodesEnumerator.cs" />
+    <Compile Include="impl\ndb\subnodebtree\SubNodesEnumerator.cs" />
     <Compile Include="interfaces\btree\IBTreeLeafKeysEnumerator.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
     <Compile Include="interfaces\ndb\IDataTreeBlockLevelDecider.cs" />
@@ -170,7 +170,7 @@
     <Compile Include="interfaces\messaging\IPropertyTypeMetadataProvider.cs" />
     <Compile Include="interfaces\ndb\IDataTreeLeafBIDsEnumerator.cs" />
     <Compile Include="interfaces\ndb\ISubnodeBTreeBlockLevelDecider.cs" />
-    <Compile Include="interfaces\ndb\ISubnodesEnumerator.cs" />
+    <Compile Include="interfaces\ndb\ISubNodesEnumerator.cs" />
     <Compile Include="MAPIProperties.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="MessageStore.cs" />

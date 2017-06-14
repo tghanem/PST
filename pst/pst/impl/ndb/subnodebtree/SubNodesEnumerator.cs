@@ -7,14 +7,14 @@ using System.Collections.Generic;
 
 namespace pst.impl.ndb.subnodebtree
 {
-    class SubnodesEnumerator : ISubnodesEnumerator
+    class SubNodesEnumerator : ISubNodesEnumerator
     {
         private readonly ISubnodeBTreeBlockLevelDecider subnodeBTreeBlockLevelDecider;
         private readonly IBTreeNodeLoader<SubnodeBlock, BID> subnodeBlockLoader;
         private readonly IExtractor<SubnodeBlock, SIEntry[]> entriesFromIntermediateSubnodeBlockExtractor;
         private readonly IExtractor<SubnodeBlock, SLEntry[]> entriesFromLeafSubnodeBlockExtractor;
 
-        public SubnodesEnumerator(
+        public SubNodesEnumerator(
             ISubnodeBTreeBlockLevelDecider subnodeBTreeBlockLevelDecider,
             IBTreeNodeLoader<SubnodeBlock, BID> subnodeBlockLoader,
             IExtractor<SubnodeBlock, SIEntry[]> entriesFromIntermediateSubnodeBlockExtractor,

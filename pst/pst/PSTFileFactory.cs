@@ -232,12 +232,12 @@ namespace pst
                     dataBlockReader);
         }
 
-        private static SubnodesEnumerator CreateSubnodeEnumerator(
+        private static SubNodesEnumerator CreateSubnodeEnumerator(
             IDataBlockReader<LBBTEntry> dataBlockReader,
             IMapper<BID, LBBTEntry> bidToLBBTEntryMapper)
         {
             return
-                new SubnodesEnumerator(
+                new SubNodesEnumerator(
                     new SubnodeBTreeBlockLevelDecider(
                         dataBlockReader,
                         bidToLBBTEntryMapper),

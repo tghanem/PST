@@ -17,7 +17,7 @@ namespace pst.impl.ltp.tc
     {
         private readonly IHeapOnNodeReader heapOnNodeReader;
         private readonly IRowValuesExtractor rowValuesExtractor;
-        private readonly ISubnodesEnumerator subnodesEnumerator;
+        private readonly ISubNodesEnumerator subnodesEnumerator;
         private readonly IRowIndexReader<TRowId> rowIndexReader;
         private readonly IDataTreeLeafBIDsEnumerator dataTreeLeafNodesEnumerator;
 
@@ -31,7 +31,7 @@ namespace pst.impl.ltp.tc
         public RowMatrixReader(
             IHeapOnNodeReader heapOnNodeReader,
             IRowValuesExtractor rowValuesExtractor,
-            ISubnodesEnumerator subnodesEnumerator,
+            ISubNodesEnumerator subnodesEnumerator,
             IRowIndexReader<TRowId> rowIndexReader,
             IDataTreeLeafBIDsEnumerator dataTreeLeafNodesEnumerator,
             IDecoder<HNID> hnidDecoder,

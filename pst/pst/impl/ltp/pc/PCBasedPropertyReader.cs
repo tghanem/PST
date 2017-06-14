@@ -22,7 +22,7 @@ namespace pst.impl.ltp.pc
         private readonly IDecoder<HNID> hnidDecoder;
         private readonly IHeapOnNodeReader heapOnNodeReader;
         private readonly IBTreeOnHeapReader<PropertyId> bthReader;
-        private readonly ISubnodesEnumerator subnodesEnumerator;
+        private readonly ISubNodesEnumerator subnodesEnumerator;
         private readonly IDataTreeLeafBIDsEnumerator dataTreeLeafBlockIdsEnumerator;
         private readonly IPropertyTypeMetadataProvider propertyTypeMetadataProvider;
 
@@ -34,7 +34,7 @@ namespace pst.impl.ltp.pc
             IDecoder<HNID> hnidDecoder,
             IHeapOnNodeReader heapOnNodeReader,
             IBTreeOnHeapReader<PropertyId> bthReader,
-            ISubnodesEnumerator subnodesEnumerator,
+            ISubNodesEnumerator subnodesEnumerator,
             IDataTreeLeafBIDsEnumerator dataTreeLeafBlockIdsEnumerator,
             IPropertyTypeMetadataProvider propertyTypeMetadataProvider,
             IMapper<BID, LBBTEntry> bidToLBBTEntryMapping,
