@@ -2,7 +2,6 @@
 using pst.encodables.ltp.hn;
 using pst.encodables.ltp.tc;
 using pst.encodables.ndb;
-using pst.encodables.ndb.btree;
 using pst.interfaces;
 using pst.interfaces.io;
 using pst.interfaces.ltp.hn;
@@ -24,9 +23,7 @@ namespace pst.impl.ltp.tc
         private readonly IDecoder<HNID> hnidDecoder;
         private readonly IDecoder<TCINFO> tcinfoDecoder;
 
-        private readonly IMapper<BID, LBBTEntry> bidToLBBTEntryMapper;
-        private readonly IMapper<NID, LNBTEntry> nidToLNBTEntryMapper;
-        private readonly IDataBlockReader<LBBTEntry> dataBlockReader;
+        private readonly IDataBlockReader dataBlockReader;
 
         public RowMatrixReader(
             IHeapOnNodeReader heapOnNodeReader,
@@ -36,9 +33,7 @@ namespace pst.impl.ltp.tc
             IDataTreeLeafBIDsEnumerator dataTreeLeafNodesEnumerator,
             IDecoder<HNID> hnidDecoder,
             IDecoder<TCINFO> tcinfoDecoder,
-            IMapper<BID, LBBTEntry> bidToLBBTEntryMapper,
-            IMapper<NID, LNBTEntry> nidToLNBTEntryMapper,
-            IDataBlockReader<LBBTEntry> dataBlockReader)
+            IDataBlockReader dataBlockReader)
         {
             this.dataTreeLeafNodesEnumerator = dataTreeLeafNodesEnumerator;
             this.rowValuesExtractor = rowValuesExtractor;
@@ -47,24 +42,16 @@ namespace pst.impl.ltp.tc
             this.tcinfoDecoder = tcinfoDecoder;
             this.hnidDecoder = hnidDecoder;
             this.subnodesEnumerator = subnodesEnumerator;
-            this.bidToLBBTEntryMapper = bidToLBBTEntryMapper;
-            this.nidToLNBTEntryMapper = nidToLNBTEntryMapper;
             this.dataBlockReader = dataBlockReader;
         }
 
         public Maybe<TableRow> GetRow(BID nodeDataBlockId, BID subnodeDataBlockId, TRowId rowId)
         {
-            var lbbtEntry =
-                bidToLBBTEntryMapper.Map(nodeDataBlockId);
-
-            var dataBlockId =
-                lbbtEntry.BlockReference.BlockId;
-
             var hnHeader =
-                heapOnNodeReader.GetHeapOnNodeHeader(dataBlockId);
+                heapOnNodeReader.GetHeapOnNodeHeader(nodeDataBlockId);
 
             var userRootHeapItem =
-                heapOnNodeReader.GetHeapItem(dataBlockId, hnHeader.UserRoot);
+                heapOnNodeReader.GetHeapItem(nodeDataBlockId, hnHeader.UserRoot);
 
             var tcInfo =
                 tcinfoDecoder.Decode(userRootHeapItem);
@@ -78,7 +65,7 @@ namespace pst.impl.ltp.tc
             }
 
             var tcRowId =
-                rowIndexReader.GetRowId(dataBlockId, rowId);
+                rowIndexReader.GetRowId(nodeDataBlockId, rowId);
 
             if (tcRowId.HasNoValue)
             {
@@ -88,7 +75,7 @@ namespace pst.impl.ltp.tc
             if (rowMatrixHnid.IsHID)
             {
                 var heapItem =
-                    heapOnNodeReader.GetHeapItem(dataBlockId, rowMatrixHnid.HID);
+                    heapOnNodeReader.GetHeapItem(nodeDataBlockId, rowMatrixHnid.HID);
 
                 var encodedRows =
                     heapItem.Slice(tcInfo.GroupsOffsets[3]);
@@ -119,11 +106,8 @@ namespace pst.impl.ltp.tc
                 var blockIndex =
                     (int)(tcRowId.Value.RowIndex / numberOfRowsPerBlock);
 
-                var lbbEntryForDataBlock =
-                    bidToLBBTEntryMapper.Map(dataBlocks[blockIndex]);
-
                 var dataBlock =
-                    dataBlockReader.Read(lbbEntryForDataBlock, lbbEntryForDataBlock.GetBlockSize());
+                    dataBlockReader.Read(dataBlocks[blockIndex]);
 
                 var tableRow =
                     new TableRow(

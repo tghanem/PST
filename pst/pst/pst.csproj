@@ -125,8 +125,9 @@
     <Compile Include="impl\encoders\ndb\btree\LBBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\ndb\btree\LNBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\ndb\NIDEncoder.cs" />
-    <Compile Include="impl\io\LBBTEntryBlockReaderAdapter.cs" />
-    <Compile Include="impl\io\StreamBasedBlockReader.cs" />
+    <Compile Include="impl\io\BlockIdBasedDataBlockReader.cs" />
+    <Compile Include="impl\io\BlockReferenceBasedDataBlockReader.cs" />
+    <Compile Include="impl\io\DataReader.cs" />
     <Compile Include="impl\ltp\bth\BTreeOnHeapReader.cs" />
     <Compile Include="impl\ltp\hn\HeapOnNodeItemsLoader.cs" />
     <Compile Include="impl\ltp\hn\HeapOnNodeReader.cs" />
@@ -154,11 +155,12 @@
     <Compile Include="impl\ndb\subnodebtree\SubNodesEnumerator.cs" />
     <Compile Include="interfaces\btree\IBTreeLeafKeysEnumerator.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
+    <Compile Include="interfaces\io\IDataReader.cs" />
     <Compile Include="interfaces\ndb\IDataTreeBlockLevelDecider.cs" />
     <Compile Include="interfaces\IConverter.cs" />
     <Compile Include="interfaces\IExtractor.cs" />
     <Compile Include="interfaces\IMapper.cs" />
-    <Compile Include="interfaces\io\IDataReader.cs" />
+    <Compile Include="interfaces\io\IDataBlockReader.cs" />
     <Compile Include="interfaces\ltp\bth\IBTreeOnHeapReader.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeItemsLoader.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeReader.cs" />

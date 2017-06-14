@@ -8,21 +8,18 @@ namespace pst.impl.ndb
 {
     class BTPageLoader : IBTreeNodeLoader<BTPage, BREF>
     {
+        private readonly IDataReader dataReader;
         private readonly IDecoder<BTPage> pageDecoder;
 
-        private readonly IDataBlockReader<BREF> pageBlockReader;
-
-        public BTPageLoader(
-            IDecoder<BTPage> pageDecoder,
-            IDataBlockReader<BREF> pageBlockReader)
+        public BTPageLoader(IDataReader dataReader, IDecoder<BTPage> pageDecoder)
         {
+            this.dataReader = dataReader;
             this.pageDecoder = pageDecoder;
-            this.pageBlockReader = pageBlockReader;
         }
 
         public BTPage LoadNode(BREF pageReference)
         {
-            var encodedPage = pageBlockReader.Read(pageReference, 512);
+            var encodedPage = dataReader.Read(pageReference.ByteIndex.Value, 512);
 
             return pageDecoder.Decode(encodedPage);
         }

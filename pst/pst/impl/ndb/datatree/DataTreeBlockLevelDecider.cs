@@ -1,6 +1,4 @@
 ﻿using pst.encodables.ndb;
-using pst.encodables.ndb.btree;
-using pst.interfaces;
 using pst.interfaces.io;
 using pst.interfaces.ndb;
 
@@ -8,22 +6,16 @@ namespace pst.impl.ndb.datatree
 {
     class DataTreeBlockLevelDecider : IDataTreeBlockLevelDecider
     {
-        private readonly IDataBlockReader<LBBTEntry> dataBlockReader;
-        private readonly IMapper<BID, LBBTEntry> bidToLBBTEntryMapper;
+        private readonly IDataBlockReader dataBlockReader;
 
-        public DataTreeBlockLevelDecider(
-            IDataBlockReader<LBBTEntry> dataBlockReader,
-            IMapper<BID, LBBTEntry> bidToLBBTEntryMapper)
+        public DataTreeBlockLevelDecider(IDataBlockReader dataBlockReader)
         {
             this.dataBlockReader = dataBlockReader;
-            this.bidToLBBTEntryMapper = bidToLBBTEntryMapper;
         }
 
         public int GetBlockLevel(BID blockId)
         {
-            var lbbtEntry = bidToLBBTEntryMapper.Map(blockId);
-
-            var dataBlock = dataBlockReader.Read(lbbtEntry, lbbtEntry.GetBlockSize());
+            var dataBlock = dataBlockReader.Read(blockId);
 
             if (dataBlock.Value[0] == 0x01)
             {

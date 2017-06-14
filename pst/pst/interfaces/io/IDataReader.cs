@@ -2,8 +2,8 @@
 
 namespace pst.interfaces.io
 {
-    interface IDataBlockReader<TBlockReference> where TBlockReference : class
+    interface IDataReader
     {
-        BinaryData Read(TBlockReference blockReference, int blockSize);
+        BinaryData Read(long offset, int count);
     }
 }

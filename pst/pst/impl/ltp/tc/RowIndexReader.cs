@@ -2,9 +2,7 @@
 using pst.encodables.ltp.bth;
 using pst.encodables.ltp.tc;
 using pst.encodables.ndb;
-using pst.encodables.ndb.btree;
 using pst.interfaces;
-using pst.interfaces.io;
 using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.ltp.tc;
@@ -20,18 +18,14 @@ namespace pst.impl.ltp.tc
         private readonly IBTreeOnHeapReader<TRowId> bthReader;
         private readonly IConverter<DataRecord, TCROWID> dataRecordToTCROWIDConverter;
 
-        private readonly IDataBlockReader<LBBTEntry> dataBlockReader;
-
         public RowIndexReader(
             IDecoder<TCINFO> tcinfoDecoder,
             IHeapOnNodeReader heapOnNodeReader,
             IBTreeOnHeapReader<TRowId> bthReader,
-            IConverter<DataRecord, TCROWID> dataRecordToTCROWIDConverter,
-            IDataBlockReader<LBBTEntry> dataBlockReader)
+            IConverter<DataRecord, TCROWID> dataRecordToTCROWIDConverter)
         {
             this.bthReader = bthReader;
             this.tcinfoDecoder = tcinfoDecoder;
-            this.dataBlockReader = dataBlockReader;
             this.heapOnNodeReader = heapOnNodeReader;
             this.dataRecordToTCROWIDConverter = dataRecordToTCROWIDConverter;
         }

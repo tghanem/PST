@@ -2,9 +2,7 @@
 using pst.encodables.ltp.bth;
 using pst.encodables.ltp.hn;
 using pst.encodables.ndb;
-using pst.encodables.ndb.btree;
 using pst.interfaces;
-using pst.interfaces.io;
 using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.hn;
 using pst.utilities;
@@ -15,24 +13,21 @@ namespace pst.impl.ltp.bth
 {
     class BTreeOnHeapReader<TKey> : IBTreeOnHeapReader<TKey> where TKey : IComparable<TKey>
     {
-        private readonly IHeapOnNodeReader heapOnNodeReader;
-        private readonly IDecoder<BTHHEADER> bthHeaderDecoder;
-        private readonly IDecoder<TKey> keyDecoder;
         private readonly IDecoder<HID> hidDecoder;
-        private readonly IDataBlockReader<LBBTEntry> dataBlockReader;
+        private readonly IDecoder<TKey> keyDecoder;
+        private readonly IDecoder<BTHHEADER> bthHeaderDecoder;
+        private readonly IHeapOnNodeReader heapOnNodeReader;
 
         public BTreeOnHeapReader(
-            IHeapOnNodeReader heapOnNodeReader,
-            IDecoder<BTHHEADER> bthHeaderDecoder,
-            IDecoder<TKey> keyDecoder,
             IDecoder<HID> hidDecoder,
-            IDataBlockReader<LBBTEntry> dataBlockReader)
+            IDecoder<TKey> keyDecoder,
+            IDecoder<BTHHEADER> bthHeaderDecoder,
+            IHeapOnNodeReader heapOnNodeReader)
         {
-            this.heapOnNodeReader = heapOnNodeReader;
-            this.bthHeaderDecoder = bthHeaderDecoder;
             this.keyDecoder = keyDecoder;
             this.hidDecoder = hidDecoder;
-            this.dataBlockReader = dataBlockReader;
+            this.heapOnNodeReader = heapOnNodeReader;
+            this.bthHeaderDecoder = bthHeaderDecoder;
         }
 
         public Maybe<DataRecord> ReadDataRecord(BID blockId, TKey key)

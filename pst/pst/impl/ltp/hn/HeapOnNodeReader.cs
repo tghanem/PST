@@ -1,6 +1,5 @@
 ﻿using pst.encodables.ltp.hn;
 using pst.encodables.ndb;
-using pst.encodables.ndb.btree;
 using pst.interfaces;
 using pst.interfaces.io;
 using pst.interfaces.ltp.hn;
@@ -19,8 +18,7 @@ namespace pst.impl.ltp.hn
         private readonly IHeapOnNodeItemsLoader heapOnNodeItemsLoader;
         private readonly IDataTreeLeafBIDsEnumerator externalDataBlockIdsLoader;
 
-        private readonly IMapper<BID, LBBTEntry> blockIdToEntryMapping;
-        private readonly IDataBlockReader<LBBTEntry> dataBlockReader;
+        private readonly IDataBlockReader dataBlockReader;
 
         public HeapOnNodeReader(
             IDecoder<HNHDR> hnHDRDecoder,
@@ -30,8 +28,7 @@ namespace pst.impl.ltp.hn
             IDecoder<HNBITMAPHDR> hnBitmapHDRDecoder,
             IHeapOnNodeItemsLoader heapOnNodeItemsLoader,
             IDataTreeLeafBIDsEnumerator externalDataBlockIdsLoader,
-            IMapper<BID, LBBTEntry> blockIdToEntryMapping,
-            IDataBlockReader<LBBTEntry> dataBlockReader)
+            IDataBlockReader dataBlockReader)
         {
             this.hnHDRDecoder = hnHDRDecoder;
             this.hnPageHDRDecoder = hnPageHDRDecoder;
@@ -40,7 +37,6 @@ namespace pst.impl.ltp.hn
             this.hnBitmapHDRDecoder = hnBitmapHDRDecoder;
             this.heapOnNodeItemsLoader = heapOnNodeItemsLoader;
             this.externalDataBlockIdsLoader = externalDataBlockIdsLoader;
-            this.blockIdToEntryMapping = blockIdToEntryMapping;
             this.dataBlockReader = dataBlockReader;
         }
 
@@ -94,11 +90,8 @@ namespace pst.impl.ltp.hn
             var externalDataBlockIds =
                 externalDataBlockIdsLoader.Enumerate(blockId);
 
-            var externalBlockLbbtEntry =
-                blockIdToEntryMapping.Map(externalDataBlockIds[blockIndex]);
-
             var externalDataBlock =
-                dataBlockReader.Read(externalBlockLbbtEntry, externalBlockLbbtEntry.GetBlockSize());
+                dataBlockReader.Read(externalDataBlockIds[blockIndex]);
 
             return blockDataDecoder.Decode(externalDataBlock);
         }

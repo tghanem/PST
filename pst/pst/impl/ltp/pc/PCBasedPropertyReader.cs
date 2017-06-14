@@ -2,7 +2,6 @@
 using pst.encodables.ltp.hn;
 using pst.encodables.ndb;
 using pst.encodables.ndb.blocks.data;
-using pst.encodables.ndb.btree;
 using pst.interfaces;
 using pst.interfaces.io;
 using pst.interfaces.ltp;
@@ -26,20 +25,18 @@ namespace pst.impl.ltp.pc
         private readonly IDataTreeLeafBIDsEnumerator dataTreeLeafBlockIdsEnumerator;
         private readonly IPropertyTypeMetadataProvider propertyTypeMetadataProvider;
 
-        private readonly IMapper<BID, LBBTEntry> bidToLBBTEntryMapping;
-        private readonly IDataBlockReader<LBBTEntry> dataBlockReader;
+        private readonly IDataBlockReader dataBlockReader;
         private readonly IDecoder<ExternalDataBlock> externalDataBlockDecoder;
 
         public PCBasedPropertyReader(
             IDecoder<HNID> hnidDecoder,
+            IDecoder<ExternalDataBlock> externalDataBlockDecoder,
+            IDataBlockReader dataBlockReader,
             IHeapOnNodeReader heapOnNodeReader,
-            IBTreeOnHeapReader<PropertyId> bthReader,
             ISubNodesEnumerator subnodesEnumerator,
             IDataTreeLeafBIDsEnumerator dataTreeLeafBlockIdsEnumerator,
             IPropertyTypeMetadataProvider propertyTypeMetadataProvider,
-            IMapper<BID, LBBTEntry> bidToLBBTEntryMapping,
-            IDataBlockReader<LBBTEntry> dataBlockReader,
-            IDecoder<ExternalDataBlock> externalDataBlockDecoder)
+            IBTreeOnHeapReader<PropertyId> bthReader)
         {
             this.bthReader = bthReader;
             this.hnidDecoder = hnidDecoder;
@@ -48,7 +45,6 @@ namespace pst.impl.ltp.pc
             this.dataTreeLeafBlockIdsEnumerator = dataTreeLeafBlockIdsEnumerator;
             this.propertyTypeMetadataProvider = propertyTypeMetadataProvider;
 
-            this.bidToLBBTEntryMapping = bidToLBBTEntryMapping;
             this.dataBlockReader = dataBlockReader;
             this.externalDataBlockDecoder = externalDataBlockDecoder;
         }
@@ -111,11 +107,8 @@ namespace pst.impl.ltp.pc
                         dataBlockIds,
                         id =>
                         {
-                            var lbbtEntryForBlock =
-                                bidToLBBTEntryMapping.Map(id);
-
                             var externalDataBlock =
-                                dataBlockReader.Read(lbbtEntryForBlock, lbbtEntryForBlock.GetBlockSize());
+                                dataBlockReader.Read(id);
 
                             var decodedExternalDataBlock =
                                 externalDataBlockDecoder.Decode(externalDataBlock);
