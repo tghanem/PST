@@ -6,6 +6,7 @@ namespace pst.utilities
     {
         public static readonly NID NID_MESSAGE_STORE = new NID(0x21);
         public static readonly NID NID_ROOT_FOLDER = new NID(0x122);
+        public static readonly NID NID_NAME_TO_ID_MAP = new NID(0x61);
 
         public const int NID_TYPE_HIERARCHY_TABLE = 0x0D;
         public const int NID_TYPE_CONTENTS_TABLE = 0x0E;

@@ -8,6 +8,7 @@ using pst.interfaces.ltp.tc;
 using pst.interfaces.ndb;
 using pst.utilities;
 using System.Linq;
+using pst.interfaces.ltp;
 
 namespace pst
 {
@@ -18,6 +19,7 @@ namespace pst
         private readonly ITCReader<NID> tcReader;
         private readonly ITCReader<Tag> tagBasedTableContextReader;
         private readonly ISubNodesEnumerator subnodesEnumerator;
+        private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPCBasedPropertyReader pcBasedPropertyReader;        
         private readonly IMapper<NID, LNBTEntry> nidToLNBTEntryMapper;
 
@@ -27,6 +29,7 @@ namespace pst
             ITCReader<NID> tcReader,
             ITCReader<Tag> tagBasedTableContextReader,
             ISubNodesEnumerator subnodesEnumerator,
+            IPropertyNameToIdMap propertyNameToIdMap,
             IPCBasedPropertyReader pcBasedPropertyReader,
             IMapper<NID, LNBTEntry> nidToLNBTEntryMapper)
         {
@@ -35,6 +38,7 @@ namespace pst
             this.nidDecoder = nidDecoder;
             this.tagBasedTableContextReader = tagBasedTableContextReader;
             this.subnodesEnumerator = subnodesEnumerator;
+            this.propertyNameToIdMap = propertyNameToIdMap;
             this.pcBasedPropertyReader = pcBasedPropertyReader;            
             this.nidToLNBTEntryMapper = nidToLNBTEntryMapper;
         }
@@ -57,6 +61,7 @@ namespace pst
                         tcReader,                        
                         tagBasedTableContextReader,
                         subnodesEnumerator,
+                        propertyNameToIdMap, 
                         pcBasedPropertyReader,                        
                         nidToLNBTEntryMapper))
                 .ToArray();
@@ -87,9 +92,34 @@ namespace pst
                                 tcReader,
                                 tagBasedTableContextReader,
                                 subnodesEnumerator,
+                                propertyNameToIdMap, 
                                 pcBasedPropertyReader);
                     })
                 .ToArray();
+        }
+
+        public Maybe<PropertyValue> GetProperty(NumericalPropertyTag propertyTag)
+        {
+            var propertyId = propertyNameToIdMap.GetPropertyId(propertyTag.Set, propertyTag.Id);
+
+            if (propertyId.HasNoValue)
+            {
+                return Maybe<PropertyValue>.NoValue();
+            }
+
+            return GetProperty(new PropertyTag(propertyId.Value, propertyTag.Type));
+        }
+
+        public Maybe<PropertyValue> GetProperty(StringPropertyTag propertyTag)
+        {
+            var propertyId = propertyNameToIdMap.GetPropertyId(propertyTag.Set, propertyTag.Name);
+
+            if (propertyId.HasNoValue)
+            {
+                return Maybe<PropertyValue>.NoValue();
+            }
+
+            return GetProperty(new PropertyTag(propertyId.Value, propertyTag.Type));
         }
 
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)

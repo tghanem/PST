@@ -86,6 +86,32 @@ namespace pst.tests
             Assert.AreEqual(new string('a', 4 * 1028), result.Value.Value.ToUnicode().Trim());
         }
 
+        [Test]
+        public void ShouldCorrectlyReadMessageProperty_NumericalNamedProperty_PidLidInternetAccountName()
+        {
+            //Arrange
+            var sut = GetMessageSut("FolderWithSingleMessage", "Test1");
+
+            //Act
+            var result = sut.GetProperty(MAPIProperties.PidLidInternetAccountName);
+
+            //Assert
+            Assert.AreEqual("user1@test.lab", result.Value.Value.ToUnicode().Trim());
+        }
+
+        [Test]
+        public void ShouldCorrectlyReadMessageProperty_StringNamedProperty_ContentType()
+        {
+            //Arrange
+            var sut = GetMessageSut("FolderWithSingleMessage", "Test1");
+
+            //Act
+            var result = sut.GetProperty(MAPIProperties.PidNameContentType);
+
+            //Assert
+            Assert.IsTrue(result.Value.Value.ToUnicode().Trim().Contains("multipart/alternative"));
+        }
+
         private Message GetMessageSut(string folderName, string messageSubject)
         {
             var folder = GetFolderSut(folderName);

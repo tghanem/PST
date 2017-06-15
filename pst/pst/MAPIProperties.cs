@@ -1,11 +1,20 @@
-﻿namespace pst
+﻿using System;
+
+namespace pst
 {
     public static class MAPIProperties
     {
+        internal static readonly PropertyTag PidTagNameidStreamGuid = new PropertyTag(new PropertyId(0x0002), PropertyType.PtypBinary);
+        internal static readonly PropertyTag PidTagNameidStreamEntry = new PropertyTag(new PropertyId(0x0003), PropertyType.PtypBinary);
+        internal static readonly PropertyTag PidTagNameidStreamString = new PropertyTag(new PropertyId(0x0004), PropertyType.PtypBinary);
+
         public const int PidTagRecipientTypeMessageOriginator = 0;
         public const int PidTagRecipientTypePrimaryRecipient = 1;
         public const int PidTagRecipientTypeCcRecipient = 2;
         public const int PidTagRecipientTypeBccRecipient = 3;
+
+        public static readonly Guid PSETID_Common = Guid.Parse("00062008-0000-0000-C000-000000000046");
+        public static readonly Guid PS_INTERNET_HEADERS = Guid.Parse("00020386-0000-0000-C000-000000000046");
 
         public const int mfHasAttach = 0x00000010;
 
@@ -41,5 +50,8 @@
 
         public static readonly PropertyTag PidTagAttachMethod = new PropertyTag(new PropertyId(0x3705), PropertyType.PtypInteger32);
         public static readonly PropertyTag PidTagAttachDataObject = new PropertyTag(new PropertyId(0x3701), PropertyType.PtypObject);
+
+        public static readonly NumericalPropertyTag PidLidInternetAccountName = new NumericalPropertyTag(PSETID_Common, 0x00008580, PropertyType.PtypString);
+        public static readonly StringPropertyTag PidNameContentType = new StringPropertyTag(PS_INTERNET_HEADERS, "content-type", PropertyType.PtypString);
     }
 }

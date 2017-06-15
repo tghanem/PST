@@ -35,6 +35,7 @@ using pst.utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using pst.impl.messaging;
 
 namespace pst
 {
@@ -80,6 +81,11 @@ namespace pst
                     new NIDDecoder(),
                     CreateSubnodesEnumerator(
                         dataBlockReader),
+                    new PropertyNameToIdMap(
+                        new NAMEIDDecoder(),
+                        CreatePCBasedPropertyReader(
+                            dataBlockReader),
+                        new DictionaryBasedMapper<NID, LNBTEntry>(nodeBTree)),
                     CreatePCBasedPropertyReader(
                         dataBlockReader),
                     new DictionaryBasedMapper<NID, LNBTEntry>(nodeBTree));

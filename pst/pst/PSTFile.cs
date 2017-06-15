@@ -2,6 +2,7 @@
 using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.interfaces;
+using pst.interfaces.ltp;
 using pst.interfaces.ltp.pc;
 using pst.interfaces.ltp.tc;
 using pst.interfaces.ndb;
@@ -17,6 +18,7 @@ namespace pst
         private readonly ITCReader<Tag> tagBasedTableContextReader;
 
         private readonly ISubNodesEnumerator subnodesEnumerator;
+        private readonly IPropertyNameToIdMap propertyIdToNameMap;
         private readonly IPCBasedPropertyReader pcBasedPropertyReader;
         private readonly IMapper<NID, LNBTEntry> nidToLNBTEntryMapper;
 
@@ -26,12 +28,14 @@ namespace pst
             IDecoder<EntryId> entryIdDecoder,
             IDecoder<NID> nidDecoder,
             ISubNodesEnumerator subnodesEnumerator,
+            IPropertyNameToIdMap propertyIdToNameMap,
             IPCBasedPropertyReader pcBasedPropertyReader,
             IMapper<NID, LNBTEntry> nidToLNBTEntryMapper)
         {
             this.entryIdDecoder = entryIdDecoder;
             this.nidDecoder = nidDecoder;
             this.subnodesEnumerator = subnodesEnumerator;
+            this.propertyIdToNameMap = propertyIdToNameMap;
             this.tableContextReader = tableContextReader;
             this.tagBasedTableContextReader = tagBasedTableContextReader;
             this.pcBasedPropertyReader = pcBasedPropertyReader;
@@ -56,6 +60,7 @@ namespace pst
                     tableContextReader,
                     tagBasedTableContextReader,
                     subnodesEnumerator,
+                    propertyIdToNameMap, 
                     pcBasedPropertyReader,
                     nidToLNBTEntryMapper);
         }

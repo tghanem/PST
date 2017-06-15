@@ -54,6 +54,7 @@
     <Compile Include="encodables\ltp\tc\TCINFO.cs" />
     <Compile Include="encodables\ltp\tc\TCOLDESC.cs" />
     <Compile Include="encodables\ltp\tc\TCROWID.cs" />
+    <Compile Include="encodables\messaging\NAMEID.cs" />
     <Compile Include="encodables\ndb\blocks\BlockTrailer.cs" />
     <Compile Include="encodables\ndb\blocks\data\ExternalDataBlock.cs" />
     <Compile Include="encodables\ndb\blocks\data\InternalDataBlock.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="impl\decoders\ltp\tc\TCINFODecoder.cs" />
     <Compile Include="impl\decoders\ltp\tc\TCOLDESCDecoder.cs" />
     <Compile Include="impl\decoders\ltp\tc\TCROWIDDecoder.cs" />
+    <Compile Include="impl\decoders\messaging\NAMEIDDecoder.cs" />
     <Compile Include="impl\decoders\messaging\PropertyIdDecoder.cs" />
     <Compile Include="impl\decoders\messaging\PropertyTagDecoder.cs" />
     <Compile Include="impl\decoders\messaging\PropertyTypeDecoder.cs" />
@@ -136,6 +138,7 @@
     <Compile Include="impl\ltp\tc\RowMatrixReader.cs" />
     <Compile Include="impl\ltp\tc\RowValuesExtractor.cs" />
     <Compile Include="impl\ltp\tc\TCReader.cs" />
+    <Compile Include="impl\messaging\PropertyNameToIdMap.cs" />
     <Compile Include="impl\ndb\bbt\BREFFromIBBTEntryExtractor.cs" />
     <Compile Include="impl\ndb\bbt\IBBTEntriesFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\bbt\LBBTEntriesFromBTPageExtractor.cs" />
@@ -156,6 +159,7 @@
     <Compile Include="interfaces\btree\IBTreeLeafKeysEnumerator.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
     <Compile Include="interfaces\io\IDataReader.cs" />
+    <Compile Include="interfaces\messaging\IPropertyNameToIdMap.cs" />
     <Compile Include="interfaces\ndb\IDataTreeBlockLevelDecider.cs" />
     <Compile Include="interfaces\IConverter.cs" />
     <Compile Include="interfaces\IExtractor.cs" />
@@ -176,6 +180,7 @@
     <Compile Include="MAPIProperties.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="MessageStore.cs" />
+    <Compile Include="NumericalPropertyTag.cs" />
     <Compile Include="PropertyId.cs" />
     <Compile Include="PropertyTag.cs" />
     <Compile Include="PropertyType.cs" />
@@ -184,6 +189,7 @@
     <Compile Include="PSTFileFactory.cs" />
     <Compile Include="impl\ndb\subnodebtree\SIEntriesFromSubnodeBlockExtractor.cs" />
     <Compile Include="Recipient.cs" />
+    <Compile Include="StringPropertyTag.cs" />
     <Compile Include="utilities\BinaryData.cs" />
     <Compile Include="interfaces\IDecoder.cs" />
     <Compile Include="interfaces\IEncoder.cs" />
