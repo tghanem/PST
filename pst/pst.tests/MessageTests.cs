@@ -121,7 +121,7 @@ namespace pst.tests
             var sut = GetMessageSut("FolderWithSampleMessages", "TestWithYellowAndGreenCategories");
 
             //Act
-            var result = sut.GetProperty(MAPIProperties.PidNameKeywords).Value.GetMultipleValues();
+            var result = sut.GetProperty(MAPIProperties.PidNameKeywords).Value.GetMultipleVariableLengthValues();
 
             //Assert
             var multipleValuesAsStrings = result.Select(d => d.ToUnicode()).ToArray();

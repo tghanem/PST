@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using pst.utilities;
+using System.Collections.Generic;
 using System.Linq;
-using pst.utilities;
 
 namespace pst
 {
@@ -15,7 +15,7 @@ namespace pst
             Value = value;
         }
 
-        public BinaryData[] GetMultipleValues()
+        public BinaryData[] GetMultipleVariableLengthValues()
         {
             var count = Value.Take(4).ToInt32();
 

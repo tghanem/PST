@@ -28,6 +28,16 @@ namespace pst.utilities
         public const int PtypTime = 0x0040;
         public const int PtypGuid = 0x0048;
 
+        public const int PtypMultipleInteger16 = 0x1002;
+        public const int PtypMultipleInteger32 = 0x1003;
+        public const int PtypMultipleFloating32 = 0x1004;
+        public const int PtypMultipleFloating64 = 0x1005;
+        public const int PtypMultipleCurrency = 0x1006;
+        public const int PtypMultipleFloatingTime = 0x1007;
+        public const int PtypMultipleInteger64 = 0x1014;
+        public const int PtypMultipleTime = 0x1040;
+        public const int PtypMultipleGuid = 0x1048;
+
         public const int PtypString = 0x001f;
         public const int PtypString8 = 0x001e;
 

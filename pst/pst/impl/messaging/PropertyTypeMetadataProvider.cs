@@ -6,6 +6,20 @@ namespace pst.impl.ltp
 {
     class PropertyTypeMetadataProvider : IPropertyTypeMetadataProvider
     {
+        public bool IsMultiValueFixedLength(PropertyType propertyType)
+        {
+            return
+                propertyType.Value == Globals.PtypMultipleInteger16 ||
+                propertyType.Value == Globals.PtypMultipleInteger32 ||
+                propertyType.Value == Globals.PtypMultipleFloating32 ||
+                propertyType.Value == Globals.PtypMultipleFloating64 ||
+                propertyType.Value == Globals.PtypMultipleCurrency ||
+                propertyType.Value == Globals.PtypMultipleFloatingTime ||
+                propertyType.Value == Globals.PtypMultipleInteger64 ||
+                propertyType.Value == Globals.PtypMultipleTime ||
+                propertyType.Value == Globals.PtypMultipleGuid;
+        }
+
         public bool IsMultiValueVariableLength(PropertyType propertyType)
         {
             return

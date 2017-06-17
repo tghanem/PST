@@ -65,6 +65,10 @@ namespace pst.impl.messaging
                     return new PropertyValue(heapItem);
                 }
             }
+            else if (propertyTypeMetadataProvider.IsMultiValueFixedLength(propertyType))
+            {
+                return new PropertyValue(propertyValue);
+            }
             else if (propertyTypeMetadataProvider.IsVariableLength(propertyType) ||
                      propertyTypeMetadataProvider.IsMultiValueVariableLength(propertyType))
             {
