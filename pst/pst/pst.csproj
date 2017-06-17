@@ -128,7 +128,6 @@
     <Compile Include="impl\encoders\ndb\btree\LNBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\ndb\NIDEncoder.cs" />
     <Compile Include="impl\io\BlockIdBasedDataBlockReader.cs" />
-    <Compile Include="impl\io\BlockReferenceBasedDataBlockReader.cs" />
     <Compile Include="impl\io\DataReader.cs" />
     <Compile Include="impl\ltp\bth\BTreeOnHeapReader.cs" />
     <Compile Include="impl\ltp\hn\HeapOnNodeItemsLoader.cs" />
@@ -139,6 +138,7 @@
     <Compile Include="impl\ltp\tc\RowValuesExtractor.cs" />
     <Compile Include="impl\ltp\tc\TCReader.cs" />
     <Compile Include="impl\messaging\PropertyNameToIdMap.cs" />
+    <Compile Include="impl\messaging\PropertyValueProcessor.cs" />
     <Compile Include="impl\ndb\bbt\BREFFromIBBTEntryExtractor.cs" />
     <Compile Include="impl\ndb\bbt\IBBTEntriesFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\bbt\LBBTEntriesFromBTPageExtractor.cs" />
@@ -152,7 +152,6 @@
     <Compile Include="impl\ndb\nbt\LNBTEntriesFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\PageLevelFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\subnodebtree\SubnodeBTreeBlockLevelDecider.cs" />
-    <Compile Include="impl\ndb\subnodebtree\SIEntryToLBBTEntryMapper.cs" />
     <Compile Include="impl\ndb\subnodebtree\SLEntriesFromSubnodeBlockExtractor.cs" />
     <Compile Include="impl\ndb\subnodebtree\SubnodeBlockLoader.cs" />
     <Compile Include="impl\ndb\subnodebtree\SubNodesEnumerator.cs" />
@@ -160,6 +159,7 @@
     <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
     <Compile Include="interfaces\io\IDataReader.cs" />
     <Compile Include="interfaces\messaging\IPropertyNameToIdMap.cs" />
+    <Compile Include="interfaces\messaging\IPropertyValueProcessor.cs" />
     <Compile Include="interfaces\ndb\IDataTreeBlockLevelDecider.cs" />
     <Compile Include="interfaces\IConverter.cs" />
     <Compile Include="interfaces\IExtractor.cs" />

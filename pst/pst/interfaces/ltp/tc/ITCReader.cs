@@ -10,8 +10,6 @@ namespace pst.interfaces.ltp.tc
 
         TableRow[] GetAllRows(BID nodeBlockId, BID subnodeBlockId);
 
-        Maybe<TableRow> GetRow(BID nodeBlockId, BID subnodeBlockId, TRowId rowId);
-
         Maybe<PropertyValue> ReadProperty(BID nodeBlockId, BID subnodeBlockId, TRowId rowId, PropertyTag propertyTag);
     }
 }

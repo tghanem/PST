@@ -18,6 +18,7 @@ using pst.impl.ltp.bth;
 using pst.impl.ltp.hn;
 using pst.impl.ltp.pc;
 using pst.impl.ltp.tc;
+using pst.impl.messaging;
 using pst.impl.ndb;
 using pst.impl.ndb.bbt;
 using pst.impl.ndb.datatree;
@@ -30,12 +31,12 @@ using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.ltp.pc;
 using pst.interfaces.ltp.tc;
+using pst.interfaces.messaging;
 using pst.interfaces.ndb;
 using pst.utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using pst.impl.messaging;
 
 namespace pst
 {
@@ -94,21 +95,15 @@ namespace pst
         private static TCReader<TRowId> CreateTCReader<TRowId>(IDataBlockReader dataBlockReader, IDecoder<TRowId> rowIdDecoder) where TRowId : IComparable<TRowId>
         {
             return
-                new TCReader<TRowId>(
-                    new HIDDecoder(),
-                    new HNIDDecoder(
-                        new HIDDecoder(),
-                        new NIDDecoder()),
-                    rowIdDecoder,
-                    CreateHeapOnNodeReader(
-                        dataBlockReader),
+                new TCReader<TRowId>(rowIdDecoder,
                     CreateRowIndexReader(
                         dataBlockReader,
                         rowIdDecoder),
                     CreateRowMatrixReader(
                         rowIdDecoder,
                         dataBlockReader),
-                    new PropertyTypeMetadataProvider());
+                    CreatePropertyValueProcessor(
+                        dataBlockReader));
         }
 
         private static IRowIndexReader<TRowId> CreateRowIndexReader<TRowId>(IDataBlockReader dataBlockReader, IDecoder<TRowId> rowIdDecoder) where TRowId : IComparable<TRowId>
@@ -130,6 +125,16 @@ namespace pst
         {
             return
                 new PCBasedPropertyReader(
+                    CreateBTreeOnHeapReader(
+                        new PropertyIdDecoder(),
+                        dataBlockReader),
+                    CreatePropertyValueProcessor(dataBlockReader));
+        }
+
+        private static IPropertyValueProcessor CreatePropertyValueProcessor(IDataBlockReader dataBlockReader)
+        {
+            return
+                new PropertyValueProcessor(
                     new HNIDDecoder(
                         new HIDDecoder(),
                         new NIDDecoder()),
@@ -137,7 +142,6 @@ namespace pst
                         new BlockTrailerDecoder(
                             new BIDDecoder()),
                         new PermutativeDecoder(false)),
-                    dataBlockReader,
                     CreateHeapOnNodeReader(
                         dataBlockReader),
                     CreateSubnodesEnumerator(
@@ -145,9 +149,7 @@ namespace pst
                     CreateDataTreeLeafNodesEnumerator(
                         dataBlockReader),
                     new PropertyTypeMetadataProvider(),
-                    CreateBTreeOnHeapReader(
-                        new PropertyIdDecoder(),
-                        dataBlockReader));
+                    dataBlockReader);
         }
 
         private static IDecoder<Header> CreateHeaderDecoder()

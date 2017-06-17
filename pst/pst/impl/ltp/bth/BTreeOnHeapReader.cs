@@ -112,8 +112,10 @@ namespace pst.impl.ltp.bth
 
                 for (var i = 0; i < itemCount; i++)
                 {
-                    var key = parser.TakeAndSkip(keySize);
-                    var hid = parser.TakeAndSkip(4, hidDecoder);
+                    var hid =
+                        parser
+                        .Skip(keySize)
+                        .TakeAndSkip(4, hidDecoder);
 
                     Enumerate(
                         blockId,

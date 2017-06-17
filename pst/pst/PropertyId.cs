@@ -11,7 +11,10 @@ namespace pst
             Value = value;
         }
 
-        public static PropertyId OfValue(int value) => new PropertyId(value);
+        public static PropertyId OfValue(int value)
+        {
+            return new PropertyId(value);
+        }
 
         public int CompareTo(PropertyId other)
         {

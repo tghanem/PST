@@ -14,7 +14,16 @@ namespace pst.utilities
         }
 
         public static BinaryDataParser OfValue(BinaryData data)
-            => new BinaryDataParser(new MemoryStream(data.Value));
+        {
+            return new BinaryDataParser(new MemoryStream(data.Value));
+        }
+
+        public BinaryDataParser Skip(int count)
+        {
+            valueStream.Position += count;
+
+            return this;
+        }
 
         public BinaryData[] Slice(int numberOfItems, int itemSize)
         {
@@ -26,17 +35,6 @@ namespace pst.utilities
             }
 
             return data.ToArray();
-        }
-
-        public BinaryData TakeAt(int offset, int count)
-        {
-            valueStream.Seek(offset, SeekOrigin.Begin);
-
-            var buffer = new byte[count];
-
-            valueStream.Read(buffer, 0, count);
-
-            return BinaryData.OfValue(buffer);
         }
 
         public BinaryData TakeAndSkip(int count)

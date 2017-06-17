@@ -7,9 +7,4 @@ namespace pst.interfaces.io
     {
         BinaryData Read(BID blockId);
     }
-
-    interface IDataBlockReader<TBlockId>
-    {
-        BinaryData Read(TBlockId blockId, int blockSize);
-    }
 }
