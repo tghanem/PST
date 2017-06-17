@@ -6,6 +6,14 @@ namespace pst.impl.ltp
 {
     class PropertyTypeMetadataProvider : IPropertyTypeMetadataProvider
     {
+        public bool IsMultiValueVariableLength(PropertyType propertyType)
+        {
+            return
+                propertyType.Value == Globals.PtypMultipleString ||
+                propertyType.Value == Globals.PtypMultipleBinary ||
+                propertyType.Value == Globals.PtypMultipleString8;
+        }
+
         public int GetFixedLengthTypeSize(PropertyType propertyType)
         {
             if (propertyType.Value == Globals.PtypInteger16)

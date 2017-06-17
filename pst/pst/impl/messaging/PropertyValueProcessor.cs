@@ -1,4 +1,5 @@
-﻿using pst.encodables.ltp.hn;
+﻿using pst.core;
+using pst.encodables.ltp.hn;
 using pst.encodables.ndb;
 using pst.encodables.ndb.blocks.data;
 using pst.interfaces;
@@ -64,49 +65,19 @@ namespace pst.impl.messaging
                     return new PropertyValue(heapItem);
                 }
             }
-            else if (propertyTypeMetadataProvider.IsVariableLength(propertyType))
+            else if (propertyTypeMetadataProvider.IsVariableLength(propertyType) ||
+                     propertyTypeMetadataProvider.IsMultiValueVariableLength(propertyType))
             {
                 var hnid = hnidDecoder.Decode(propertyValue);
 
-                if (hnid.IsHID)
+                var value = GetHNIDBinaryData(dataBlockId, subnodeDataBlockId, hnid);
+
+                if (value.HasNoValue)
                 {
-                    if (hnid.HID.Index == 0)
-                    {
-                        return PropertyValue.Empty;
-                    }
-
-                    var heapItem = heapOnNodeReader.GetHeapItem(dataBlockId, hnid.HID);
-
-                    return new PropertyValue(heapItem);
+                    return PropertyValue.Empty;
                 }
-                else if (hnid.IsNID)
-                {
-                    var subnodes =
-                        subnodesEnumerator.Enumerate(subnodeDataBlockId);
 
-                    var subnodeEntry =
-                        subnodes.First(s => s.LocalSubnodeId.Value == hnid.NID.Value);
-
-                    var dataBlockIds =
-                        dataTreeLeafBlockIdsEnumerator.Enumerate(subnodeEntry.DataBlockId);
-
-                    var stream = new MemoryStream();
-
-                    Array.ForEach(
-                        dataBlockIds,
-                        id =>
-                        {
-                            var externalDataBlock =
-                                dataBlockReader.Read(id);
-
-                            var decodedExternalDataBlock =
-                                externalDataBlockDecoder.Decode(externalDataBlock);
-
-                            stream.Write(decodedExternalDataBlock.Data, 0, decodedExternalDataBlock.Data.Length);
-                        });
-
-                    return new PropertyValue(BinaryData.OfValue(stream.ToArray()));
-                }
+                return new PropertyValue(value.Value);
             }
             else if (propertyType.Value == Globals.PtypObject)
             {
@@ -118,6 +89,51 @@ namespace pst.impl.messaging
             }
 
             return PropertyValue.Empty;
+        }
+
+        private Maybe<BinaryData> GetHNIDBinaryData(BID dataBlockId, BID subnodeDataBlockId, HNID hnid)
+        {
+            if (hnid.IsHID)
+            {
+                if (hnid.HID.Index == 0)
+                {
+                    return Maybe<BinaryData>.NoValue();
+                }
+
+                var heapItem = heapOnNodeReader.GetHeapItem(dataBlockId, hnid.HID);
+
+                return Maybe<BinaryData>.OfValue(heapItem);
+            }
+            else if (hnid.IsNID)
+            {
+                var subnodes =
+                    subnodesEnumerator.Enumerate(subnodeDataBlockId);
+
+                var subnodeEntry =
+                    subnodes.First(s => s.LocalSubnodeId.Value == hnid.NID.Value);
+
+                var dataBlockIds =
+                    dataTreeLeafBlockIdsEnumerator.Enumerate(subnodeEntry.DataBlockId);
+
+                var stream = new MemoryStream();
+
+                Array.ForEach(
+                    dataBlockIds,
+                    id =>
+                    {
+                        var externalDataBlock =
+                            dataBlockReader.Read(id);
+
+                        var decodedExternalDataBlock =
+                            externalDataBlockDecoder.Decode(externalDataBlock);
+
+                        stream.Write(decodedExternalDataBlock.Data, 0, decodedExternalDataBlock.Data.Length);
+                    });
+
+                return Maybe<BinaryData>.OfValue(BinaryData.OfValue(stream.ToArray()));
+            }
+
+            return Maybe<BinaryData>.NoValue();
         }
     }
 }

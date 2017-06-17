@@ -15,6 +15,7 @@ namespace pst
 
         public static readonly Guid PSETID_Common = Guid.Parse("00062008-0000-0000-C000-000000000046");
         public static readonly Guid PS_INTERNET_HEADERS = Guid.Parse("00020386-0000-0000-C000-000000000046");
+        public static readonly Guid PS_PUBLIC_STRINGS = Guid.Parse("00020329-0000-0000-C000-000000000046");
 
         public const int mfHasAttach = 0x00000010;
 
@@ -53,5 +54,6 @@ namespace pst
 
         public static readonly NumericalPropertyTag PidLidInternetAccountName = new NumericalPropertyTag(PSETID_Common, 0x00008580, PropertyType.PtypString);
         public static readonly StringPropertyTag PidNameContentType = new StringPropertyTag(PS_INTERNET_HEADERS, "content-type", PropertyType.PtypString);
+        public static readonly StringPropertyTag PidNameKeywords = new StringPropertyTag(PS_PUBLIC_STRINGS, "Keywords", PropertyType.PtypMultipleString);
     }
 }

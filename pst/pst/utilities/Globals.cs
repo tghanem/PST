@@ -33,5 +33,9 @@ namespace pst.utilities
 
         public const int PtypBinary = 0x0102;
         public const int PtypObject = 0x000D;
+
+        public const int PtypMultipleBinary = 0x1102;
+        public const int PtypMultipleString = 0x101F;
+        public const int PtypMultipleString8 = 0x101E;
     }
 }

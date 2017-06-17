@@ -6,6 +6,8 @@
 
         bool IsVariableLength(PropertyType propertyType);
 
+        bool IsMultiValueVariableLength(PropertyType propertyType);
+
         int GetFixedLengthTypeSize(PropertyType propertyType);
     }
 }

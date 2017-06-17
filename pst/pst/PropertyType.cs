@@ -1,4 +1,6 @@
-﻿namespace pst
+﻿using pst.utilities;
+
+namespace pst
 {
     public class PropertyType
     {
@@ -17,6 +19,9 @@
         public static readonly PropertyType PtypString8 = new PropertyType(0x001e);
         public static readonly PropertyType PtypBinary = new PropertyType(0x0102);
         public static readonly PropertyType PtypObject = new PropertyType(0x000D);
+        public static readonly PropertyType PtypMultipleString = new PropertyType(Globals.PtypMultipleString);
+        public static readonly PropertyType PtypMultipleBinary = new PropertyType(Globals.PtypMultipleBinary);
+        public static readonly PropertyType PtypMultipleString8 = new PropertyType(Globals.PtypMultipleString8);
 
         public int Value { get; }
 

@@ -2,6 +2,8 @@
 using pst.tests.Properties;
 using System.IO;
 using System.Linq;
+using System.Text;
+using pst.utilities;
 
 namespace pst.tests
 {
@@ -110,6 +112,21 @@ namespace pst.tests
 
             //Assert
             Assert.IsTrue(result.Value.Value.ToUnicode().Trim().Contains("multipart/alternative"));
+        }
+
+        [Test]
+        public void ShouldCorrectlyReadMessageCategories()
+        {
+            //Arrange
+            var sut = GetMessageSut("FolderWithSampleMessages", "TestWithYellowAndGreenCategories");
+
+            //Act
+            var result = sut.GetProperty(MAPIProperties.PidNameKeywords).Value.GetMultipleValues();
+
+            //Assert
+            var multipleValuesAsStrings = result.Select(d => d.ToUnicode()).ToArray();
+            Assert.AreEqual("Yellow category", multipleValuesAsStrings[1]);
+            Assert.AreEqual("Green category", multipleValuesAsStrings[0]);
         }
 
         private Message GetMessageSut(string folderName, string messageSubject)
