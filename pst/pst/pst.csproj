@@ -157,6 +157,7 @@
     <Compile Include="impl\ndb\subnodebtree\SubNodesEnumerator.cs" />
     <Compile Include="interfaces\btree\IBTreeLeafKeysEnumerator.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
+    <Compile Include="interfaces\IBlockDataObfuscator.cs" />
     <Compile Include="interfaces\io\IDataReader.cs" />
     <Compile Include="interfaces\messaging\IPropertyNameToIdMap.cs" />
     <Compile Include="interfaces\messaging\IPropertyValueProcessor.cs" />
@@ -196,10 +197,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="utilities\BinaryDataGenerator.cs" />
     <Compile Include="utilities\BinaryDataParser.cs" />
+    <Compile Include="utilities\CyclicEncoding.cs" />
     <Compile Include="utilities\DictionaryBasedMapper.cs" />
     <Compile Include="utilities\ExtensionMethods.cs" />
     <Compile Include="utilities\Globals.cs" />
-    <Compile Include="utilities\PermutativeDecoder.cs" />
+    <Compile Include="utilities\NoEncoding.cs" />
+    <Compile Include="utilities\PermutativeEncoding.cs" />
     <Compile Include="impl\messaging\PropertyTypeMetadataProvider.cs" />
     <Compile Include="encodables\Tag.cs" />
   </ItemGroup>

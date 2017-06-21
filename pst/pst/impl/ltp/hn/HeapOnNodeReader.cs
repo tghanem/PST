@@ -13,8 +13,8 @@ namespace pst.impl.ltp.hn
         private readonly IDecoder<HNHDR> hnHDRDecoder;
         private readonly IDecoder<HNPAGEHDR> hnPageHDRDecoder;
         private readonly IDecoder<HNPAGEMAP> hnPageMapDecoder;
-        private readonly IDecoder<BinaryData> blockDataDecoder;
         private readonly IDecoder<HNBITMAPHDR> hnBitmapHDRDecoder;
+        private readonly IBlockDataDeObfuscator blockDataDeObfuscator;
         private readonly IHeapOnNodeItemsLoader heapOnNodeItemsLoader;
         private readonly IDataTreeLeafBIDsEnumerator externalDataBlockIdsLoader;
 
@@ -24,8 +24,8 @@ namespace pst.impl.ltp.hn
             IDecoder<HNHDR> hnHDRDecoder,
             IDecoder<HNPAGEHDR> hnPageHDRDecoder,
             IDecoder<HNPAGEMAP> hnPageMapDecoder,
-            IDecoder<BinaryData> blockDataDecoder,
             IDecoder<HNBITMAPHDR> hnBitmapHDRDecoder,
+            IBlockDataDeObfuscator blockDataDeObfuscator,
             IHeapOnNodeItemsLoader heapOnNodeItemsLoader,
             IDataTreeLeafBIDsEnumerator externalDataBlockIdsLoader,
             IDataBlockReader dataBlockReader)
@@ -33,10 +33,11 @@ namespace pst.impl.ltp.hn
             this.hnHDRDecoder = hnHDRDecoder;
             this.hnPageHDRDecoder = hnPageHDRDecoder;
             this.hnPageMapDecoder = hnPageMapDecoder;
-            this.blockDataDecoder = blockDataDecoder;
             this.hnBitmapHDRDecoder = hnBitmapHDRDecoder;
+            this.blockDataDeObfuscator = blockDataDeObfuscator;
             this.heapOnNodeItemsLoader = heapOnNodeItemsLoader;
             this.externalDataBlockIdsLoader = externalDataBlockIdsLoader;
+
             this.dataBlockReader = dataBlockReader;
         }
 
@@ -93,7 +94,7 @@ namespace pst.impl.ltp.hn
             var externalDataBlock =
                 dataBlockReader.Read(externalDataBlockIds[blockIndex]);
 
-            return blockDataDecoder.Decode(externalDataBlock);
+            return blockDataDeObfuscator.DeObfuscate(externalDataBlock, blockId);
         }
 
         private HNPAGEMAP GetPageMapFromExternalDataBlock(BinaryData block, int pageMapOffset)

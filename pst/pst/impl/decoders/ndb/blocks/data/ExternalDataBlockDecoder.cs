@@ -9,17 +9,18 @@ namespace pst.impl.decoders.ndb.blocks.data
     {
         private readonly IDecoder<BlockTrailer> trailerDecoder;
 
-        private readonly IDecoder<BinaryData> blockDataDecoder;
+        private readonly IBlockDataDeObfuscator blockDataDeObfuscator;
 
-        public ExternalDataBlockDecoder(IDecoder<BlockTrailer> trailerDecoder, IDecoder<BinaryData> blockDataDecoder)
+        public ExternalDataBlockDecoder(IDecoder<BlockTrailer> trailerDecoder, IBlockDataDeObfuscator blockDataDeObfuscator)
         {
             this.trailerDecoder = trailerDecoder;
-            this.blockDataDecoder = blockDataDecoder;
+            this.blockDataDeObfuscator = blockDataDeObfuscator;
         }
 
         public ExternalDataBlock Decode(BinaryData encodedData)
         {
-            var parser = BinaryDataParser.OfValue(encodedData);
+            var parser =
+                BinaryDataParser.OfValue(encodedData);
 
             var trailer =
                 parser
@@ -29,16 +30,13 @@ namespace pst.impl.decoders.ndb.blocks.data
                 parser.TakeAndSkip(trailer.AmountOfData);
 
             var decodedBlockData =
-                blockDataDecoder.Decode(encodedBlockData);
+                blockDataDeObfuscator.DeObfuscate(encodedBlockData, trailer.BlockId);
 
             var padding =
                 parser.TakeAndSkip(trailer.AmountOfData.GetRemainingToNextMultipleOf(64));
 
             return
-                new ExternalDataBlock(
-                    decodedBlockData,
-                    padding,
-                    trailer);
+                new ExternalDataBlock(decodedBlockData, padding, trailer);
         }
     }
 }
