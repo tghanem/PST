@@ -16,8 +16,8 @@ namespace pst
     {
         private readonly NID nodeId;
         private readonly IDecoder<NID> nidDecoder;
-        private readonly ITCReader<NID> tcReader;
-        private readonly ITCReader<Tag> tagBasedTableContextReader;
+        private readonly ITableContextReader<NID> tableContextReader;
+        private readonly ITableContextReader<Tag> tagBasedTableContextReader;
         private readonly ISubNodesEnumerator subnodesEnumerator;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPCBasedPropertyReader pcBasedPropertyReader;        
@@ -26,15 +26,15 @@ namespace pst
         internal Folder(
             NID nodeId,
             IDecoder<NID> nidDecoder,
-            ITCReader<NID> tcReader,
-            ITCReader<Tag> tagBasedTableContextReader,
+            ITableContextReader<NID> tableContextReader,
+            ITableContextReader<Tag> tagBasedTableContextReader,
             ISubNodesEnumerator subnodesEnumerator,
             IPropertyNameToIdMap propertyNameToIdMap,
             IPCBasedPropertyReader pcBasedPropertyReader,
             IMapper<NID, LNBTEntry> nidToLNBTEntryMapper)
         {
             this.nodeId = nodeId;
-            this.tcReader = tcReader;
+            this.tableContextReader = tableContextReader;
             this.nidDecoder = nidDecoder;
             this.tagBasedTableContextReader = tagBasedTableContextReader;
             this.subnodesEnumerator = subnodesEnumerator;
@@ -49,7 +49,7 @@ namespace pst
                 nidToLNBTEntryMapper.Map(nodeId.ChangeType(Globals.NID_TYPE_HIERARCHY_TABLE));
 
             var rowIds =
-                tcReader.GetAllRowIds(lnbtEntry.DataBlockId);
+                tableContextReader.GetAllRowIds(lnbtEntry.DataBlockId);
 
             return
                 rowIds
@@ -58,7 +58,7 @@ namespace pst
                     new Folder(
                         nidDecoder.Decode(r.RowId),
                         nidDecoder,
-                        tcReader,                        
+                        tableContextReader,                        
                         tagBasedTableContextReader,
                         subnodesEnumerator,
                         propertyNameToIdMap, 
@@ -73,7 +73,7 @@ namespace pst
                 nidToLNBTEntryMapper.Map(nodeId.ChangeType(Globals.NID_TYPE_CONTENTS_TABLE));
 
             var rowIds =
-                tcReader.GetAllRowIds(lnbtEntry.DataBlockId);
+                tableContextReader.GetAllRowIds(lnbtEntry.DataBlockId);
 
             return
                 rowIds
@@ -89,7 +89,7 @@ namespace pst
                                 lnbtEntryForMessage.DataBlockId,
                                 lnbtEntryForMessage.SubnodeBlockId,
                                 nidDecoder,
-                                tcReader,
+                                tableContextReader,
                                 tagBasedTableContextReader,
                                 subnodesEnumerator,
                                 propertyNameToIdMap, 

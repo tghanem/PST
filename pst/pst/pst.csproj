@@ -136,7 +136,7 @@
     <Compile Include="impl\ltp\tc\RowIndexReader.cs" />
     <Compile Include="impl\ltp\tc\RowMatrixReader.cs" />
     <Compile Include="impl\ltp\tc\RowValuesExtractor.cs" />
-    <Compile Include="impl\ltp\tc\TCReader.cs" />
+    <Compile Include="impl\ltp\tc\TableContextReader.cs" />
     <Compile Include="impl\messaging\PropertyNameToIdMap.cs" />
     <Compile Include="impl\messaging\PropertyValueProcessor.cs" />
     <Compile Include="impl\ndb\bbt\BREFFromIBBTEntryExtractor.cs" />
@@ -173,7 +173,7 @@
     <Compile Include="interfaces\ltp\tc\IRowIndexReader.cs" />
     <Compile Include="interfaces\ltp\tc\IRowMatrixReader.cs" />
     <Compile Include="interfaces\ltp\tc\IRowValuesExtractor.cs" />
-    <Compile Include="interfaces\ltp\tc\ITCReader.cs" />
+    <Compile Include="interfaces\ltp\tc\ITableContextReader.cs" />
     <Compile Include="interfaces\messaging\IPropertyTypeMetadataProvider.cs" />
     <Compile Include="interfaces\ndb\IDataTreeLeafBIDsEnumerator.cs" />
     <Compile Include="interfaces\ndb\ISubnodeBTreeBlockLevelDecider.cs" />

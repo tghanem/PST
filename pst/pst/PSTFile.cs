@@ -14,8 +14,8 @@ namespace pst
         private readonly IDecoder<EntryId> entryIdDecoder;
         private readonly IDecoder<NID> nidDecoder;
 
-        private readonly ITCReader<NID> tableContextReader;
-        private readonly ITCReader<Tag> tagBasedTableContextReader;
+        private readonly ITableContextReader<NID> tableContextReader;
+        private readonly ITableContextReader<Tag> tagBasedTableContextReader;
 
         private readonly ISubNodesEnumerator subnodesEnumerator;
         private readonly IPropertyNameToIdMap propertyIdToNameMap;
@@ -23,8 +23,8 @@ namespace pst
         private readonly IMapper<NID, LNBTEntry> nidToLNBTEntryMapper;
 
         private PSTFile(
-            ITCReader<NID> tableContextReader,
-            ITCReader<Tag> tagBasedTableContextReader,
+            ITableContextReader<NID> tableContextReader,
+            ITableContextReader<Tag> tagBasedTableContextReader,
             IDecoder<EntryId> entryIdDecoder,
             IDecoder<NID> nidDecoder,
             ISubNodesEnumerator subnodesEnumerator,

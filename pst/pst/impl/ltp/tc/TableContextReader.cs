@@ -9,14 +9,14 @@ using System.Collections.Generic;
 
 namespace pst.impl.ltp.tc
 {
-    class TCReader<TRowId> : ITCReader<TRowId>
+    class TableContextReader<TRowId> : ITableContextReader<TRowId>
     {
         private readonly IDecoder<TRowId> rowIdDecoder;
         private readonly IRowIndexReader<TRowId> rowIndexReader;
         private readonly IRowMatrixReader<TRowId> rowMatrixReader;
         private readonly IPropertyValueProcessor propertyValueProcessor;
 
-        public TCReader(
+        public TableContextReader(
             IDecoder<TRowId> rowIdDecoder,
             IRowIndexReader<TRowId> rowIndexReader,
             IRowMatrixReader<TRowId> rowMatrixReader,

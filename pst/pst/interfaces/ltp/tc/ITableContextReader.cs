@@ -4,7 +4,7 @@ using pst.encodables.ndb;
 
 namespace pst.interfaces.ltp.tc
 {
-    interface ITCReader<TRowId>
+    interface ITableContextReader<TRowId>
     {
         TCROWID[] GetAllRowIds(BID nodeBlockId);
 

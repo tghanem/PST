@@ -13,14 +13,14 @@ namespace pst
         private readonly Tag recipientRowId;
 
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
-        private readonly ITCReader<Tag> tableContextReader;
+        private readonly ITableContextReader<Tag> tableContextReader;
 
         internal Recipient(
             BID recipientTableBlockId,
             BID recipientTableSubnodeBlockId,
             Tag recipientRowId,
             IPropertyNameToIdMap propertyNameToIdMap,
-            ITCReader<Tag> tableContextReader)
+            ITableContextReader<Tag> tableContextReader)
         {
             this.recipientTableBlockId = recipientTableBlockId;
             this.recipientTableSubnodeBlockId = recipientTableSubnodeBlockId;

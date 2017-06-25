@@ -16,8 +16,8 @@ namespace pst
         private readonly BID attachmentDataBlockId;
         private readonly BID attachmentSubnodeBlockId;
         private readonly IDecoder<NID> nidDecoder;
-        private readonly ITCReader<NID> nidBasedTableContextReader;
-        private readonly ITCReader<Tag> tagBasedTableContextReader;
+        private readonly ITableContextReader<NID> nidBasedTableContextReader;
+        private readonly ITableContextReader<Tag> tagBasedTableContextReader;
         private readonly ISubNodesEnumerator subnodesEnumerator;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPCBasedPropertyReader pcBasedPropertyReader;
@@ -26,8 +26,8 @@ namespace pst
             BID attachmentDataBlockId,
             BID attachmentSubnodeBlockId,
             IDecoder<NID> nidDecoder,
-            ITCReader<NID> nidBasedTableContextReader,
-            ITCReader<Tag> tagBasedTableContextReader,
+            ITableContextReader<NID> nidBasedTableContextReader,
+            ITableContextReader<Tag> tagBasedTableContextReader,
             ISubNodesEnumerator subnodesEnumerator,
             IPropertyNameToIdMap propertyNameToIdMap,
             IPCBasedPropertyReader pcBasedPropertyReader)
