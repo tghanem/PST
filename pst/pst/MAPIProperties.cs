@@ -21,6 +21,8 @@ namespace pst
 
         public const int afEmbeddedMessage = 0x00000005;
 
+        public static readonly PropertyTag PidTagPstPassword = new PropertyTag(new PropertyId(0x67FF), PropertyType.PtypInteger32);
+
         public static readonly PropertyTag PidTagRecordKey = new PropertyTag(new PropertyId(0x0FF9), PropertyType.PtypBinary);
         public static readonly PropertyTag PidTagDisplayName = new PropertyTag(new PropertyId(0x3001), PropertyType.PtypString);
         public static readonly PropertyTag PidTagIpmSubTreeEntryId = new PropertyTag(new PropertyId(0x35E0), PropertyType.PtypBinary);
