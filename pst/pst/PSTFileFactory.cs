@@ -1,5 +1,6 @@
 ﻿using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
+using pst.impl;
 using pst.impl.btree;
 using pst.impl.converters;
 using pst.impl.decoders;
@@ -35,7 +36,6 @@ using pst.interfaces.messaging;
 using pst.interfaces.ndb;
 using pst.utilities;
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace pst
@@ -46,58 +46,74 @@ namespace pst
         {
             var dataReader = new DataReader(stream);
 
-            var nodeBTree = new Dictionary<NID, LNBTEntry>();
-
-            var blockBTree = new Dictionary<BID, LBBTEntry>();
-
             var header = CreateHeaderDecoder().Decode(dataReader.Read(0, 546));
-            
-            foreach (var entry in CreateNodeBTreeLeafKeysEnumerator(dataReader)
-                                  .Enumerate(header.Root.NBTRootPage))
-            {
-                nodeBTree.Add(entry.NodeId, entry);
-            }
-
-            foreach (var entry in CreateBlockBTreeLeafKeysEnumerator(dataReader)
-                                  .Enumerate(header.Root.BBTRootPage))
-            {
-                blockBTree.Add(entry.BlockReference.BlockId, entry);
-            }
-
-            var dataBlockReader =
-                new BlockIdBasedDataBlockReader(
-                    dataReader,
-                    new DictionaryBasedMapper<BID, LBBTEntry>(blockBTree));
 
             return
                 new PSTFile(
                     CreateTCReader(
                         new NIDDecoder(),
-                        dataBlockReader,
+                        CreateDataBlockReader(dataReader),
                         CreateBlockDataDeObfuscator(
                             header.CryptMethod)),
                     CreateTCReader(
                         new TagDecoder(),
-                        dataBlockReader,
+                        CreateDataBlockReader(dataReader),
                         CreateBlockDataDeObfuscator(
                             header.CryptMethod)),
                     new EntryIdDecoder(
                         new NIDDecoder()),
                     new NIDDecoder(),
                     CreateSubnodesEnumerator(
-                        dataBlockReader),
-                    new PropertyNameToIdMap(
-                        new NAMEIDDecoder(),
-                        CreatePCBasedPropertyReader(
-                            dataBlockReader,
-                            CreateBlockDataDeObfuscator(
-                                header.CryptMethod)),
-                        new DictionaryBasedMapper<NID, LNBTEntry>(nodeBTree)),
+                        CreateDataBlockReader(dataReader)),
+                    CreatePropertyIdToNameMap(
+                        dataReader,
+                        header),
                     CreatePCBasedPropertyReader(
-                        dataBlockReader,
+                        CreateDataBlockReader(dataReader),
                         CreateBlockDataDeObfuscator(
                             header.CryptMethod)),
-                    new DictionaryBasedMapper<NID, LNBTEntry>(nodeBTree));
+                    CreateNIDToLNBTEntryMapper(dataReader));
+        }
+
+        private static BlockIdBasedDataBlockReader CreateDataBlockReader(
+            IDataReader dataReader)
+        {
+            return
+                new BlockIdBasedDataBlockReader(
+                    dataReader,
+                    CreateHeaderDecoder(),
+                    CreateBlockBTreeEntryFinder(
+                        dataReader));
+        }
+
+        private static NIDToLNBTEntryMapper CreateNIDToLNBTEntryMapper(
+            IDataReader dataReader)
+        {
+            return
+                new NIDToLNBTEntryMapper(
+                    dataReader,
+                    CreateHeaderDecoder(),
+                    CreateNodeBTreeEntryFinder(
+                        dataReader));
+        }
+
+        private static PropertyNameToIdMap CreatePropertyIdToNameMap(
+            IDataReader dataReader,
+            Header header)
+        {
+            return
+                new PropertyNameToIdMap(
+                    new NAMEIDDecoder(),
+                    CreatePCBasedPropertyReader(
+                        new BlockIdBasedDataBlockReader(
+                            dataReader,
+                            CreateHeaderDecoder(),
+                            CreateBlockBTreeEntryFinder(
+                                dataReader)),
+                        CreateBlockDataDeObfuscator(
+                            header.CryptMethod)),
+                    CreateNIDToLNBTEntryMapper(
+                        dataReader));
         }
 
         private static IDecoder<Header> CreateHeaderDecoder()
@@ -119,11 +135,13 @@ namespace pst
             {
                 return new NoEncoding();
             }
-            else if (cryptMethod == Globals.NDB_CRYPT_CYCLIC)
+
+            if (cryptMethod == Globals.NDB_CRYPT_CYCLIC)
             {
                 return new CyclicEncoding();
             }
-            else if (cryptMethod == Globals.NDB_CRYPT_PERMUTE)
+
+            if (cryptMethod == Globals.NDB_CRYPT_PERMUTE)
             {
                 return new PermutativeEncoding();
             }
@@ -196,7 +214,7 @@ namespace pst
                     new ExternalDataBlockDecoder(
                         new BlockTrailerDecoder(
                             new BIDDecoder()),
-                        new PermutativeEncoding()),
+                        blockDataDeObfuscator),
                     CreateHeapOnNodeReader(
                         dataBlockReader,
                         blockDataDeObfuscator),
@@ -316,36 +334,17 @@ namespace pst
                         new BIDDecoder()));
         }
 
-        private static IBTreeLeafKeysEnumerator<LNBTEntry, BREF> CreateNodeBTreeLeafKeysEnumerator(
+        private static IBTreeEntryFinder<BID, LBBTEntry, BREF> CreateBlockBTreeEntryFinder(
             IDataReader dataReader)
         {
             return
-                new BTreeLeafKeysEnumerator<BTPage, BREF, INBTEntry, LNBTEntry>(
-                    new BREFFromINBTEntryExtractor(),
-                    new INBTEntriesFromBTPageExtractor(
-                        new INBTEntryDecoder(
-                            new NIDDecoder(),
-                            new BREFDecoder(
-                                new BIDDecoder(),
-                                new IBDecoder()))),
-                    new LNBTEntriesFromBTPageExtractor(
-                        new LNBTEntryDecoder(
-                            new NIDDecoder(),
-                            new BIDDecoder())),
-                    new PageLevelFromBTPageExtractor(),
-                    new BTPageLoader(
-                        dataReader,
-                        new BTPageDecoder(
-                            new PageTrailerDecoder(
-                                new BIDDecoder()))));
-        }
-
-        private static IBTreeLeafKeysEnumerator<LBBTEntry, BREF> CreateBlockBTreeLeafKeysEnumerator(
-            IDataReader dataReader)
-        {
-            return
-                new BTreeLeafKeysEnumerator<BTPage, BREF, IBBTEntry, LBBTEntry>(
-                    new BREFFromIBBTEntryExtractor(),
+                new BTreeEntryFinder<BID, LBBTEntry, IBBTEntry, BREF, BTPage>(
+                    new FuncBasedExtractor<LBBTEntry, BID>(
+                        entry => entry.BlockReference.BlockId),
+                    new FuncBasedExtractor<IBBTEntry, BID>(
+                        entry => entry.Key),
+                    new FuncBasedExtractor<IBBTEntry, BREF>(
+                        entry => entry.ChildPageBlockReference),
                     new IBBTEntriesFromBTPageExtractor(
                         new IBBTEntryDecoder(
                             new BIDDecoder(),
@@ -357,7 +356,38 @@ namespace pst
                             new BREFDecoder(
                                 new BIDDecoder(),
                                 new IBDecoder()))),
-                    new PageLevelFromBTPageExtractor(),
+                    new FuncBasedExtractor<BTPage, int>(
+                        page => page.PageLevel),
+                    new BTPageLoader(
+                        dataReader,
+                        new BTPageDecoder(
+                            new PageTrailerDecoder(
+                                new BIDDecoder()))));
+        }
+
+        private static IBTreeEntryFinder<NID, LNBTEntry, BREF> CreateNodeBTreeEntryFinder(
+            IDataReader dataReader)
+        {
+            return
+                new BTreeEntryFinder<NID, LNBTEntry, INBTEntry, BREF, BTPage>(
+                    new FuncBasedExtractor<LNBTEntry, NID>(
+                        entry => entry.NodeId),
+                    new FuncBasedExtractor<INBTEntry, NID>(
+                        entry => entry.Key),
+                    new FuncBasedExtractor<INBTEntry, BREF>(
+                        entry => entry.ChildPageBlockReference),
+                    new INBTEntriesFromBTPageExtractor(
+                        new INBTEntryDecoder(
+                            new NIDDecoder(),
+                            new BREFDecoder(
+                                new BIDDecoder(),
+                                new IBDecoder()))),
+                    new LNBTEntriesFromBTPageExtractor(
+                        new LNBTEntryDecoder(
+                            new NIDDecoder(),
+                            new BIDDecoder())),
+                    new FuncBasedExtractor<BTPage, int>(
+                        page => page.PageLevel),
                     new BTPageLoader(
                         dataReader,
                         new BTPageDecoder(
