@@ -14,7 +14,7 @@ namespace pst
         private readonly IDecoder<NID> nidDecoder;
 
         private readonly IRowIndexReader<NID> rowIndexReader;
-        private readonly ITableContextReader<NID> tableContextReader;
+        private readonly ITableContextReader tableContextReader;
         private readonly ITableContextBasedPropertyReader<NID> nidBasedTableContextBasedPropertyReader;
         private readonly ITableContextBasedPropertyReader<Tag> tagBasedTableContextBasedPropertyReader;
 
@@ -25,7 +25,7 @@ namespace pst
 
         private PSTFile(
             IRowIndexReader<NID> rowIndexReader,
-            ITableContextReader<NID> tableContextReader,
+            ITableContextReader tableContextReader,
             ITableContextBasedPropertyReader<NID> nidBasedTableContextBasedPropertyReader,
             ITableContextBasedPropertyReader<Tag> tagBasedTableContextBasedPropertyReader,
             IDecoder<EntryId> entryIdDecoder,

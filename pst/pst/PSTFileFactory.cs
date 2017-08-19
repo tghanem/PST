@@ -58,15 +58,14 @@ namespace pst
                     CreateNIDToLNBTEntryMapper(stream));
         }
 
-        private static ITableContextReader<NID> CreateNIDBasedTableContextReader(
+        private static ITableContextReader CreateNIDBasedTableContextReader(
             Stream stream)
         {
             return
                 new TableContextReader<NID>(
                     new NIDDecoder(),
                     CreateNIDBasedRowIndexReader(stream),
-                    CreateNIDBasedRowMatrixReader(stream),
-                    CreatePropertyValueProcessor(stream));
+                    CreateNIDBasedRowMatrixReader(stream));
         }
 
         private static BlockIdBasedDataBlockReader CreateDataBlockReader(
