@@ -4,4 +4,4 @@
 [![Build Status:](https://travis-ci.org/tghanem/pst.svg?branch=master)](https://travis-ci.org/tghanem/pst)
 
 
-# Special Thanks to JetBrains (https://www.jetbrains.com/) For Their Open Source License for ReSharper 2017.
+Special Thanks to JetBrains (https://www.jetbrains.com/) For Their Open Source License for ReSharper 2017.
