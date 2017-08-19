@@ -3,7 +3,6 @@ using pst.encodables;
 using pst.encodables.ndb;
 using pst.interfaces;
 using pst.interfaces.ltp;
-using pst.interfaces.ltp.pc;
 using pst.interfaces.ltp.tc;
 using pst.interfaces.ndb;
 using pst.utilities;
@@ -16,31 +15,37 @@ namespace pst
         private readonly BID nodeBlockId;
         private readonly BID subnodeBlockId;
         private readonly IDecoder<NID> nidDecoder;
-        private readonly ITableContextReader<NID> nidBasedTableContextReader;
-        private readonly ITableContextReader<Tag> tagBasedTableContextReader;
+        private readonly IRowIndexReader<NID> rowIndexReader;
+        private readonly ITableContextReader<NID> tableContextReader;
+        private readonly ITableContextBasedPropertyReader<NID> nidBasedTableContextBasedPropertyReader;
+        private readonly ITableContextBasedPropertyReader<Tag> tagBasedTableContextBasedPropertyReader;
         private readonly ISubNodesEnumerator subnodesEnumerator;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
-        private readonly IPCBasedPropertyReader pcBasedPropertyReader;
+        private readonly IPropertyReader propertyReader;
 
         internal Message(
             BID nodeBlockId,
             BID subnodeBlockId,
             IDecoder<NID> nidDecoder,
-            ITableContextReader<NID> nidBasedTableContextReader,
-            ITableContextReader<Tag> tagBasedTableContextReader,
+            IRowIndexReader<NID> rowIndexReader,
+            ITableContextReader<NID> tableContextReader,
+            ITableContextBasedPropertyReader<NID> nidBasedTableContextBasedPropertyReader,
+            ITableContextBasedPropertyReader<Tag> tagBasedTableContextBasedPropertyReader,
             ISubNodesEnumerator subnodesEnumerator,
             IPropertyNameToIdMap propertyNameToIdMap,
-            IPCBasedPropertyReader pcBasedPropertyReader)
+            IPropertyReader propertyReader)
         {
             this.nodeBlockId = nodeBlockId;
             this.subnodeBlockId = subnodeBlockId;
 
             this.nidDecoder = nidDecoder;
+            this.rowIndexReader = rowIndexReader;
+            this.tableContextReader = tableContextReader;
             this.subnodesEnumerator = subnodesEnumerator;
             this.propertyNameToIdMap = propertyNameToIdMap;
-            this.pcBasedPropertyReader = pcBasedPropertyReader;
-            this.nidBasedTableContextReader = nidBasedTableContextReader;
-            this.tagBasedTableContextReader = tagBasedTableContextReader;
+            this.propertyReader = propertyReader;
+            this.nidBasedTableContextBasedPropertyReader = nidBasedTableContextBasedPropertyReader;
+            this.tagBasedTableContextBasedPropertyReader = tagBasedTableContextBasedPropertyReader;
         }
 
         public Recipient[] GetRecipients()
@@ -52,9 +57,7 @@ namespace pst
                 subnodes.First(s => s.LocalSubnodeId.Type == Globals.NID_TYPE_RECIPIENT_TABLE);
 
             var rows =
-                nidBasedTableContextReader.GetAllRows(
-                    recipientTableEntry.DataBlockId,
-                    recipientTableEntry.SubnodeBlockId);
+                tableContextReader.GetAllRows(recipientTableEntry.DataBlockId, recipientTableEntry.SubnodeBlockId);
 
             return
                 rows
@@ -66,8 +69,8 @@ namespace pst
                                 recipientTableEntry.DataBlockId,
                                 recipientTableEntry.SubnodeBlockId,
                                 Tag.OfValue(r.RowId),
-                                propertyNameToIdMap, 
-                                tagBasedTableContextReader);
+                                propertyNameToIdMap,
+                                tagBasedTableContextBasedPropertyReader);
                     })
                 .ToArray();
         }
@@ -81,7 +84,7 @@ namespace pst
                 subnodes.First(s => s.LocalSubnodeId.Type == Globals.NID_TYPE_ATTACHMENT_TABLE);
 
             var rowsIds =
-                nidBasedTableContextReader.GetAllRowIds(attachmentsTableEntry.DataBlockId);
+                rowIndexReader.GetAllRowIds(attachmentsTableEntry.DataBlockId);
 
             return
                 rowsIds
@@ -98,11 +101,13 @@ namespace pst
                                 attachmentSubnodeEntry.DataBlockId,
                                 attachmentSubnodeEntry.SubnodeBlockId,
                                 nidDecoder,
-                                nidBasedTableContextReader,
-                                tagBasedTableContextReader,
+                                rowIndexReader,
+                                tableContextReader, 
+                                nidBasedTableContextBasedPropertyReader,
+                                tagBasedTableContextBasedPropertyReader,
                                 subnodesEnumerator,
-                                propertyNameToIdMap, 
-                                pcBasedPropertyReader);
+                                propertyNameToIdMap,
+                                propertyReader);
                     })
                 .ToArray();
         }
@@ -133,7 +138,7 @@ namespace pst
 
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
-            return pcBasedPropertyReader.ReadProperty(nodeBlockId, subnodeBlockId, propertyTag);
+            return propertyReader.ReadProperty(nodeBlockId, subnodeBlockId, propertyTag);
         }
     }
 }

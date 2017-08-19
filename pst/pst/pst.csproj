@@ -134,10 +134,11 @@
     <Compile Include="impl\ltp\bth\BTreeOnHeapReader.cs" />
     <Compile Include="impl\ltp\hn\HeapOnNodeItemsLoader.cs" />
     <Compile Include="impl\ltp\hn\HeapOnNodeReader.cs" />
-    <Compile Include="impl\ltp\pc\PCBasedPropertyReader.cs" />
+    <Compile Include="impl\ltp\pc\PropertyContextBasedPropertyReader.cs" />
     <Compile Include="impl\ltp\tc\RowIndexReader.cs" />
     <Compile Include="impl\ltp\tc\RowMatrixReader.cs" />
     <Compile Include="impl\ltp\tc\RowValuesExtractor.cs" />
+    <Compile Include="impl\ltp\tc\TableContextBasedPropertyReader.cs" />
     <Compile Include="impl\ltp\tc\TableContextReader.cs" />
     <Compile Include="impl\messaging\PropertyNameToIdMap.cs" />
     <Compile Include="impl\messaging\PropertyValueProcessor.cs" />
@@ -158,6 +159,7 @@
     <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
     <Compile Include="interfaces\IBlockDataObfuscator.cs" />
     <Compile Include="interfaces\io\IDataReader.cs" />
+    <Compile Include="interfaces\ltp\IPropertyReader.cs" />
     <Compile Include="interfaces\messaging\IPropertyNameToIdMap.cs" />
     <Compile Include="interfaces\messaging\IPropertyValueProcessor.cs" />
     <Compile Include="interfaces\ndb\IDataTreeBlockLevelDecider.cs" />
@@ -168,7 +170,6 @@
     <Compile Include="interfaces\ltp\bth\IBTreeOnHeapReader.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeItemsLoader.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeReader.cs" />
-    <Compile Include="interfaces\ltp\pc\IPCBasedPropertyReader.cs" />
     <Compile Include="interfaces\ltp\tc\IRowIndexReader.cs" />
     <Compile Include="interfaces\ltp\tc\IRowMatrixReader.cs" />
     <Compile Include="interfaces\ltp\tc\IRowValuesExtractor.cs" />
@@ -206,7 +207,9 @@
     <Compile Include="impl\messaging\PropertyTypeMetadataProvider.cs" />
     <Compile Include="encodables\Tag.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="interfaces\ltp\pc\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

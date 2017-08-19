@@ -3,7 +3,6 @@ using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.interfaces;
 using pst.interfaces.ltp;
-using pst.interfaces.ltp.pc;
 using pst.interfaces.ltp.tc;
 using pst.interfaces.ndb;
 
@@ -14,36 +13,42 @@ namespace pst
         private readonly IDecoder<EntryId> entryIdDecoder;
         private readonly IDecoder<NID> nidDecoder;
 
+        private readonly IRowIndexReader<NID> rowIndexReader;
         private readonly ITableContextReader<NID> tableContextReader;
-        private readonly ITableContextReader<Tag> tagBasedTableContextReader;
+        private readonly ITableContextBasedPropertyReader<NID> nidBasedTableContextBasedPropertyReader;
+        private readonly ITableContextBasedPropertyReader<Tag> tagBasedTableContextBasedPropertyReader;
 
         private readonly ISubNodesEnumerator subnodesEnumerator;
         private readonly IPropertyNameToIdMap propertyIdToNameMap;
-        private readonly IPCBasedPropertyReader pcBasedPropertyReader;
+        private readonly IPropertyReader propertyReader;
         private readonly IMapper<NID, LNBTEntry> nidToLNBTEntryMapper;
 
         private PSTFile(
+            IRowIndexReader<NID> rowIndexReader,
             ITableContextReader<NID> tableContextReader,
-            ITableContextReader<Tag> tagBasedTableContextReader,
+            ITableContextBasedPropertyReader<NID> nidBasedTableContextBasedPropertyReader,
+            ITableContextBasedPropertyReader<Tag> tagBasedTableContextBasedPropertyReader,
             IDecoder<EntryId> entryIdDecoder,
             IDecoder<NID> nidDecoder,
             ISubNodesEnumerator subnodesEnumerator,
             IPropertyNameToIdMap propertyIdToNameMap,
-            IPCBasedPropertyReader pcBasedPropertyReader,
+            IPropertyReader propertyReader,
             IMapper<NID, LNBTEntry> nidToLNBTEntryMapper)
         {
+            this.rowIndexReader = rowIndexReader;
+            this.tableContextReader = tableContextReader;
             this.entryIdDecoder = entryIdDecoder;
             this.nidDecoder = nidDecoder;
             this.subnodesEnumerator = subnodesEnumerator;
             this.propertyIdToNameMap = propertyIdToNameMap;
-            this.tableContextReader = tableContextReader;
-            this.tagBasedTableContextReader = tagBasedTableContextReader;
-            this.pcBasedPropertyReader = pcBasedPropertyReader;
+            this.nidBasedTableContextBasedPropertyReader = nidBasedTableContextBasedPropertyReader;
+            this.tagBasedTableContextBasedPropertyReader = tagBasedTableContextBasedPropertyReader;
+            this.propertyReader = propertyReader;
             this.nidToLNBTEntryMapper = nidToLNBTEntryMapper;
         }
 
         public MessageStore MessageStore
-            => new MessageStore(nidToLNBTEntryMapper, pcBasedPropertyReader);
+            => new MessageStore(nidToLNBTEntryMapper, propertyReader);
 
         public Folder GetRootMailboxFolder()
         {
@@ -57,11 +62,13 @@ namespace pst
                 new Folder(
                     entryId.NID,
                     nidDecoder,
-                    tableContextReader,
-                    tagBasedTableContextReader,
+                    rowIndexReader,
+                    tableContextReader, 
+                    nidBasedTableContextBasedPropertyReader,
+                    tagBasedTableContextBasedPropertyReader,
                     subnodesEnumerator,
                     propertyIdToNameMap, 
-                    pcBasedPropertyReader,
+                    propertyReader,
                     nidToLNBTEntryMapper);
         }
     }

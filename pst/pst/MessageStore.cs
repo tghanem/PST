@@ -2,7 +2,7 @@
 using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.interfaces;
-using pst.interfaces.ltp.pc;
+using pst.interfaces.ltp;
 using pst.utilities;
 
 namespace pst
@@ -11,14 +11,14 @@ namespace pst
     {
         private readonly IMapper<NID, LNBTEntry> nidToLNBTEntryMapper;
 
-        private readonly IPCBasedPropertyReader pcBasedPropertyReader;
+        private readonly IPropertyReader propertyReader;
 
         internal MessageStore(
             IMapper<NID, LNBTEntry> nidToLNBTEntryMapper,
-            IPCBasedPropertyReader pcBasedPropertyReader)
+            IPropertyReader propertyReader)
         {
             this.nidToLNBTEntryMapper = nidToLNBTEntryMapper;
-            this.pcBasedPropertyReader = pcBasedPropertyReader;
+            this.propertyReader = propertyReader;
         }
 
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
@@ -26,7 +26,7 @@ namespace pst
             var lnbtEntry =
                 nidToLNBTEntryMapper.Map(Globals.NID_MESSAGE_STORE);
 
-            return pcBasedPropertyReader.ReadProperty(lnbtEntry.DataBlockId, lnbtEntry.SubnodeBlockId, propertyTag);
+            return propertyReader.ReadProperty(lnbtEntry.DataBlockId, lnbtEntry.SubnodeBlockId, propertyTag);
         }
     }
 }

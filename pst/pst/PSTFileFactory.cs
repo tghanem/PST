@@ -1,4 +1,5 @@
-﻿using pst.encodables.ndb;
+﻿using pst.encodables;
+using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.impl;
 using pst.impl.btree;
@@ -27,15 +28,13 @@ using pst.impl.ndb.nbt;
 using pst.impl.ndb.subnodebtree;
 using pst.interfaces;
 using pst.interfaces.btree;
-using pst.interfaces.io;
+using pst.interfaces.ltp;
 using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.hn;
-using pst.interfaces.ltp.pc;
 using pst.interfaces.ltp.tc;
 using pst.interfaces.messaging;
 using pst.interfaces.ndb;
 using pst.utilities;
-using System;
 using System.IO;
 
 namespace pst
@@ -46,53 +45,58 @@ namespace pst
         {
             return
                 new PSTFile(
-                    CreateTCReader(
-                        new NIDDecoder(),
-                        new DataReader(stream)),
-                    CreateTCReader(
-                        new TagDecoder(),
-                        new DataReader(stream)),
+                    CreateNIDBasedRowIndexReader(stream),
+                    CreateNIDBasedTableContextReader(stream),
+                    CreateNIDBasedTableContextBasedPropertyReader(stream), 
+                    CreateTagBasedTableContextBasedPropertyReader(stream), 
                     new EntryIdDecoder(
                         new NIDDecoder()),
                     new NIDDecoder(),
-                    CreateSubnodesEnumerator(
-                        new DataReader(stream)),
-                    CreatePropertyIdToNameMap(
-                        new DataReader(stream)),
-                    CreatePCBasedPropertyReader(
-                        new DataReader(stream)),
-                    CreateNIDToLNBTEntryMapper(
-                        new DataReader(stream)));
+                    CreateSubnodesEnumerator(stream),
+                    CreatePropertyIdToNameMap(stream),
+                    CreatePropertyContextBasedPropertyReader(stream),
+                    CreateNIDToLNBTEntryMapper(stream));
+        }
+
+        private static ITableContextReader<NID> CreateNIDBasedTableContextReader(
+            Stream stream)
+        {
+            return
+                new TableContextReader<NID>(
+                    new NIDDecoder(),
+                    CreateNIDBasedRowIndexReader(stream),
+                    CreateNIDBasedRowMatrixReader(stream),
+                    CreatePropertyValueProcessor(stream));
         }
 
         private static BlockIdBasedDataBlockReader CreateDataBlockReader(
-            IDataReader dataReader)
+            Stream dataReader)
         {
             return
                 new BlockIdBasedDataBlockReader(
-                    dataReader,
+                    new DataReader(dataReader),
                     CreateHeaderDecoder(),
                     CreateBlockBTreeEntryFinder(dataReader));
         }
 
         private static NIDToLNBTEntryMapper CreateNIDToLNBTEntryMapper(
-            IDataReader dataReader)
+            Stream dataStream)
         {
             return
                 new NIDToLNBTEntryMapper(
-                    dataReader,
+                    new DataReader(dataStream),
                     CreateHeaderDecoder(),
-                    CreateNodeBTreeEntryFinder(dataReader));
+                    CreateNodeBTreeEntryFinder(dataStream));
         }
 
         private static PropertyNameToIdMap CreatePropertyIdToNameMap(
-            IDataReader dataReader)
+            Stream dataStream)
         {
             return
                 new PropertyNameToIdMap(
                     new NAMEIDDecoder(),
-                    CreatePCBasedPropertyReader(dataReader),
-                    CreateNIDToLNBTEntryMapper(dataReader));
+                    CreatePropertyContextBasedPropertyReader(dataStream),
+                    CreateNIDToLNBTEntryMapper(dataStream));
         }
 
         private static IDecoder<Header> CreateHeaderDecoder()
@@ -108,55 +112,72 @@ namespace pst
         }
 
         private static IBlockDataDeObfuscator CreateBlockDataDeObfuscator(
-            IDataReader dataReader)
+            Stream dataStream)
         {
             return
                 new EncodingThatDetectsTypeFromTheHeader(
-                    dataReader,
+                    new DataReader(dataStream),
                     CreateHeaderDecoder(),
                     new PermutativeEncoding(),
                     new CyclicEncoding(),
                     new NoEncoding());
         }
 
-        private static ITableContextReader<TRowId> CreateTCReader<TRowId>(
-            IDecoder<TRowId> rowIdDecoder,
-            IDataReader dataReader) where TRowId : IComparable<TRowId>
+        private static ITableContextBasedPropertyReader<Tag> CreateTagBasedTableContextBasedPropertyReader(
+            Stream dataStream)
         {
             return
-                new TableContextReader<TRowId>(rowIdDecoder,
-                    CreateRowIndexReader(rowIdDecoder, dataReader),
-                    CreateRowMatrixReader(rowIdDecoder, dataReader),
-                    CreatePropertyValueProcessor(dataReader));
+                new TableContextBasedPropertyReader<Tag>(
+                    CreateTagBasedRowMatrixReader(dataStream), 
+                    CreatePropertyValueProcessor(dataStream));
         }
 
-        private static IRowIndexReader<TRowId> CreateRowIndexReader<TRowId>(
-            IDecoder<TRowId> rowIdDecoder,
-            IDataReader dataReader) where TRowId : IComparable<TRowId>
+        private static ITableContextBasedPropertyReader<NID> CreateNIDBasedTableContextBasedPropertyReader(
+            Stream dataStream)
         {
             return
-                new RowIndexReader<TRowId>(
+                new TableContextBasedPropertyReader<NID>(
+                    CreateNIDBasedRowMatrixReader(dataStream), 
+                    CreatePropertyValueProcessor(dataStream));
+        }
+
+        private static IRowIndexReader<Tag> CreateTagBasedRowIndexReader(
+            Stream dataStream)
+        {
+            return
+                new RowIndexReader<Tag>(
                     new TCINFODecoder(
                         new HIDDecoder(),
                         new TCOLDESCDecoder()),
-                    CreateHeapOnNodeReader(dataReader),
-                    CreateBTreeOnHeapReader(rowIdDecoder, dataReader),
+                    CreateHeapOnNodeReader(dataStream),
+                    CreateTagBasedBTreeOnHeapReader(dataStream), 
                     new DataRecordToTCROWIDConverter());
         }
 
-        private static IPCBasedPropertyReader CreatePCBasedPropertyReader(
-            IDataReader dataReader)
+        private static IRowIndexReader<NID> CreateNIDBasedRowIndexReader(
+            Stream dataStream)
         {
             return
-                new PCBasedPropertyReader(
-                    CreateBTreeOnHeapReader(
-                        new PropertyIdDecoder(),
-                        dataReader),
-                    CreatePropertyValueProcessor(dataReader));
+                new RowIndexReader<NID>(
+                    new TCINFODecoder(
+                        new HIDDecoder(),
+                        new TCOLDESCDecoder()),
+                    CreateHeapOnNodeReader(dataStream),
+                    CreateNIDBasedBTreeOnHeapReader(dataStream),
+                    new DataRecordToTCROWIDConverter());
+        }
+
+        private static IPropertyReader CreatePropertyContextBasedPropertyReader(
+            Stream dataStream)
+        {
+            return
+                new PropertyContextBasedPropertyReader(
+                    CreatePropertyIdBasedBTreeOnHeapReader(dataStream),
+                    CreatePropertyValueProcessor(dataStream));
         }
 
         private static IPropertyValueProcessor CreatePropertyValueProcessor(
-            IDataReader dataReader)
+            Stream dataStream)
         {
             return
                 new PropertyValueProcessor(
@@ -166,46 +187,64 @@ namespace pst
                     new ExternalDataBlockDecoder(
                         new BlockTrailerDecoder(
                             new BIDDecoder()),
-                        CreateBlockDataDeObfuscator(dataReader)),
-                    CreateHeapOnNodeReader(dataReader),
-                    CreateSubnodesEnumerator(dataReader),
-                    CreateDataTreeLeafNodesEnumerator(dataReader),
+                        CreateBlockDataDeObfuscator(dataStream)),
+                    CreateHeapOnNodeReader(dataStream),
+                    CreateSubnodesEnumerator(dataStream),
+                    CreateDataTreeLeafNodesEnumerator(dataStream),
                     new PropertyTypeMetadataProvider(),
-                    CreateDataBlockReader(dataReader));
+                    CreateDataBlockReader(dataStream));
         }
 
-        private static IRowMatrixReader<TRowId> CreateRowMatrixReader<TRowId>(
-            IDecoder<TRowId> rowIdDecoder,
-            IDataReader dataReader) where TRowId : IComparable<TRowId>
+        private static IRowMatrixReader<Tag> CreateTagBasedRowMatrixReader(
+            Stream dataStream)
         {
             return
-                new RowMatrixReader<TRowId>(
-                    CreateHeapOnNodeReader(dataReader),
+                new RowMatrixReader<Tag>(
+                    CreateHeapOnNodeReader(dataStream),
                     new RowValuesExtractor(),
-                    CreateSubnodesEnumerator(dataReader),
-                    CreateRowIndexReader(rowIdDecoder, dataReader),
-                    CreateDataTreeLeafNodesEnumerator(dataReader),
+                    CreateSubnodesEnumerator(dataStream),
+                    CreateTagBasedRowIndexReader(dataStream), 
+                    CreateDataTreeLeafNodesEnumerator(dataStream),
                     new HNIDDecoder(
                         new HIDDecoder(),
                         new NIDDecoder()),
                     new TCINFODecoder(
                         new HIDDecoder(),
                         new TCOLDESCDecoder()),
-                    CreateDataBlockReader(dataReader));
+                    CreateDataBlockReader(dataStream));
+        }
+
+        private static IRowMatrixReader<NID> CreateNIDBasedRowMatrixReader(
+            Stream dataStream)
+        {
+            return
+                new RowMatrixReader<NID>(
+                    CreateHeapOnNodeReader(dataStream),
+                    new RowValuesExtractor(),
+                    CreateSubnodesEnumerator(dataStream),
+                    CreateNIDBasedRowIndexReader(dataStream),
+                    CreateDataTreeLeafNodesEnumerator(dataStream),
+                    new HNIDDecoder(
+                        new HIDDecoder(),
+                        new NIDDecoder()),
+                    new TCINFODecoder(
+                        new HIDDecoder(),
+                        new TCOLDESCDecoder()),
+                    CreateDataBlockReader(dataStream));
         }
 
         private static ISubNodesEnumerator CreateSubnodesEnumerator(
-            IDataReader dataReader)
+            Stream dataStream)
         {
             return
                 new SubNodesEnumerator(
                     new SubnodeBTreeBlockLevelDecider(
-                        CreateDataBlockReader(dataReader)),
+                        CreateDataBlockReader(dataStream)),
                     new SubnodeBlockLoader(
                         new SubnodeBlockDecoder(
                             new BlockTrailerDecoder(
                                 new BIDDecoder())),
-                        CreateDataBlockReader(dataReader)),
+                        CreateDataBlockReader(dataStream)),
                     new SIEntriesFromSubnodeBlockExtractor(
                         new SIEntryDecoder(
                             new NIDDecoder(),
@@ -216,21 +255,44 @@ namespace pst
                             new BIDDecoder())));
         }
 
-        private static IBTreeOnHeapReader<TKey> CreateBTreeOnHeapReader<TKey>(
-            IDecoder<TKey> keyDecoder,
-            IDataReader dataReader) where TKey : IComparable<TKey>
+        private static IBTreeOnHeapReader<Tag> CreateTagBasedBTreeOnHeapReader(
+            Stream dataStream)
         {
             return
-                new BTreeOnHeapReader<TKey>(
+                new BTreeOnHeapReader<Tag>(
                     new HIDDecoder(),
-                    keyDecoder,
+                    new TagDecoder(), 
                     new BTHHEADERDecoder(
                         new HIDDecoder()),
-                    CreateHeapOnNodeReader(dataReader));
+                    CreateHeapOnNodeReader(dataStream));
+        }
+
+        private static IBTreeOnHeapReader<NID> CreateNIDBasedBTreeOnHeapReader(
+            Stream dataStream)
+        {
+            return
+                new BTreeOnHeapReader<NID>(
+                    new HIDDecoder(),
+                    new NIDDecoder(),
+                    new BTHHEADERDecoder(
+                        new HIDDecoder()),
+                    CreateHeapOnNodeReader(dataStream));
+        }
+
+        private static IBTreeOnHeapReader<PropertyId> CreatePropertyIdBasedBTreeOnHeapReader(
+            Stream dataStream)
+        {
+            return
+                new BTreeOnHeapReader<PropertyId>(
+                    new HIDDecoder(),
+                    new PropertyIdDecoder(),
+                    new BTHHEADERDecoder(
+                        new HIDDecoder()),
+                    CreateHeapOnNodeReader(dataStream));
         }
 
         private static IHeapOnNodeReader CreateHeapOnNodeReader(
-            IDataReader dataReader)
+            Stream dataStream)
         {
             return
                 new HeapOnNodeReader(
@@ -239,30 +301,30 @@ namespace pst
                     new HNPAGEHDRDecoder(),
                     new HNPAGEMAPDecoder(),
                     new HNBITMAPHDRDecoder(),
-                    CreateBlockDataDeObfuscator(dataReader),
+                    CreateBlockDataDeObfuscator(dataStream),
                     new HeapOnNodeItemsLoader(),
-                    CreateDataTreeLeafNodesEnumerator(dataReader),
-                    CreateDataBlockReader(dataReader));
+                    CreateDataTreeLeafNodesEnumerator(dataStream),
+                    CreateDataBlockReader(dataStream));
         }
 
         private static IDataTreeLeafBIDsEnumerator CreateDataTreeLeafNodesEnumerator(
-            IDataReader dataReader)
+            Stream dataStream)
         {
             return
                 new DataTreeLeafBIDsEnumerator(
                     new DataTreeBlockLevelDecider(
-                        CreateDataBlockReader(dataReader)),
+                        CreateDataBlockReader(dataStream)),
                     new InternalDataBlockLoader(
                         new InternalDataBlockDecoder(
                             new BlockTrailerDecoder(
                                 new BIDDecoder())),
-                        CreateDataBlockReader(dataReader)),
+                        CreateDataBlockReader(dataStream)),
                     new BIDsFromInternalDataBlockExtractor(
                         new BIDDecoder()));
         }
 
         private static IBTreeEntryFinder<BID, LBBTEntry, BREF> CreateBlockBTreeEntryFinder(
-            IDataReader dataReader)
+            Stream dataStream)
         {
             return
                 new BTreeEntryFinder<BID, LBBTEntry, IBBTEntry, BREF, BTPage>(
@@ -286,14 +348,14 @@ namespace pst
                     new FuncBasedExtractor<BTPage, int>(
                         page => page.PageLevel),
                     new BTPageLoader(
-                        dataReader,
+                        new DataReader(dataStream),
                         new BTPageDecoder(
                             new PageTrailerDecoder(
                                 new BIDDecoder()))));
         }
 
         private static IBTreeEntryFinder<NID, LNBTEntry, BREF> CreateNodeBTreeEntryFinder(
-            IDataReader dataReader)
+            Stream dataStream)
         {
             return
                 new BTreeEntryFinder<NID, LNBTEntry, INBTEntry, BREF, BTPage>(
@@ -316,7 +378,7 @@ namespace pst
                     new FuncBasedExtractor<BTPage, int>(
                         page => page.PageLevel),
                     new BTPageLoader(
-                        dataReader,
+                        new DataReader(dataStream),
                         new BTPageDecoder(
                             new PageTrailerDecoder(
                                 new BIDDecoder()))));

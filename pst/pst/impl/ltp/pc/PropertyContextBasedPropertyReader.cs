@@ -1,17 +1,17 @@
 ﻿using pst.core;
 using pst.encodables.ndb;
+using pst.interfaces.ltp;
 using pst.interfaces.ltp.bth;
-using pst.interfaces.ltp.pc;
 using pst.interfaces.messaging;
 
 namespace pst.impl.ltp.pc
 {
-    class PCBasedPropertyReader : IPCBasedPropertyReader
+    class PropertyContextBasedPropertyReader : IPropertyReader
     {
         private readonly IBTreeOnHeapReader<PropertyId> bthReader;
         private readonly IPropertyValueProcessor propertyValueProcessor;
 
-        public PCBasedPropertyReader(
+        public PropertyContextBasedPropertyReader(
             IBTreeOnHeapReader<PropertyId> bthReader,
             IPropertyValueProcessor propertyValueProcessor)
         {

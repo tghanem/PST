@@ -4,7 +4,6 @@ using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.interfaces;
 using pst.interfaces.ltp;
-using pst.interfaces.ltp.pc;
 using pst.utilities;
 using System;
 using System.Text;
@@ -14,16 +13,16 @@ namespace pst.impl.messaging
     class PropertyNameToIdMap : IPropertyNameToIdMap
     {
         private readonly IDecoder<NAMEID> nameIdDecoder;
-        private readonly IPCBasedPropertyReader pcBasedPropertyReader;
+        private readonly IPropertyReader propertyReader;
         private readonly IMapper<NID, LNBTEntry> nidToLNBTEntryMapper;
 
         public PropertyNameToIdMap(
             IDecoder<NAMEID> nameIdDecoder,
-            IPCBasedPropertyReader pcBasedPropertyReader,
+            IPropertyReader propertyReader,
             IMapper<NID, LNBTEntry> nidToLNBTEntryMapper)
         {
             this.nameIdDecoder = nameIdDecoder;
-            this.pcBasedPropertyReader = pcBasedPropertyReader;
+            this.propertyReader = propertyReader;
             this.nidToLNBTEntryMapper = nidToLNBTEntryMapper;
         }
 
@@ -33,7 +32,7 @@ namespace pst.impl.messaging
                 nidToLNBTEntryMapper.Map(Globals.NID_NAME_TO_ID_MAP);
 
             var entryStream =
-                pcBasedPropertyReader.ReadProperty(
+                propertyReader.ReadProperty(
                     lnbtEntryForNameToIdMap.DataBlockId,
                     lnbtEntryForNameToIdMap.SubnodeBlockId,
                     MAPIProperties.PidTagNameidStreamEntry);
@@ -67,13 +66,13 @@ namespace pst.impl.messaging
                 nidToLNBTEntryMapper.Map(Globals.NID_NAME_TO_ID_MAP);
 
             var entryStream =
-                pcBasedPropertyReader.ReadProperty(
+                propertyReader.ReadProperty(
                     lnbtEntryForNameToIdMap.DataBlockId,
                     lnbtEntryForNameToIdMap.SubnodeBlockId,
                     MAPIProperties.PidTagNameidStreamEntry);
 
             var stringStream =
-                pcBasedPropertyReader.ReadProperty(
+                propertyReader.ReadProperty(
                     lnbtEntryForNameToIdMap.DataBlockId,
                     lnbtEntryForNameToIdMap.SubnodeBlockId,
                     MAPIProperties.PidTagNameidStreamString);

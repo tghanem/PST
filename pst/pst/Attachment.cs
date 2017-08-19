@@ -2,12 +2,11 @@
 using pst.encodables;
 using pst.encodables.ndb;
 using pst.interfaces;
-using pst.interfaces.ltp.pc;
+using pst.interfaces.ltp;
 using pst.interfaces.ltp.tc;
 using pst.interfaces.ndb;
 using pst.utilities;
 using System.Linq;
-using pst.interfaces.ltp;
 
 namespace pst
 {
@@ -16,38 +15,44 @@ namespace pst
         private readonly BID attachmentDataBlockId;
         private readonly BID attachmentSubnodeBlockId;
         private readonly IDecoder<NID> nidDecoder;
-        private readonly ITableContextReader<NID> nidBasedTableContextReader;
-        private readonly ITableContextReader<Tag> tagBasedTableContextReader;
+        private readonly IRowIndexReader<NID> rowIndexReader;
+        private readonly ITableContextReader<NID> tableContextReader;
+        private readonly ITableContextBasedPropertyReader<NID> nidBasedTableContextBasedPropertyReader;
+        private readonly ITableContextBasedPropertyReader<Tag> tagBasedTableContextBasedPropertyReader;
         private readonly ISubNodesEnumerator subnodesEnumerator;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
-        private readonly IPCBasedPropertyReader pcBasedPropertyReader;
+        private readonly IPropertyReader propertyReader;
 
         internal Attachment(
             BID attachmentDataBlockId,
             BID attachmentSubnodeBlockId,
             IDecoder<NID> nidDecoder,
-            ITableContextReader<NID> nidBasedTableContextReader,
-            ITableContextReader<Tag> tagBasedTableContextReader,
+            IRowIndexReader<NID> rowIndexReader,
+            ITableContextReader<NID> tableContextReader,
+            ITableContextBasedPropertyReader<NID> nidBasedTableContextBasedPropertyReader,
+            ITableContextBasedPropertyReader<Tag> tagBasedTableContextBasedPropertyReader,
             ISubNodesEnumerator subnodesEnumerator,
             IPropertyNameToIdMap propertyNameToIdMap,
-            IPCBasedPropertyReader pcBasedPropertyReader)
+            IPropertyReader propertyReader)
         {
             this.attachmentDataBlockId = attachmentDataBlockId;
             this.attachmentSubnodeBlockId = attachmentSubnodeBlockId;
 
             this.nidDecoder = nidDecoder;
-            this.nidBasedTableContextReader = nidBasedTableContextReader;
-            this.tagBasedTableContextReader = tagBasedTableContextReader;
+            this.rowIndexReader = rowIndexReader;
+            this.tableContextReader = tableContextReader;
+            this.nidBasedTableContextBasedPropertyReader = nidBasedTableContextBasedPropertyReader;
+            this.tagBasedTableContextBasedPropertyReader = tagBasedTableContextBasedPropertyReader;
 
             this.subnodesEnumerator = subnodesEnumerator;
             this.propertyNameToIdMap = propertyNameToIdMap;
-            this.pcBasedPropertyReader = pcBasedPropertyReader;
+            this.propertyReader = propertyReader;
         }
 
         public Maybe<Message> GetEmbeddedMessage()
         {
             var attachMethodPropertyValue =
-                pcBasedPropertyReader.ReadProperty(
+                propertyReader.ReadProperty(
                     attachmentDataBlockId,
                     attachmentSubnodeBlockId,
                     MAPIProperties.PidTagAttachMethod);
@@ -56,7 +61,7 @@ namespace pst
                 attachMethodPropertyValue.Value.Value.HasFlag(MAPIProperties.afEmbeddedMessage))
             {
                 var attachDataObject =
-                    pcBasedPropertyReader.ReadProperty(
+                    propertyReader.ReadProperty(
                         attachmentDataBlockId,
                         attachmentSubnodeBlockId,
                         MAPIProperties.PidTagAttachDataObject);
@@ -78,11 +83,13 @@ namespace pst
                         embeddedMessageNodeEntry.DataBlockId,
                         embeddedMessageNodeEntry.SubnodeBlockId,
                         nidDecoder,
-                        nidBasedTableContextReader,
-                        tagBasedTableContextReader,
+                        rowIndexReader,
+                        tableContextReader, 
+                        nidBasedTableContextBasedPropertyReader,
+                        tagBasedTableContextBasedPropertyReader,
                         subnodesEnumerator,
                         propertyNameToIdMap, 
-                        pcBasedPropertyReader);
+                        propertyReader);
             }
 
             return Maybe<Message>.NoValue();
@@ -115,7 +122,7 @@ namespace pst
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
             return
-                pcBasedPropertyReader.ReadProperty(
+                propertyReader.ReadProperty(
                     attachmentDataBlockId,
                     attachmentSubnodeBlockId,
                     propertyTag);

@@ -2,7 +2,6 @@
 using pst.encodables;
 using pst.encodables.ndb;
 using pst.interfaces.ltp;
-using pst.interfaces.ltp.tc;
 
 namespace pst
 {
@@ -13,20 +12,20 @@ namespace pst
         private readonly Tag recipientRowId;
 
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
-        private readonly ITableContextReader<Tag> tableContextReader;
+        private readonly ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader;
 
         internal Recipient(
             BID recipientTableBlockId,
             BID recipientTableSubnodeBlockId,
             Tag recipientRowId,
             IPropertyNameToIdMap propertyNameToIdMap,
-            ITableContextReader<Tag> tableContextReader)
+            ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader)
         {
             this.recipientTableBlockId = recipientTableBlockId;
             this.recipientTableSubnodeBlockId = recipientTableSubnodeBlockId;
             this.recipientRowId = recipientRowId;
             this.propertyNameToIdMap = propertyNameToIdMap;
-            this.tableContextReader = tableContextReader;
+            this.tableContextBasedPropertyReader = tableContextBasedPropertyReader;
         }
 
         public Maybe<PropertyValue> GetProperty(NumericalPropertyTag propertyTag)
@@ -56,7 +55,7 @@ namespace pst
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
             return
-                tableContextReader.ReadProperty(
+                tableContextBasedPropertyReader.ReadProperty(
                     recipientTableBlockId,
                     recipientTableSubnodeBlockId,
                     recipientRowId,

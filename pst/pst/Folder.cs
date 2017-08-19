@@ -3,12 +3,11 @@ using pst.encodables;
 using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.interfaces;
-using pst.interfaces.ltp.pc;
+using pst.interfaces.ltp;
 using pst.interfaces.ltp.tc;
 using pst.interfaces.ndb;
 using pst.utilities;
 using System.Linq;
-using pst.interfaces.ltp;
 
 namespace pst
 {
@@ -16,30 +15,36 @@ namespace pst
     {
         private readonly NID nodeId;
         private readonly IDecoder<NID> nidDecoder;
+        private readonly IRowIndexReader<NID> rowIndexReader;
         private readonly ITableContextReader<NID> tableContextReader;
-        private readonly ITableContextReader<Tag> tagBasedTableContextReader;
+        private readonly ITableContextBasedPropertyReader<NID> nidBasedTableContextBasedPropertyReader;
+        private readonly ITableContextBasedPropertyReader<Tag> tagBasedTableContextBasedPropertyReader;
         private readonly ISubNodesEnumerator subnodesEnumerator;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
-        private readonly IPCBasedPropertyReader pcBasedPropertyReader;        
+        private readonly IPropertyReader propertyReader;        
         private readonly IMapper<NID, LNBTEntry> nidToLNBTEntryMapper;
 
         internal Folder(
             NID nodeId,
             IDecoder<NID> nidDecoder,
+            IRowIndexReader<NID> rowIndexReader,
             ITableContextReader<NID> tableContextReader,
-            ITableContextReader<Tag> tagBasedTableContextReader,
+            ITableContextBasedPropertyReader<NID> nidBasedTableContextBasedPropertyReader,
+            ITableContextBasedPropertyReader<Tag> tagBasedTableContextBasedPropertyReader,
             ISubNodesEnumerator subnodesEnumerator,
             IPropertyNameToIdMap propertyNameToIdMap,
-            IPCBasedPropertyReader pcBasedPropertyReader,
+            IPropertyReader propertyReader,
             IMapper<NID, LNBTEntry> nidToLNBTEntryMapper)
         {
             this.nodeId = nodeId;
-            this.tableContextReader = tableContextReader;
+            this.nidBasedTableContextBasedPropertyReader = nidBasedTableContextBasedPropertyReader;
             this.nidDecoder = nidDecoder;
-            this.tagBasedTableContextReader = tagBasedTableContextReader;
+            this.rowIndexReader = rowIndexReader;
+            this.tableContextReader = tableContextReader;
+            this.tagBasedTableContextBasedPropertyReader = tagBasedTableContextBasedPropertyReader;
             this.subnodesEnumerator = subnodesEnumerator;
             this.propertyNameToIdMap = propertyNameToIdMap;
-            this.pcBasedPropertyReader = pcBasedPropertyReader;            
+            this.propertyReader = propertyReader;            
             this.nidToLNBTEntryMapper = nidToLNBTEntryMapper;
         }
 
@@ -49,7 +54,7 @@ namespace pst
                 nidToLNBTEntryMapper.Map(nodeId.ChangeType(Globals.NID_TYPE_HIERARCHY_TABLE));
 
             var rowIds =
-                tableContextReader.GetAllRowIds(lnbtEntry.DataBlockId);
+                rowIndexReader.GetAllRowIds(lnbtEntry.DataBlockId);
 
             return
                 rowIds
@@ -58,11 +63,13 @@ namespace pst
                     new Folder(
                         nidDecoder.Decode(r.RowId),
                         nidDecoder,
-                        tableContextReader,                        
-                        tagBasedTableContextReader,
+                        rowIndexReader,
+                        tableContextReader, 
+                        nidBasedTableContextBasedPropertyReader,                        
+                        tagBasedTableContextBasedPropertyReader,
                         subnodesEnumerator,
                         propertyNameToIdMap, 
-                        pcBasedPropertyReader,                        
+                        propertyReader,                        
                         nidToLNBTEntryMapper))
                 .ToArray();
         }
@@ -73,7 +80,7 @@ namespace pst
                 nidToLNBTEntryMapper.Map(nodeId.ChangeType(Globals.NID_TYPE_CONTENTS_TABLE));
 
             var rowIds =
-                tableContextReader.GetAllRowIds(lnbtEntry.DataBlockId);
+                rowIndexReader.GetAllRowIds(lnbtEntry.DataBlockId);
 
             return
                 rowIds
@@ -89,11 +96,13 @@ namespace pst
                                 lnbtEntryForMessage.DataBlockId,
                                 lnbtEntryForMessage.SubnodeBlockId,
                                 nidDecoder,
-                                tableContextReader,
-                                tagBasedTableContextReader,
+                                rowIndexReader,
+                                tableContextReader, 
+                                nidBasedTableContextBasedPropertyReader,
+                                tagBasedTableContextBasedPropertyReader,
                                 subnodesEnumerator,
                                 propertyNameToIdMap, 
-                                pcBasedPropertyReader);
+                                propertyReader);
                     })
                 .ToArray();
         }
@@ -128,7 +137,7 @@ namespace pst
                 nidToLNBTEntryMapper.Map(nodeId);
 
             return
-                pcBasedPropertyReader.ReadProperty(
+                propertyReader.ReadProperty(
                     lnbtEntry.DataBlockId,
                     lnbtEntry.SubnodeBlockId,
                     propertyTag);
