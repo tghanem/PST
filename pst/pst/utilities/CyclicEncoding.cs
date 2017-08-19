@@ -4,7 +4,7 @@ using System.IO;
 
 namespace pst.utilities
 {
-    class CyclicEncoding : IBlockDataObfuscator, IBlockDataDeObfuscator
+    class CyclicEncoding : IEncoding
     {
         public BinaryData Obfuscate(BinaryData blockData, BID blockId)
         {

@@ -3,7 +3,7 @@ using pst.interfaces;
 
 namespace pst.utilities
 {
-    class PermutativeEncoding : IBlockDataObfuscator, IBlockDataDeObfuscator
+    class PermutativeEncoding : IEncoding
     {
         public BinaryData Obfuscate(BinaryData blockData, BID blockId)
         {

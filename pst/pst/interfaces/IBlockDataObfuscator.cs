@@ -12,4 +12,8 @@ namespace pst.interfaces
     {
         BinaryData DeObfuscate(BinaryData blockData, BID blockId);
     }
+
+    interface IEncoding : IBlockDataObfuscator, IBlockDataDeObfuscator
+    {
+    }
 }

@@ -198,6 +198,7 @@
     <Compile Include="utilities\BinaryDataParser.cs" />
     <Compile Include="utilities\Crc32.cs" />
     <Compile Include="utilities\CyclicEncoding.cs" />
+    <Compile Include="utilities\EncodingThatDetectsTypeFromTheHeader.cs" />
     <Compile Include="utilities\ExtensionMethods.cs" />
     <Compile Include="utilities\Globals.cs" />
     <Compile Include="utilities\NoEncoding.cs" />

@@ -44,35 +44,25 @@ namespace pst
     {
         public static PSTFile Open(Stream stream)
         {
-            var dataReader = new DataReader(stream);
-
-            var header = CreateHeaderDecoder().Decode(dataReader.Read(0, 546));
-
             return
                 new PSTFile(
                     CreateTCReader(
                         new NIDDecoder(),
-                        CreateDataBlockReader(dataReader),
-                        CreateBlockDataDeObfuscator(
-                            header.CryptMethod)),
+                        new DataReader(stream)),
                     CreateTCReader(
                         new TagDecoder(),
-                        CreateDataBlockReader(dataReader),
-                        CreateBlockDataDeObfuscator(
-                            header.CryptMethod)),
+                        new DataReader(stream)),
                     new EntryIdDecoder(
                         new NIDDecoder()),
                     new NIDDecoder(),
                     CreateSubnodesEnumerator(
-                        CreateDataBlockReader(dataReader)),
+                        new DataReader(stream)),
                     CreatePropertyIdToNameMap(
-                        dataReader,
-                        header),
+                        new DataReader(stream)),
                     CreatePCBasedPropertyReader(
-                        CreateDataBlockReader(dataReader),
-                        CreateBlockDataDeObfuscator(
-                            header.CryptMethod)),
-                    CreateNIDToLNBTEntryMapper(dataReader));
+                        new DataReader(stream)),
+                    CreateNIDToLNBTEntryMapper(
+                        new DataReader(stream)));
         }
 
         private static BlockIdBasedDataBlockReader CreateDataBlockReader(
@@ -82,8 +72,7 @@ namespace pst
                 new BlockIdBasedDataBlockReader(
                     dataReader,
                     CreateHeaderDecoder(),
-                    CreateBlockBTreeEntryFinder(
-                        dataReader));
+                    CreateBlockBTreeEntryFinder(dataReader));
         }
 
         private static NIDToLNBTEntryMapper CreateNIDToLNBTEntryMapper(
@@ -93,27 +82,17 @@ namespace pst
                 new NIDToLNBTEntryMapper(
                     dataReader,
                     CreateHeaderDecoder(),
-                    CreateNodeBTreeEntryFinder(
-                        dataReader));
+                    CreateNodeBTreeEntryFinder(dataReader));
         }
 
         private static PropertyNameToIdMap CreatePropertyIdToNameMap(
-            IDataReader dataReader,
-            Header header)
+            IDataReader dataReader)
         {
             return
                 new PropertyNameToIdMap(
                     new NAMEIDDecoder(),
-                    CreatePCBasedPropertyReader(
-                        new BlockIdBasedDataBlockReader(
-                            dataReader,
-                            CreateHeaderDecoder(),
-                            CreateBlockBTreeEntryFinder(
-                                dataReader)),
-                        CreateBlockDataDeObfuscator(
-                            header.CryptMethod)),
-                    CreateNIDToLNBTEntryMapper(
-                        dataReader));
+                    CreatePCBasedPropertyReader(dataReader),
+                    CreateNIDToLNBTEntryMapper(dataReader));
         }
 
         private static IDecoder<Header> CreateHeaderDecoder()
@@ -129,82 +108,55 @@ namespace pst
         }
 
         private static IBlockDataDeObfuscator CreateBlockDataDeObfuscator(
-            int cryptMethod)
+            IDataReader dataReader)
         {
-            if (cryptMethod == Globals.NDB_CRYPT_NONE)
-            {
-                return new NoEncoding();
-            }
-
-            if (cryptMethod == Globals.NDB_CRYPT_CYCLIC)
-            {
-                return new CyclicEncoding();
-            }
-
-            if (cryptMethod == Globals.NDB_CRYPT_PERMUTE)
-            {
-                return new PermutativeEncoding();
-            }
-
-            throw new Exception($"Unexpected bCryptMethod {cryptMethod}");
+            return
+                new EncodingThatDetectsTypeFromTheHeader(
+                    dataReader,
+                    CreateHeaderDecoder(),
+                    new PermutativeEncoding(),
+                    new CyclicEncoding(),
+                    new NoEncoding());
         }
 
         private static ITableContextReader<TRowId> CreateTCReader<TRowId>(
             IDecoder<TRowId> rowIdDecoder,
-            IDataBlockReader dataBlockReader,
-            IBlockDataDeObfuscator blockDataDeObfuscator) where TRowId : IComparable<TRowId>
+            IDataReader dataReader) where TRowId : IComparable<TRowId>
         {
             return
                 new TableContextReader<TRowId>(rowIdDecoder,
-                    CreateRowIndexReader(rowIdDecoder,
-                        dataBlockReader, blockDataDeObfuscator),
-                    CreateRowMatrixReader(
-                        rowIdDecoder,
-                        dataBlockReader,
-                        blockDataDeObfuscator),
-                    CreatePropertyValueProcessor(
-                        dataBlockReader,
-                        blockDataDeObfuscator));
+                    CreateRowIndexReader(rowIdDecoder, dataReader),
+                    CreateRowMatrixReader(rowIdDecoder, dataReader),
+                    CreatePropertyValueProcessor(dataReader));
         }
 
         private static IRowIndexReader<TRowId> CreateRowIndexReader<TRowId>(
             IDecoder<TRowId> rowIdDecoder,
-            IDataBlockReader dataBlockReader,
-            IBlockDataDeObfuscator blockDataDeObfuscator) where TRowId : IComparable<TRowId>
+            IDataReader dataReader) where TRowId : IComparable<TRowId>
         {
             return
                 new RowIndexReader<TRowId>(
                     new TCINFODecoder(
                         new HIDDecoder(),
                         new TCOLDESCDecoder()),
-                    CreateHeapOnNodeReader(
-                        dataBlockReader,
-                        blockDataDeObfuscator),
-                    CreateBTreeOnHeapReader(
-                        rowIdDecoder,
-                        dataBlockReader,
-                        blockDataDeObfuscator),
+                    CreateHeapOnNodeReader(dataReader),
+                    CreateBTreeOnHeapReader(rowIdDecoder, dataReader),
                     new DataRecordToTCROWIDConverter());
         }
 
         private static IPCBasedPropertyReader CreatePCBasedPropertyReader(
-            IDataBlockReader dataBlockReader,
-            IBlockDataDeObfuscator blockDataDeObfuscator)
+            IDataReader dataReader)
         {
             return
                 new PCBasedPropertyReader(
                     CreateBTreeOnHeapReader(
                         new PropertyIdDecoder(),
-                        dataBlockReader,
-                        blockDataDeObfuscator),
-                    CreatePropertyValueProcessor(
-                        dataBlockReader,
-                        blockDataDeObfuscator));
+                        dataReader),
+                    CreatePropertyValueProcessor(dataReader));
         }
 
         private static IPropertyValueProcessor CreatePropertyValueProcessor(
-            IDataBlockReader dataBlockReader,
-            IBlockDataDeObfuscator blockDataDeObfuscator)
+            IDataReader dataReader)
         {
             return
                 new PropertyValueProcessor(
@@ -214,66 +166,46 @@ namespace pst
                     new ExternalDataBlockDecoder(
                         new BlockTrailerDecoder(
                             new BIDDecoder()),
-                        blockDataDeObfuscator),
-                    CreateHeapOnNodeReader(
-                        dataBlockReader,
-                        blockDataDeObfuscator),
-                    CreateSubnodesEnumerator(
-                        dataBlockReader),
-                    CreateDataTreeLeafNodesEnumerator(
-                        dataBlockReader),
+                        CreateBlockDataDeObfuscator(dataReader)),
+                    CreateHeapOnNodeReader(dataReader),
+                    CreateSubnodesEnumerator(dataReader),
+                    CreateDataTreeLeafNodesEnumerator(dataReader),
                     new PropertyTypeMetadataProvider(),
-                    dataBlockReader);
+                    CreateDataBlockReader(dataReader));
         }
 
         private static IRowMatrixReader<TRowId> CreateRowMatrixReader<TRowId>(
             IDecoder<TRowId> rowIdDecoder,
-            IDataBlockReader dataBlockReader,
-            IBlockDataDeObfuscator blockDataDeObfuscator) where TRowId : IComparable<TRowId>
+            IDataReader dataReader) where TRowId : IComparable<TRowId>
         {
             return
                 new RowMatrixReader<TRowId>(
-                    CreateHeapOnNodeReader(
-                        dataBlockReader,
-                        blockDataDeObfuscator),
+                    CreateHeapOnNodeReader(dataReader),
                     new RowValuesExtractor(),
-                    CreateSubnodesEnumerator(
-                        dataBlockReader),
-                    new RowIndexReader<TRowId>(
-                        new TCINFODecoder(
-                            new HIDDecoder(),
-                            new TCOLDESCDecoder()),
-                        CreateHeapOnNodeReader(
-                            dataBlockReader,
-                            blockDataDeObfuscator),
-                        CreateBTreeOnHeapReader(
-                            rowIdDecoder,
-                            dataBlockReader,
-                            blockDataDeObfuscator),
-                        new DataRecordToTCROWIDConverter()),
-                    CreateDataTreeLeafNodesEnumerator(
-                        dataBlockReader),
+                    CreateSubnodesEnumerator(dataReader),
+                    CreateRowIndexReader(rowIdDecoder, dataReader),
+                    CreateDataTreeLeafNodesEnumerator(dataReader),
                     new HNIDDecoder(
                         new HIDDecoder(),
                         new NIDDecoder()),
                     new TCINFODecoder(
                         new HIDDecoder(),
                         new TCOLDESCDecoder()),
-                    dataBlockReader);
+                    CreateDataBlockReader(dataReader));
         }
 
         private static ISubNodesEnumerator CreateSubnodesEnumerator(
-            IDataBlockReader dataBlockReader)
+            IDataReader dataReader)
         {
             return
                 new SubNodesEnumerator(
                     new SubnodeBTreeBlockLevelDecider(
-                        dataBlockReader),
+                        CreateDataBlockReader(dataReader)),
                     new SubnodeBlockLoader(
                         new SubnodeBlockDecoder(
                             new BlockTrailerDecoder(
                                 new BIDDecoder())),
-                        dataBlockReader),
+                        CreateDataBlockReader(dataReader)),
                     new SIEntriesFromSubnodeBlockExtractor(
                         new SIEntryDecoder(
                             new NIDDecoder(),
@@ -286,8 +218,7 @@ namespace pst
 
         private static IBTreeOnHeapReader<TKey> CreateBTreeOnHeapReader<TKey>(
             IDecoder<TKey> keyDecoder,
-            IDataBlockReader dataBlockReader,
-            IBlockDataDeObfuscator blockDataDeObfuscator) where TKey : IComparable<TKey>
+            IDataReader dataReader) where TKey : IComparable<TKey>
         {
             return
                 new BTreeOnHeapReader<TKey>(
@@ -295,14 +226,11 @@ namespace pst
                     keyDecoder,
                     new BTHHEADERDecoder(
                         new HIDDecoder()),
-                    CreateHeapOnNodeReader(
-                        dataBlockReader,
-                        blockDataDeObfuscator));
+                    CreateHeapOnNodeReader(dataReader));
         }
 
         private static IHeapOnNodeReader CreateHeapOnNodeReader(
-            IDataBlockReader dataBlockReader,
-            IBlockDataDeObfuscator blockDataDeObfuscator)
+            IDataReader dataReader)
         {
             return
                 new HeapOnNodeReader(
@@ -311,25 +239,24 @@ namespace pst
                     new HNPAGEHDRDecoder(),
                     new HNPAGEMAPDecoder(),
                     new HNBITMAPHDRDecoder(),
-                    blockDataDeObfuscator,
+                    CreateBlockDataDeObfuscator(dataReader),
                     new HeapOnNodeItemsLoader(),
-                    CreateDataTreeLeafNodesEnumerator(
-                        dataBlockReader),
-                    dataBlockReader);
+                    CreateDataTreeLeafNodesEnumerator(dataReader),
+                    CreateDataBlockReader(dataReader));
         }
 
         private static IDataTreeLeafBIDsEnumerator CreateDataTreeLeafNodesEnumerator(
-            IDataBlockReader dataBlockReader)
+            IDataReader dataReader)
         {
             return
                 new DataTreeLeafBIDsEnumerator(
                     new DataTreeBlockLevelDecider(
-                        dataBlockReader),
+                        CreateDataBlockReader(dataReader)),
                     new InternalDataBlockLoader(
                         new InternalDataBlockDecoder(
                             new BlockTrailerDecoder(
                                 new BIDDecoder())),
-                        dataBlockReader),
+                        CreateDataBlockReader(dataReader)),
                     new BIDsFromInternalDataBlockExtractor(
                         new BIDDecoder()));
         }
