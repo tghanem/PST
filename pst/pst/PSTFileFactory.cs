@@ -45,17 +45,74 @@ namespace pst
         {
             return
                 new PSTFile(
-                    CreateNIDBasedRowIndexReader(stream),
-                    CreateNIDBasedTableContextReader(stream),
-                    CreateNIDBasedTableContextBasedPropertyReader(stream), 
-                    CreateTagBasedTableContextBasedPropertyReader(stream), 
                     new EntryIdDecoder(
                         new NIDDecoder()),
+                    CreateReadOnlyFolder(stream),
+                    CreateReadOnlyMessage(stream),
+                    CreateReadOnlyAttachment(stream),
+                    CreatePropertyContextBasedReadOnlyComponent(stream),
+                    CreateTagBasedTableContextBasedReadOnlyComponent(stream));
+        }
+
+        private static IReadOnlyFolder CreateReadOnlyFolder(
+            Stream dataStream)
+        {
+            return
+                new ReadOnlyFolder(
+                    CreateNodeEntryFinder(dataStream),
+                    CreateNIDBasedRowIndexReader(dataStream),
+                    new NIDDecoder());
+        }
+
+        private static IReadOnlyMessage CreateReadOnlyMessage(
+            Stream dataStream)
+        {
+            return
+                new ReadOnlyMessage(
+                    CreateSubnodesEnumerator(dataStream),
+                    CreateNIDBasedTableContextReader(dataStream),
+                    CreateNIDBasedRowIndexReader(dataStream),
                     new NIDDecoder(),
-                    CreateSubnodesEnumerator(stream),
-                    CreatePropertyIdToNameMap(stream),
-                    CreatePropertyContextBasedPropertyReader(stream),
-                    CreateNIDToLNBTEntryMapper(stream));
+                    CreateNodeEntryFinder(dataStream));
+        }
+
+        private static IReadOnlyAttachment CreateReadOnlyAttachment(
+            Stream dataStream)
+        {
+            return
+                new ReadOnlyAttachment(
+                    new NIDDecoder(),
+                    CreateNodeEntryFinder(dataStream),
+                    CreatePropertyContextBasedReadOnlyComponent(dataStream));
+        }
+
+        private static IPropertyContextBasedReadOnlyComponent CreatePropertyContextBasedReadOnlyComponent(
+            Stream dataStream)
+        {
+            return
+                new PropertyContextBasedReadOnlyComponent(
+                    CreateNodeEntryFinder(dataStream),
+                    CreatePropertyIdToNameMap(dataStream),
+                    CreatePropertyContextBasedPropertyReader(dataStream));
+        }
+
+        private static ITableContextBasedReadOnlyComponent<Tag> CreateTagBasedTableContextBasedReadOnlyComponent(
+            Stream dataStream)
+        {
+            return
+                new TableContextBasedReadOnlyComponent<Tag>(
+                    CreateNodeEntryFinder(dataStream),
+                    CreatePropertyIdToNameMap(dataStream),
+                    CreateTagBasedTableContextBasedPropertyReader(dataStream));
+        }
+
+        private static INodeEntryFinder CreateNodeEntryFinder(
+            Stream dataStream)
+        {
+            return
+                new NodeEntryFinder(
+                    CreateNIDToLNBTEntryMapper(dataStream),
+                    CreateSubnodesEnumerator(dataStream));
         }
 
         private static ITableContextReader CreateNIDBasedTableContextReader(
@@ -127,16 +184,7 @@ namespace pst
         {
             return
                 new TableContextBasedPropertyReader<Tag>(
-                    CreateTagBasedRowMatrixReader(dataStream), 
-                    CreatePropertyValueProcessor(dataStream));
-        }
-
-        private static ITableContextBasedPropertyReader<NID> CreateNIDBasedTableContextBasedPropertyReader(
-            Stream dataStream)
-        {
-            return
-                new TableContextBasedPropertyReader<NID>(
-                    CreateNIDBasedRowMatrixReader(dataStream), 
+                    CreateTagBasedRowMatrixReader(dataStream),
                     CreatePropertyValueProcessor(dataStream));
         }
 
@@ -149,7 +197,7 @@ namespace pst
                         new HIDDecoder(),
                         new TCOLDESCDecoder()),
                     CreateHeapOnNodeReader(dataStream),
-                    CreateTagBasedBTreeOnHeapReader(dataStream), 
+                    CreateTagBasedBTreeOnHeapReader(dataStream),
                     new DataRecordToTCROWIDConverter());
         }
 
@@ -202,7 +250,7 @@ namespace pst
                     CreateHeapOnNodeReader(dataStream),
                     new RowValuesExtractor(),
                     CreateSubnodesEnumerator(dataStream),
-                    CreateTagBasedRowIndexReader(dataStream), 
+                    CreateTagBasedRowIndexReader(dataStream),
                     CreateDataTreeLeafNodesEnumerator(dataStream),
                     new HNIDDecoder(
                         new HIDDecoder(),
@@ -260,7 +308,7 @@ namespace pst
             return
                 new BTreeOnHeapReader<Tag>(
                     new HIDDecoder(),
-                    new TagDecoder(), 
+                    new TagDecoder(),
                     new BTHHEADERDecoder(
                         new HIDDecoder()),
                     CreateHeapOnNodeReader(dataStream));

@@ -1,144 +1,97 @@
 ﻿using pst.core;
 using pst.encodables;
 using pst.encodables.ndb;
-using pst.interfaces;
-using pst.interfaces.ltp;
-using pst.interfaces.ltp.tc;
-using pst.interfaces.ndb;
-using pst.utilities;
+using pst.interfaces.messaging;
 using System.Linq;
 
 namespace pst
 {
     public class Message
     {
-        private readonly BID nodeBlockId;
-        private readonly BID subnodeBlockId;
-        private readonly IDecoder<NID> nidDecoder;
-        private readonly IRowIndexReader<NID> rowIndexReader;
-        private readonly ITableContextReader tableContextReader;
-        private readonly ITableContextBasedPropertyReader<NID> nidBasedTableContextBasedPropertyReader;
-        private readonly ITableContextBasedPropertyReader<Tag> tagBasedTableContextBasedPropertyReader;
-        private readonly ISubNodesEnumerator subnodesEnumerator;
-        private readonly IPropertyNameToIdMap propertyNameToIdMap;
-        private readonly IPropertyReader propertyReader;
+        private readonly NID[] messageNodePath;
+        private readonly IReadOnlyMessage readOnlyMessage;
+        private readonly IReadOnlyAttachment readOnlyAttachment;
+        private readonly IPropertyContextBasedReadOnlyComponent readOnlyComponent;
+        private readonly ITableContextBasedReadOnlyComponent<Tag> readOnlyComponentForRecipient;
 
         internal Message(
-            BID nodeBlockId,
-            BID subnodeBlockId,
-            IDecoder<NID> nidDecoder,
-            IRowIndexReader<NID> rowIndexReader,
-            ITableContextReader tableContextReader,
-            ITableContextBasedPropertyReader<NID> nidBasedTableContextBasedPropertyReader,
-            ITableContextBasedPropertyReader<Tag> tagBasedTableContextBasedPropertyReader,
-            ISubNodesEnumerator subnodesEnumerator,
-            IPropertyNameToIdMap propertyNameToIdMap,
-            IPropertyReader propertyReader)
+            NID[] messageNodePath,
+            IReadOnlyMessage readOnlyMessage,
+            IReadOnlyAttachment readOnlyAttachment,
+            IPropertyContextBasedReadOnlyComponent readOnlyComponent,
+            ITableContextBasedReadOnlyComponent<Tag> readOnlyComponentForRecipient)
         {
-            this.nodeBlockId = nodeBlockId;
-            this.subnodeBlockId = subnodeBlockId;
-
-            this.nidDecoder = nidDecoder;
-            this.rowIndexReader = rowIndexReader;
-            this.tableContextReader = tableContextReader;
-            this.subnodesEnumerator = subnodesEnumerator;
-            this.propertyNameToIdMap = propertyNameToIdMap;
-            this.propertyReader = propertyReader;
-            this.nidBasedTableContextBasedPropertyReader = nidBasedTableContextBasedPropertyReader;
-            this.tagBasedTableContextBasedPropertyReader = tagBasedTableContextBasedPropertyReader;
+            this.messageNodePath = messageNodePath;
+            this.readOnlyMessage = readOnlyMessage;
+            this.readOnlyComponent = readOnlyComponent;
+            this.readOnlyAttachment = readOnlyAttachment;
+            this.readOnlyComponentForRecipient = readOnlyComponentForRecipient;
         }
 
         public Recipient[] GetRecipients()
         {
-            var subnodes =
-                subnodesEnumerator.Enumerate(subnodeBlockId);
+            var tagsForRecipients =
+                readOnlyMessage.GetTagsForRecipients(messageNodePath);
 
-            var recipientTableEntry =
-                subnodes.First(s => s.LocalSubnodeId.Type == Globals.NID_TYPE_RECIPIENT_TABLE);
+            if (tagsForRecipients.HasNoValue)
+            {
+                return new Recipient[0];
+            }
 
-            var rows =
-                tableContextReader.GetAllRows(recipientTableEntry.DataBlockId, recipientTableEntry.SubnodeBlockId);
+            var recipientTableNodeId =
+                readOnlyMessage.GetRecipientTableNodeId(messageNodePath);
+
+            if (recipientTableNodeId.HasNoValue)
+            {
+                return new Recipient[0];
+            }
+
+            var recipientTablePath =
+                messageNodePath.Concat(new[] { recipientTableNodeId.Value }).ToArray();
 
             return
-                rows
-                .Select(
-                    r =>
-                    {
-                        return
-                            new Recipient(
-                                recipientTableEntry.DataBlockId,
-                                recipientTableEntry.SubnodeBlockId,
-                                Tag.OfValue(r.RowId),
-                                propertyNameToIdMap,
-                                tagBasedTableContextBasedPropertyReader);
-                    })
+                tagsForRecipients
+                .Value
+                .Select(tag => new Recipient(recipientTablePath, tag, readOnlyComponentForRecipient))
                 .ToArray();
         }
 
         public Attachment[] GetAttachments()
         {
-            var subnodes =
-                subnodesEnumerator.Enumerate(subnodeBlockId);
+            var nidsForAttachments =
+                readOnlyMessage.GetNodeIdsForAttachments(messageNodePath);
 
-            var attachmentsTableEntry =
-                subnodes.First(s => s.LocalSubnodeId.Type == Globals.NID_TYPE_ATTACHMENT_TABLE);
-
-            var rowsIds =
-                rowIndexReader.GetAllRowIds(attachmentsTableEntry.DataBlockId);
+            if (nidsForAttachments.HasNoValue)
+            {
+                return new Attachment[0];
+            }
 
             return
-                rowsIds
+                nidsForAttachments
+                .Value
                 .Select(
-                    id =>
-                    {
-                        var attachmentNodeId = nidDecoder.Decode(id.RowId);
-
-                        var attachmentSubnodeEntry =
-                            subnodes.First(s => s.LocalSubnodeId.Value == attachmentNodeId.Value);
-
-                        return
-                            new Attachment(
-                                attachmentSubnodeEntry.DataBlockId,
-                                attachmentSubnodeEntry.SubnodeBlockId,
-                                nidDecoder,
-                                rowIndexReader,
-                                tableContextReader, 
-                                nidBasedTableContextBasedPropertyReader,
-                                tagBasedTableContextBasedPropertyReader,
-                                subnodesEnumerator,
-                                propertyNameToIdMap,
-                                propertyReader);
-                    })
+                    nid =>
+                    new Attachment(
+                        messageNodePath.Concat(new[] { nid }).ToArray(),
+                        readOnlyMessage,
+                        readOnlyAttachment,
+                        readOnlyComponent, readOnlyComponentForRecipient))
                 .ToArray();
         }
 
         public Maybe<PropertyValue> GetProperty(NumericalPropertyTag propertyTag)
         {
-            var propertyId = propertyNameToIdMap.GetPropertyId(propertyTag.Set, propertyTag.Id);
-
-            if (propertyId.HasNoValue)
-            {
-                return Maybe<PropertyValue>.NoValue();
-            }
-
-            return GetProperty(new PropertyTag(propertyId.Value, propertyTag.Type));
+            return readOnlyComponent.GetProperty(messageNodePath, propertyTag);
         }
 
         public Maybe<PropertyValue> GetProperty(StringPropertyTag propertyTag)
         {
-            var propertyId = propertyNameToIdMap.GetPropertyId(propertyTag.Set, propertyTag.Name);
-
-            if (propertyId.HasNoValue)
-            {
-                return Maybe<PropertyValue>.NoValue();
-            }
-
-            return GetProperty(new PropertyTag(propertyId.Value, propertyTag.Type));
+            return readOnlyComponent.GetProperty(messageNodePath, propertyTag);
         }
 
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
-            return propertyReader.ReadProperty(nodeBlockId, subnodeBlockId, propertyTag);
+            return readOnlyComponent.GetProperty(messageNodePath, propertyTag);
         }
     }
 }

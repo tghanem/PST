@@ -2,7 +2,6 @@
 using pst.interfaces;
 using pst.interfaces.btree;
 using System;
-using System.Linq;
 
 namespace pst.impl.btree
 {
@@ -68,7 +67,7 @@ namespace pst.impl.btree
             {
                 var intermediateKey = entryKeyFromIntermediateEntryExtractor.Extract(intermediateEntries[i]);
 
-                if (intermediateKey.CompareTo(key) == 0)
+                if (intermediateKey.CompareTo(key) == 0 || (intermediateKey.CompareTo(key) > 0 && i == 0))
                 {
                     var nodeReference = nodeReferenceFromIntermediateEntryExtractor.Extract(intermediateEntries[i]);
 

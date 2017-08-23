@@ -14,12 +14,12 @@ namespace pst.impl.messaging
     {
         private readonly IDecoder<NAMEID> nameIdDecoder;
         private readonly IPropertyReader propertyReader;
-        private readonly IMapper<NID, LNBTEntry> nidToLNBTEntryMapper;
+        private readonly IMapper<NID, Maybe<LNBTEntry>> nidToLNBTEntryMapper;
 
         public PropertyNameToIdMap(
             IDecoder<NAMEID> nameIdDecoder,
             IPropertyReader propertyReader,
-            IMapper<NID, LNBTEntry> nidToLNBTEntryMapper)
+            IMapper<NID, Maybe<LNBTEntry>> nidToLNBTEntryMapper)
         {
             this.nameIdDecoder = nameIdDecoder;
             this.propertyReader = propertyReader;
@@ -31,10 +31,15 @@ namespace pst.impl.messaging
             var lnbtEntryForNameToIdMap =
                 nidToLNBTEntryMapper.Map(Globals.NID_NAME_TO_ID_MAP);
 
+            if (lnbtEntryForNameToIdMap.HasNoValue)
+            {
+                return Maybe<PropertyId>.NoValue();
+            }
+
             var entryStream =
                 propertyReader.ReadProperty(
-                    lnbtEntryForNameToIdMap.DataBlockId,
-                    lnbtEntryForNameToIdMap.SubnodeBlockId,
+                    lnbtEntryForNameToIdMap.Value.DataBlockId,
+                    lnbtEntryForNameToIdMap.Value.SubnodeBlockId,
                     MAPIProperties.PidTagNameidStreamEntry);
 
             if (entryStream.HasNoValue)
@@ -65,16 +70,21 @@ namespace pst.impl.messaging
             var lnbtEntryForNameToIdMap =
                 nidToLNBTEntryMapper.Map(Globals.NID_NAME_TO_ID_MAP);
 
+            if (lnbtEntryForNameToIdMap.HasNoValue)
+            {
+                return Maybe<PropertyId>.NoValue();
+            }
+
             var entryStream =
                 propertyReader.ReadProperty(
-                    lnbtEntryForNameToIdMap.DataBlockId,
-                    lnbtEntryForNameToIdMap.SubnodeBlockId,
+                    lnbtEntryForNameToIdMap.Value.DataBlockId,
+                    lnbtEntryForNameToIdMap.Value.SubnodeBlockId,
                     MAPIProperties.PidTagNameidStreamEntry);
 
             var stringStream =
                 propertyReader.ReadProperty(
-                    lnbtEntryForNameToIdMap.DataBlockId,
-                    lnbtEntryForNameToIdMap.SubnodeBlockId,
+                    lnbtEntryForNameToIdMap.Value.DataBlockId,
+                    lnbtEntryForNameToIdMap.Value.SubnodeBlockId,
                     MAPIProperties.PidTagNameidStreamString);
 
             if (entryStream.HasNoValue || stringStream.HasNoValue)

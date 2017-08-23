@@ -1,65 +1,39 @@
 ﻿using pst.core;
 using pst.encodables;
 using pst.encodables.ndb;
-using pst.interfaces.ltp;
+using pst.interfaces.messaging;
 
 namespace pst
 {
     public class Recipient
     {
-        private readonly BID recipientTableBlockId;
-        private readonly BID recipientTableSubnodeBlockId;
+        private readonly NID[] recipientTableSubnodePath;
         private readonly Tag recipientRowId;
-
-        private readonly IPropertyNameToIdMap propertyNameToIdMap;
-        private readonly ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader;
+        private readonly ITableContextBasedReadOnlyComponent<Tag> readOnlyComponent;
 
         internal Recipient(
-            BID recipientTableBlockId,
-            BID recipientTableSubnodeBlockId,
+            NID[] recipientTableSubnodePath,
             Tag recipientRowId,
-            IPropertyNameToIdMap propertyNameToIdMap,
-            ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader)
+            ITableContextBasedReadOnlyComponent<Tag> readOnlyComponent)
         {
-            this.recipientTableBlockId = recipientTableBlockId;
-            this.recipientTableSubnodeBlockId = recipientTableSubnodeBlockId;
             this.recipientRowId = recipientRowId;
-            this.propertyNameToIdMap = propertyNameToIdMap;
-            this.tableContextBasedPropertyReader = tableContextBasedPropertyReader;
+            this.recipientTableSubnodePath = recipientTableSubnodePath;
+            this.readOnlyComponent = readOnlyComponent;
         }
 
         public Maybe<PropertyValue> GetProperty(NumericalPropertyTag propertyTag)
         {
-            var propertyId = propertyNameToIdMap.GetPropertyId(propertyTag.Set, propertyTag.Id);
-
-            if (propertyId.HasNoValue)
-            {
-                return Maybe<PropertyValue>.NoValue();
-            }
-
-            return GetProperty(new PropertyTag(propertyId.Value, propertyTag.Type));
+            return readOnlyComponent.GetProperty(recipientTableSubnodePath, recipientRowId, propertyTag);
         }
 
         public Maybe<PropertyValue> GetProperty(StringPropertyTag propertyTag)
         {
-            var propertyId = propertyNameToIdMap.GetPropertyId(propertyTag.Set, propertyTag.Name);
-
-            if (propertyId.HasNoValue)
-            {
-                return Maybe<PropertyValue>.NoValue();
-            }
-
-            return GetProperty(new PropertyTag(propertyId.Value, propertyTag.Type));
+            return readOnlyComponent.GetProperty(recipientTableSubnodePath, recipientRowId, propertyTag);
         }
 
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
-            return
-                tableContextBasedPropertyReader.ReadProperty(
-                    recipientTableBlockId,
-                    recipientTableSubnodeBlockId,
-                    recipientRowId,
-                    propertyTag);
+            return readOnlyComponent.GetProperty(recipientTableSubnodePath, recipientRowId, propertyTag);
         }
     }
 }

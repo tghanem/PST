@@ -1,17 +1,32 @@
-﻿namespace pst.core
+﻿using System;
+
+namespace pst.core
 {
     public struct Maybe<T> where T : class
     {
-        public T Value {get; }
+        public T Value
+        {
+            get
+            {
+                if (HasNoValue)
+                {
+                    throw new Exception("BUG: The object does not contain a value");
+                }
+
+                return value;
+            }
+        }
+
+        private readonly T value;
 
         private Maybe(T value)
         {
-            Value = value;
+            this.value = value;
         }
 
-        public bool HasValue => Value != null;
+        public bool HasValue => value != null;
 
-        public bool HasNoValue => Value == null;
+        public bool HasNoValue => value == null;
 
         public static Maybe<T> OfValue(T value)
             => new Maybe<T>(value);
