@@ -15,9 +15,7 @@ namespace pst.impl.ndb.subnodebtree
 
         public SIEntry[] Extract(SubnodeBlock parameter)
         {
-            var parser = BinaryDataParser.OfValue(parameter.Entries);
-
-            return parser.TakeAndSkip(parameter.NumberOfEntries, 16, siEntryDecoder);
+            return siEntryDecoder.DecodeMultipleItems(parameter.NumberOfEntries, 16, parameter.Entries);
         }
     }
 }

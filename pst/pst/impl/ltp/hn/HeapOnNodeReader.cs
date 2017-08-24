@@ -54,8 +54,6 @@ namespace pst.impl.ltp.hn
             var externalBlock =
                 ReadExternalDataBlock(blockId, hid.BlockIndex);
 
-            var parser = BinaryDataParser.OfValue(externalBlock);
-
             int pageMapOffset;
 
             if (hid.BlockIndex == 0)
@@ -66,13 +64,13 @@ namespace pst.impl.ltp.hn
             }
             else if (hid.BlockIndex == 8 || (hid.BlockIndex - 8) % 128 == 0)
             {
-                var hnBitmapHDR = parser.TakeAndSkip(66, hnBitmapHDRDecoder);
+                var hnBitmapHDR = hnBitmapHDRDecoder.Decode(externalBlock.Take(66));
 
                 pageMapOffset = hnBitmapHDR.PageMapOffset;
             }
             else
             {
-                var hnPageHDR = parser.TakeAndSkip(2, hnPageHDRDecoder);
+                var hnPageHDR = hnPageHDRDecoder.Decode(externalBlock.Take(2));
 
                 pageMapOffset = hnPageHDR.PageMapOffset;
             }
@@ -99,11 +97,9 @@ namespace pst.impl.ltp.hn
 
         private HNPAGEMAP GetPageMapFromExternalDataBlock(BinaryData block, int pageMapOffset)
         {
-            var parser = BinaryDataParser.OfValue(block);
+            var hnPageMap = block.Take(pageMapOffset, block.Length - pageMapOffset);
 
-            return
-                parser
-                .TakeAtWithoutChangingStreamPosition(pageMapOffset, block.Length - pageMapOffset, hnPageMapDecoder);
+            return hnPageMapDecoder.Decode(hnPageMap);
         }
     }
 }

@@ -5,7 +5,6 @@ using pst.encodables.ndb;
 using pst.interfaces;
 using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.hn;
-using pst.utilities;
 using System;
 using System.Collections.Generic;
 
@@ -106,39 +105,36 @@ namespace pst.impl.ltp.bth
 
             if (currentDepth > 0)
             {
-                var parser = BinaryDataParser.OfValue(node);
+                var items = node.Slice(keySize + 4);
 
-                var itemCount = node.Length / (keySize + 4);
+                Array.ForEach(
+                    items,
+                    item =>
+                    {
+                        var hid = hidDecoder.Decode(item.Take(keySize, 4));
 
-                for (var i = 0; i < itemCount; i++)
-                {
-                    var hid =
-                        parser
-                        .Skip(keySize)
-                        .TakeAndSkip(4, hidDecoder);
-
-                    Enumerate(
-                        blockId,
-                        hid,
-                        keySize,
-                        dataSize,
-                        currentDepth - 1,
-                        dataRecords);
-                }
+                        Enumerate(
+                            blockId,
+                            hid,
+                            keySize,
+                            dataSize,
+                            currentDepth - 1,
+                            dataRecords);
+                    });
             }
             else
             {
-                var parser = BinaryDataParser.OfValue(node);
+                var items = node.Slice(keySize + dataSize);
 
-                var itemCount = node.Length / (keySize + dataSize);
-
-                for (var i = 0; i < itemCount; i++)
-                {
-                    var key = parser.TakeAndSkip(keySize);
-                    var data = parser.TakeAndSkip(dataSize);
-
-                    dataRecords.Add(new DataRecord(key, data));
-                }
+                Array.ForEach(
+                    items,
+                    item =>
+                    {
+                        dataRecords.Add(
+                            new DataRecord(
+                                item.Take(keySize),
+                                item.Take(keySize, dataSize)));
+                    });
             }
         }
 
@@ -155,16 +151,14 @@ namespace pst.impl.ltp.bth
 
             if (currentDepth > 0)
             {
-                var parser = BinaryDataParser.OfValue(node);
-
-                var itemCount = node.Length / (bthKeySize + 4);
+                var items = node.Slice(bthKeySize + 4);
 
                 var previousIndexRecord = (IndexRecord)null;
 
-                for (var i = 0; i < itemCount; i++)
+                for (var i = 0; i < items.Length; i++)
                 {
-                    var key = parser.TakeAndSkip(bthKeySize);
-                    var hid = parser.TakeAndSkip(4, hidDecoder);
+                    var key = items[i].Take(bthKeySize);
+                    var hid = hidDecoder.Decode(items[i].Take(bthKeySize, 4));
 
                     if (keyToFind.CompareTo(keyDecoder.Decode(key)) < 0)
                     {
@@ -195,15 +189,12 @@ namespace pst.impl.ltp.bth
             }
             else
             {
-                var parser = BinaryDataParser.OfValue(node);
+                var items = node.Slice(bthKeySize + bthDataSize);
 
-                var itemCount = node.Length / (bthKeySize + bthDataSize);
-
-                for (var i = 0; i < itemCount; i++)
+                for (var i = 0; i < items.Length; i++)
                 {
-                    var key = parser.TakeAndSkip(bthKeySize);
-
-                    var data = parser.TakeAndSkip(bthDataSize);
+                    var key = items[i].Take(bthKeySize);
+                    var data = items[i].Take(bthKeySize, bthDataSize);
 
                     var decodedKey = keyDecoder.Decode(key);
 

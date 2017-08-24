@@ -5,8 +5,7 @@ using pst.utilities;
 
 namespace pst.impl.ndb.datatree
 {
-    class BIDsFromInternalDataBlockExtractor
-        : IExtractor<InternalDataBlock, BID[]>
+    class BIDsFromInternalDataBlockExtractor : IExtractor<InternalDataBlock, BID[]>
     {
         private readonly IDecoder<BID> bidDecoder;
 
@@ -18,9 +17,7 @@ namespace pst.impl.ndb.datatree
 
         public BID[] Extract(InternalDataBlock parameter)
         {
-            var parser = BinaryDataParser.OfValue(parameter.Entries);
-
-            return parser.TakeAndSkip(parameter.NumberOfEntries, 8, bidDecoder);
+            return bidDecoder.DecodeMultipleItems(parameter.NumberOfEntries, 8, parameter.Entries);
         }
     }
 }
