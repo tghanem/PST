@@ -15,17 +15,23 @@ namespace pst
 
         public Maybe<PropertyValue> GetProperty(NumericalPropertyTag propertyTag)
         {
-            return propertyContextBasedReadOnlyComponent.GetProperty(NodePath.OfValue(Globals.NID_MESSAGE_STORE), propertyTag);
+            return
+                propertyContextBasedReadOnlyComponent.GetProperty(
+                    new NumericalTaggedPropertyPath(NodePath.OfValue(Globals.NID_MESSAGE_STORE), propertyTag));
         }
 
         public Maybe<PropertyValue> GetProperty(StringPropertyTag propertyTag)
         {
-            return propertyContextBasedReadOnlyComponent.GetProperty(NodePath.OfValue(Globals.NID_MESSAGE_STORE), propertyTag);
+            return
+                propertyContextBasedReadOnlyComponent.GetProperty(
+                    new StringTaggedPropertyPath(NodePath.OfValue(Globals.NID_MESSAGE_STORE), propertyTag));
         }
 
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
-            return propertyContextBasedReadOnlyComponent.GetProperty(NodePath.OfValue(Globals.NID_MESSAGE_STORE), propertyTag);
+            return
+                propertyContextBasedReadOnlyComponent.GetProperty(
+                    new TaggedPropertyPath(NodePath.OfValue(Globals.NID_MESSAGE_STORE), propertyTag));
         }
     }
 }

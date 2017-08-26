@@ -20,16 +20,19 @@ namespace pst.impl.messaging
             this.propertyReader = propertyReader;
         }
 
-        public Maybe<PropertyValue> GetProperty(NodePath nodePath, NumericalPropertyTag propertyTag)
+        public Maybe<PropertyValue> GetProperty(NumericalTaggedPropertyPath propertyPath)
         {
-            var propertyId = propertyNameToIdMap.GetPropertyId(propertyTag.Set, propertyTag.Id);
+            var propertyId =
+                propertyNameToIdMap.GetPropertyId(
+                    propertyPath.PropertyTag.Set,
+                    propertyPath.PropertyTag.Id);
 
             if (propertyId.HasNoValue)
             {
                 return Maybe<PropertyValue>.NoValue();
             }
 
-            var nodeEntry = nodeEntryFinder.GetEntry(nodePath);
+            var nodeEntry = nodeEntryFinder.GetEntry(propertyPath.NodePath);
 
             if (nodeEntry.HasNoValue)
             {
@@ -40,19 +43,22 @@ namespace pst.impl.messaging
                 propertyReader.ReadProperty(
                     nodeEntry.Value.NodeDataBlockId,
                     nodeEntry.Value.SubnodeDataBlockId,
-                    new PropertyTag(propertyId.Value, propertyTag.Type));
+                    new PropertyTag(propertyId.Value, propertyPath.PropertyTag.Type));
         }
 
-        public Maybe<PropertyValue> GetProperty(NodePath nodePath, StringPropertyTag propertyTag)
+        public Maybe<PropertyValue> GetProperty(StringTaggedPropertyPath propertyPath)
         {
-            var propertyId = propertyNameToIdMap.GetPropertyId(propertyTag.Set, propertyTag.Name);
+            var propertyId =
+                propertyNameToIdMap.GetPropertyId(
+                    propertyPath.PropertyTag.Set,
+                    propertyPath.PropertyTag.Name);
 
             if (propertyId.HasNoValue)
             {
                 return Maybe<PropertyValue>.NoValue();
             }
 
-            var nodeEntry = nodeEntryFinder.GetEntry(nodePath);
+            var nodeEntry = nodeEntryFinder.GetEntry(propertyPath.NodePath);
 
             if (nodeEntry.HasNoValue)
             {
@@ -63,12 +69,12 @@ namespace pst.impl.messaging
                 propertyReader.ReadProperty(
                     nodeEntry.Value.NodeDataBlockId,
                     nodeEntry.Value.SubnodeDataBlockId,
-                    new PropertyTag(propertyId.Value, propertyTag.Type));
+                    new PropertyTag(propertyId.Value, propertyPath.PropertyTag.Type));
         }
 
-        public Maybe<PropertyValue> GetProperty(NodePath nodePath, PropertyTag propertyTag)
+        public Maybe<PropertyValue> GetProperty(TaggedPropertyPath propertyPath)
         {
-            var nodeEntry = nodeEntryFinder.GetEntry(nodePath);
+            var nodeEntry = nodeEntryFinder.GetEntry(propertyPath.NodePath);
 
             if (nodeEntry.HasNoValue)
             {
@@ -79,7 +85,7 @@ namespace pst.impl.messaging
                 propertyReader.ReadProperty(
                     nodeEntry.Value.NodeDataBlockId,
                     nodeEntry.Value.SubnodeDataBlockId,
-                    propertyTag);
+                    propertyPath.PropertyTag);
         }
     }
 }

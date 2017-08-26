@@ -31,7 +31,8 @@ namespace pst.impl.messaging
             }
 
             var attachMethodPropertyValue =
-                readOnlyComponent.GetProperty(attachmentNodePath, MAPIProperties.PidTagAttachMethod);
+                readOnlyComponent.GetProperty(
+                    new TaggedPropertyPath(attachmentNodePath, MAPIProperties.PidTagAttachMethod));
 
             if (attachMethodPropertyValue.HasNoValue ||
                !attachMethodPropertyValue.Value.Value.HasFlag(MAPIProperties.afEmbeddedMessage))
@@ -40,7 +41,8 @@ namespace pst.impl.messaging
             }
 
             var attachDataObject =
-                readOnlyComponent.GetProperty(attachmentNodePath, MAPIProperties.PidTagAttachDataObject);
+                readOnlyComponent.GetProperty(
+                    new TaggedPropertyPath(attachmentNodePath, MAPIProperties.PidTagAttachDataObject));
 
             return nidDecoder.Decode(attachDataObject.Value.Value.Take(4));
         }

@@ -141,6 +141,7 @@
     <Compile Include="impl\ltp\tc\RowValuesExtractor.cs" />
     <Compile Include="impl\ltp\tc\TableContextBasedPropertyReader.cs" />
     <Compile Include="impl\ltp\tc\TableContextReader.cs" />
+    <Compile Include="impl\messaging\cache\PropertyContextBasedReadOnlyComponentThatCachesThePropertyValue.cs" />
     <Compile Include="impl\messaging\NodeEntryFinder.cs" />
     <Compile Include="impl\messaging\cache\NodeEntryFinderThatCachesTheNodeEntry.cs" />
     <Compile Include="impl\messaging\PropertyNameToIdMap.cs" />
@@ -179,6 +180,9 @@
     <Compile Include="interfaces\messaging\ITableContextBasedReadOnlyComponent.cs" />
     <Compile Include="interfaces\messaging\NodeEntry.cs" />
     <Compile Include="interfaces\messaging\NodePath.cs" />
+    <Compile Include="interfaces\messaging\NumericalTaggedPropertyPath.cs" />
+    <Compile Include="interfaces\messaging\StringTaggedPropertyPath.cs" />
+    <Compile Include="interfaces\messaging\TaggedPropertyPath.cs" />
     <Compile Include="interfaces\ndb\IDataTreeBlockLevelDecider.cs" />
     <Compile Include="interfaces\IConverter.cs" />
     <Compile Include="interfaces\IExtractor.cs" />

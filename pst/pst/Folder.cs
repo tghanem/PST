@@ -80,17 +80,23 @@ namespace pst
 
         public Maybe<PropertyValue> GetProperty(NumericalPropertyTag propertyTag)
         {
-            return readOnlyComponent.GetProperty(NodePath.OfValue(nodeId), propertyTag);
+            return
+                readOnlyComponent.GetProperty(
+                    new NumericalTaggedPropertyPath(NodePath.OfValue(nodeId), propertyTag));
         }
 
         public Maybe<PropertyValue> GetProperty(StringPropertyTag propertyTag)
         {
-            return readOnlyComponent.GetProperty(NodePath.OfValue(nodeId), propertyTag);
+            return
+                readOnlyComponent.GetProperty(
+                    new StringTaggedPropertyPath(NodePath.OfValue(nodeId), propertyTag));
         }
 
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
-            return readOnlyComponent.GetProperty(NodePath.OfValue(nodeId), propertyTag);
+            return
+                readOnlyComponent.GetProperty(
+                    new TaggedPropertyPath(NodePath.OfValue(nodeId), propertyTag));
         }
     }
 }

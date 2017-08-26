@@ -1,7 +1,6 @@
 ﻿using pst.core;
 using pst.encodables;
 using pst.interfaces.messaging;
-using System.Linq;
 
 namespace pst
 {
@@ -47,17 +46,23 @@ namespace pst
 
         public Maybe<PropertyValue> GetProperty(NumericalPropertyTag propertyTag)
         {
-            return readOnlyComponent.GetProperty(attachmentNodePath, propertyTag);
+            return
+                readOnlyComponent.GetProperty(
+                    new NumericalTaggedPropertyPath(attachmentNodePath, propertyTag));
         }
 
         public Maybe<PropertyValue> GetProperty(StringPropertyTag propertyTag)
         {
-            return readOnlyComponent.GetProperty(attachmentNodePath, propertyTag);
+            return
+                readOnlyComponent.GetProperty(
+                    new StringTaggedPropertyPath(attachmentNodePath, propertyTag));
         }
 
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
-            return readOnlyComponent.GetProperty(attachmentNodePath, propertyTag);
+            return
+                readOnlyComponent.GetProperty(
+                    new TaggedPropertyPath(attachmentNodePath, propertyTag));
         }
     }
 }

@@ -23,6 +23,8 @@ namespace pst.interfaces.messaging
 
         public static NodePath OfValue(params NID[] value) => new NodePath(value);
 
+        public NID[] NodeIds => pathNodeIds.ToArray();
+
         public int Length => pathNodeIds.Count;
 
         public NID this[int index] => pathNodeIds[index];
@@ -58,7 +60,8 @@ namespace pst.interfaces.messaging
                         BitConverter.GetBytes(nid.Value))
                     .ToArray())
                 .ToLower()
-                .Replace("-", "").GetHashCode();
+                .Replace("-", "")
+                .GetHashCode();
         }
     }
 }

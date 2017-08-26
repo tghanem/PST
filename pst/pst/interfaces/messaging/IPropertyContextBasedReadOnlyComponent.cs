@@ -4,10 +4,10 @@ namespace pst.interfaces.messaging
 {
     interface IPropertyContextBasedReadOnlyComponent
     {
-        Maybe<PropertyValue> GetProperty(NodePath nodePath, NumericalPropertyTag propertyTag);
+        Maybe<PropertyValue> GetProperty(NumericalTaggedPropertyPath propertyPath);
 
-        Maybe<PropertyValue> GetProperty(NodePath nodePath, StringPropertyTag propertyTag);
+        Maybe<PropertyValue> GetProperty(StringTaggedPropertyPath propertyPath);
 
-        Maybe<PropertyValue> GetProperty(NodePath nodePath, PropertyTag propertyTag);
+        Maybe<PropertyValue> GetProperty(TaggedPropertyPath propertyPath);
     }
 }

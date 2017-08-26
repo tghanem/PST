@@ -47,14 +47,33 @@ namespace pst
             var cachedNodeEntries =
                 new DictionaryBasedCache<NodePath, NodeEntry>();
 
+            var numericalTaggedPropertyCache =
+                new DictionaryBasedCache<NumericalTaggedPropertyPath, PropertyValue>();
+
+            var stringTaggedPropertyCache =
+                new DictionaryBasedCache<StringTaggedPropertyPath, PropertyValue>();
+
+            var taggedPropertyCache =
+                new DictionaryBasedCache<TaggedPropertyPath, PropertyValue>();
+
             return
                 new PSTFile(
                     new EntryIdDecoder(
                         new NIDDecoder()),
                     CreateReadOnlyFolder(stream, cachedNodeEntries),
                     CreateReadOnlyMessage(stream, cachedNodeEntries),
-                    CreateReadOnlyAttachment(stream, cachedNodeEntries),
-                    CreatePropertyContextBasedReadOnlyComponent(stream, cachedNodeEntries),
+                    CreateReadOnlyAttachment(
+                        stream,
+                        cachedNodeEntries,
+                        numericalTaggedPropertyCache,
+                        stringTaggedPropertyCache,
+                        taggedPropertyCache),
+                    CreatePropertyContextBasedReadOnlyComponent(
+                        stream,
+                        cachedNodeEntries,
+                        numericalTaggedPropertyCache,
+                        stringTaggedPropertyCache,
+                        taggedPropertyCache),
                     CreateTagBasedTableContextBasedReadOnlyComponent(stream, cachedNodeEntries));
         }
 
@@ -84,24 +103,41 @@ namespace pst
 
         private static IReadOnlyAttachment CreateReadOnlyAttachment(
             Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache)
+            ICache<NodePath, NodeEntry> nodeEntryCache,
+            ICache<NumericalTaggedPropertyPath, PropertyValue> numericalTaggedPropertyCache,
+            ICache<StringTaggedPropertyPath, PropertyValue> stringTaggedPropertyCache,
+            ICache<TaggedPropertyPath, PropertyValue> taggedPropertyCache)
         {
             return
                 new ReadOnlyAttachment(
                     new NIDDecoder(),
-                    CreateNodeEntryFinder(dataStream, nodeEntryCache),
-                    CreatePropertyContextBasedReadOnlyComponent(dataStream, nodeEntryCache));
+                    CreateNodeEntryFinder(
+                        dataStream,
+                        nodeEntryCache),
+                    CreatePropertyContextBasedReadOnlyComponent(
+                        dataStream,
+                        nodeEntryCache,
+                        numericalTaggedPropertyCache,
+                        stringTaggedPropertyCache,
+                        taggedPropertyCache));
         }
 
         private static IPropertyContextBasedReadOnlyComponent CreatePropertyContextBasedReadOnlyComponent(
             Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache)
+            ICache<NodePath, NodeEntry> nodeEntryCache,
+            ICache<NumericalTaggedPropertyPath, PropertyValue> numericalTaggedPropertyCache,
+            ICache<StringTaggedPropertyPath, PropertyValue> stringTaggedPropertyCache,
+            ICache<TaggedPropertyPath, PropertyValue> taggedPropertyCache)
         {
             return
-                new PropertyContextBasedReadOnlyComponent(
-                    CreateNodeEntryFinder(dataStream, nodeEntryCache),
-                    CreatePropertyIdToNameMap(dataStream),
-                    CreatePropertyContextBasedPropertyReader(dataStream));
+                new PropertyContextBasedReadOnlyComponentThatCachesThePropertyValue(
+                    numericalTaggedPropertyCache,
+                    stringTaggedPropertyCache,
+                    taggedPropertyCache,
+                    new PropertyContextBasedReadOnlyComponent(
+                        CreateNodeEntryFinder(dataStream, nodeEntryCache),
+                        CreatePropertyIdToNameMap(dataStream),
+                        CreatePropertyContextBasedPropertyReader(dataStream)));
         }
 
         private static ITableContextBasedReadOnlyComponent<Tag> CreateTagBasedTableContextBasedReadOnlyComponent(
