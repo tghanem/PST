@@ -5,6 +5,6 @@ namespace pst.interfaces.messaging
 {
     interface IReadOnlyAttachment
     {
-        Maybe<NID> GetEmbeddedMessageNodeId(NID[] attachmentNodePath);
+        Maybe<NID> GetEmbeddedMessageNodeId(NodePath attachmentNodePath);
     }
 }

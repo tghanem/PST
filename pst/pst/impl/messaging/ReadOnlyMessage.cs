@@ -33,7 +33,7 @@ namespace pst.impl.messaging
             this.nodeEntryFinder = nodeEntryFinder;
         }
 
-        public Maybe<NID> GetRecipientTableNodeId(NID[] messageNodePath)
+        public Maybe<NID> GetRecipientTableNodeId(NodePath messageNodePath)
         {
             var entry = nodeEntryFinder.GetEntry(messageNodePath);
 
@@ -51,7 +51,7 @@ namespace pst.impl.messaging
             return recipientTableEntry.LocalSubnodeId;
         }
 
-        public Maybe<Tag[]> GetTagsForRecipients(NID[] messageNodePath)
+        public Maybe<Tag[]> GetTagsForRecipients(NodePath messageNodePath)
         {
             var entry = nodeEntryFinder.GetEntry(messageNodePath);
 
@@ -72,7 +72,7 @@ namespace pst.impl.messaging
                 .ToArray();
         }
 
-        public Maybe<NID[]> GetNodeIdsForAttachments(NID[] messageNodePath)
+        public Maybe<NID[]> GetNodeIdsForAttachments(NodePath messageNodePath)
         {
             var entry = nodeEntryFinder.GetEntry(messageNodePath);
 

@@ -26,7 +26,9 @@ namespace pst.impl.messaging
 
         public Maybe<NID[]> GetNodeIdsForSubFolders(NID folderNodeId)
         {
-            var entry = nodeEntryFinder.GetEntry(new[] { folderNodeId.ChangeType(Globals.NID_TYPE_HIERARCHY_TABLE) });
+            var entry =
+                nodeEntryFinder.GetEntry(
+                    NodePath.OfValue(folderNodeId.ChangeType(Globals.NID_TYPE_HIERARCHY_TABLE)));
 
             if (entry.HasNoValue)
             {
@@ -42,7 +44,9 @@ namespace pst.impl.messaging
 
         public Maybe<NID[]> GetNodeIdsForMessages(NID folderNodeId)
         {
-            var entry = nodeEntryFinder.GetEntry(new[] { folderNodeId.ChangeType(Globals.NID_TYPE_CONTENTS_TABLE) });
+            var entry =
+                nodeEntryFinder.GetEntry(
+                    NodePath.OfValue(folderNodeId.ChangeType(Globals.NID_TYPE_CONTENTS_TABLE)));
 
             if (entry.HasNoValue)
             {

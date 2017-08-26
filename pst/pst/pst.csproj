@@ -174,6 +174,8 @@
     <Compile Include="interfaces\messaging\IPropertyNameToIdMap.cs" />
     <Compile Include="interfaces\messaging\IPropertyValueProcessor.cs" />
     <Compile Include="interfaces\messaging\ITableContextBasedReadOnlyComponent.cs" />
+    <Compile Include="interfaces\messaging\NodeEntry.cs" />
+    <Compile Include="interfaces\messaging\NodePath.cs" />
     <Compile Include="interfaces\ndb\IDataTreeBlockLevelDecider.cs" />
     <Compile Include="interfaces\IConverter.cs" />
     <Compile Include="interfaces\IExtractor.cs" />

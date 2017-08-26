@@ -8,14 +8,14 @@ namespace pst
 {
     public class Message
     {
-        private readonly NID[] messageNodePath;
+        private readonly NodePath messageNodePath;
         private readonly IReadOnlyMessage readOnlyMessage;
         private readonly IReadOnlyAttachment readOnlyAttachment;
         private readonly IPropertyContextBasedReadOnlyComponent readOnlyComponent;
         private readonly ITableContextBasedReadOnlyComponent<Tag> readOnlyComponentForRecipient;
 
         internal Message(
-            NID[] messageNodePath,
+            NodePath messageNodePath,
             IReadOnlyMessage readOnlyMessage,
             IReadOnlyAttachment readOnlyAttachment,
             IPropertyContextBasedReadOnlyComponent readOnlyComponent,
@@ -47,7 +47,7 @@ namespace pst
             }
 
             var recipientTablePath =
-                messageNodePath.Concat(new[] { recipientTableNodeId.Value }).ToArray();
+                messageNodePath.Add(recipientTableNodeId.Value);
 
             return
                 tagsForRecipients
@@ -72,7 +72,7 @@ namespace pst
                 .Select(
                     nid =>
                     new Attachment(
-                        messageNodePath.Concat(new[] { nid }).ToArray(),
+                        messageNodePath.Add(nid),
                         readOnlyMessage,
                         readOnlyAttachment,
                         readOnlyComponent, readOnlyComponentForRecipient))

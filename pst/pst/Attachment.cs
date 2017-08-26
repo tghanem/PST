@@ -1,6 +1,5 @@
 ﻿using pst.core;
 using pst.encodables;
-using pst.encodables.ndb;
 using pst.interfaces.messaging;
 using System.Linq;
 
@@ -8,14 +7,14 @@ namespace pst
 {
     public class Attachment
     {
-        private readonly NID[] attachmentNodePath;
+        private readonly NodePath attachmentNodePath;
         private readonly IReadOnlyMessage readOnlyMessage;
         private readonly IReadOnlyAttachment readOnlyAttachment;
         private readonly IPropertyContextBasedReadOnlyComponent readOnlyComponent;
         private readonly ITableContextBasedReadOnlyComponent<Tag> readOnlyComponentForRecipient;
 
         internal Attachment(
-            NID[] attachmentNodePath,
+            NodePath attachmentNodePath,
             IReadOnlyMessage readOnlyMessage,
             IReadOnlyAttachment readOnlyAttachment,
             IPropertyContextBasedReadOnlyComponent readOnlyComponent,
@@ -40,7 +39,7 @@ namespace pst
 
             return
                 new Message(
-                    attachmentNodePath.Concat(new[] { embeddedMessageNID.Value }).ToArray(),
+                    attachmentNodePath.Add(embeddedMessageNID.Value),
                     readOnlyMessage,
                     readOnlyAttachment,
                     readOnlyComponent, readOnlyComponentForRecipient);

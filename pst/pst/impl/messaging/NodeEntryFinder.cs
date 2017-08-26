@@ -21,7 +21,7 @@ namespace pst.impl.messaging
             this.subnodesEnumerator = subnodesEnumerator;
         }
 
-        public Maybe<NodeEntry> GetEntry(NID[] nodePath)
+        public Maybe<NodeEntry> GetEntry(NodePath nodePath)
         {
             if (nodePath.Length == 0)
             {
@@ -39,7 +39,7 @@ namespace pst.impl.messaging
         }
 
         private Maybe<NodeEntry> GetEntry(
-            NID[] nodePath,
+            NodePath nodePath,
             int currentDepth,
             BID parentNodeSubnodeDataBlockId)
         {

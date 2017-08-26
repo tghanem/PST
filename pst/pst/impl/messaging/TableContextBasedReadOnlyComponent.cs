@@ -1,5 +1,4 @@
 ﻿using pst.core;
-using pst.encodables.ndb;
 using pst.interfaces.ltp;
 using pst.interfaces.messaging;
 
@@ -21,7 +20,7 @@ namespace pst.impl.messaging
             this.propertyReader = propertyReader;
         }
 
-        public Maybe<PropertyValue> GetProperty(NID[] subnodePath, TComponentId componentId, NumericalPropertyTag propertyTag)
+        public Maybe<PropertyValue> GetProperty(NodePath subnodePath, TComponentId componentId, NumericalPropertyTag propertyTag)
         {
             var propertyId = propertyNameToIdMap.GetPropertyId(propertyTag.Set, propertyTag.Id);
 
@@ -45,7 +44,7 @@ namespace pst.impl.messaging
                     new PropertyTag(propertyId.Value, propertyTag.Type));
         }
 
-        public Maybe<PropertyValue> GetProperty(NID[] subnodePath, TComponentId componentId, StringPropertyTag propertyTag)
+        public Maybe<PropertyValue> GetProperty(NodePath subnodePath, TComponentId componentId, StringPropertyTag propertyTag)
         {
             var propertyId = propertyNameToIdMap.GetPropertyId(propertyTag.Set, propertyTag.Name);
 
@@ -69,7 +68,7 @@ namespace pst.impl.messaging
                     new PropertyTag(propertyId.Value, propertyTag.Type));
         }
 
-        public Maybe<PropertyValue> GetProperty(NID[] subnodePath, TComponentId componentId, PropertyTag propertyTag)
+        public Maybe<PropertyValue> GetProperty(NodePath subnodePath, TComponentId componentId, PropertyTag propertyTag)
         {
             var entry = nodeEntryFinder.GetEntry(subnodePath);
 

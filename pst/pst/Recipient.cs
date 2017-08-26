@@ -7,12 +7,12 @@ namespace pst
 {
     public class Recipient
     {
-        private readonly NID[] recipientTableSubnodePath;
+        private readonly NodePath recipientTableSubnodePath;
         private readonly Tag recipientRowId;
         private readonly ITableContextBasedReadOnlyComponent<Tag> readOnlyComponent;
 
         internal Recipient(
-            NID[] recipientTableSubnodePath,
+            NodePath recipientTableSubnodePath,
             Tag recipientRowId,
             ITableContextBasedReadOnlyComponent<Tag> readOnlyComponent)
         {

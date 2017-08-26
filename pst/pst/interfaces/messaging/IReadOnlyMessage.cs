@@ -6,10 +6,10 @@ namespace pst.interfaces.messaging
 {
     interface IReadOnlyMessage
     {
-        Maybe<NID> GetRecipientTableNodeId(NID[] messageNodePath);
+        Maybe<NID> GetRecipientTableNodeId(NodePath messageNodePath);
 
-        Maybe<Tag[]> GetTagsForRecipients(NID[] messageNodePath);
+        Maybe<Tag[]> GetTagsForRecipients(NodePath messageNodePath);
 
-        Maybe<NID[]> GetNodeIdsForAttachments(NID[] messageNodePath);
+        Maybe<NID[]> GetNodeIdsForAttachments(NodePath messageNodePath);
     }
 }

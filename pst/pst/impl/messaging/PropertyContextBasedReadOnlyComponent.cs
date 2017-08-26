@@ -21,7 +21,7 @@ namespace pst.impl.messaging
             this.propertyReader = propertyReader;
         }
 
-        public Maybe<PropertyValue> GetProperty(NID[] nodePath, NumericalPropertyTag propertyTag)
+        public Maybe<PropertyValue> GetProperty(NodePath nodePath, NumericalPropertyTag propertyTag)
         {
             var propertyId = propertyNameToIdMap.GetPropertyId(propertyTag.Set, propertyTag.Id);
 
@@ -44,7 +44,7 @@ namespace pst.impl.messaging
                     new PropertyTag(propertyId.Value, propertyTag.Type));
         }
 
-        public Maybe<PropertyValue> GetProperty(NID[] nodePath, StringPropertyTag propertyTag)
+        public Maybe<PropertyValue> GetProperty(NodePath nodePath, StringPropertyTag propertyTag)
         {
             var propertyId = propertyNameToIdMap.GetPropertyId(propertyTag.Set, propertyTag.Name);
 
@@ -67,7 +67,7 @@ namespace pst.impl.messaging
                     new PropertyTag(propertyId.Value, propertyTag.Type));
         }
 
-        public Maybe<PropertyValue> GetProperty(NID[] nodePath, PropertyTag propertyTag)
+        public Maybe<PropertyValue> GetProperty(NodePath nodePath, PropertyTag propertyTag)
         {
             var nodeEntry = nodeEntryFinder.GetEntry(nodePath);
 

@@ -21,7 +21,7 @@ namespace pst.impl.messaging
             this.readOnlyComponent = readOnlyComponent;
         }
 
-        public Maybe<NID> GetEmbeddedMessageNodeId(NID[] attachmentNodePath)
+        public Maybe<NID> GetEmbeddedMessageNodeId(NodePath attachmentNodePath)
         {
             var entry = nodeEntryFinder.GetEntry(attachmentNodePath);
 

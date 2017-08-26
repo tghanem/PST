@@ -70,7 +70,7 @@ namespace pst
                 .Select(
                     nid =>
                     new Message(
-                        new[] { nid },
+                        NodePath.OfValue(nid),
                         readOnlyMessage,
                         readOnlyAttachment,
                         readOnlyComponent,
@@ -80,17 +80,17 @@ namespace pst
 
         public Maybe<PropertyValue> GetProperty(NumericalPropertyTag propertyTag)
         {
-            return readOnlyComponent.GetProperty(new[] { nodeId }, propertyTag);
+            return readOnlyComponent.GetProperty(NodePath.OfValue(nodeId), propertyTag);
         }
 
         public Maybe<PropertyValue> GetProperty(StringPropertyTag propertyTag)
         {
-            return readOnlyComponent.GetProperty(new[] { nodeId }, propertyTag);
+            return readOnlyComponent.GetProperty(NodePath.OfValue(nodeId), propertyTag);
         }
 
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
-            return readOnlyComponent.GetProperty(new[] { nodeId }, propertyTag);
+            return readOnlyComponent.GetProperty(NodePath.OfValue(nodeId), propertyTag);
         }
     }
 }
