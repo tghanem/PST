@@ -57,7 +57,7 @@ namespace pst
 
         public Message[] GetMessages()
         {
-            var nodeIds = readOnlyFolder.GetNodeIdsForMessages(nodeId);
+            var nodeIds = readOnlyFolder.GetNodeIdsForContents(nodeId);
 
             if (nodeIds.HasNoValue)
             {

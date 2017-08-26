@@ -104,6 +104,7 @@
     <Compile Include="impl\decoders\ndb\HeaderDecoder.cs" />
     <Compile Include="impl\decoders\ndb\RootDecoder.cs" />
     <Compile Include="impl\decoders\TagDecoder.cs" />
+    <Compile Include="impl\DictionaryBasedCache.cs" />
     <Compile Include="impl\encoders\ndb\blocks\BlockTrailerEncoder.cs" />
     <Compile Include="impl\encoders\ndb\RootEncoder.cs" />
     <Compile Include="impl\encoders\primitives\Int64Encoder.cs" />
@@ -141,6 +142,7 @@
     <Compile Include="impl\ltp\tc\TableContextBasedPropertyReader.cs" />
     <Compile Include="impl\ltp\tc\TableContextReader.cs" />
     <Compile Include="impl\messaging\NodeEntryFinder.cs" />
+    <Compile Include="impl\messaging\cache\NodeEntryFinderThatCachesTheNodeEntry.cs" />
     <Compile Include="impl\messaging\PropertyNameToIdMap.cs" />
     <Compile Include="impl\messaging\PropertyValueProcessor.cs" />
     <Compile Include="impl\messaging\PropertyContextBasedReadOnlyComponent.cs" />
@@ -164,6 +166,7 @@
     <Compile Include="interfaces\btree\IBTreeEntryFinder.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
     <Compile Include="interfaces\IBlockDataObfuscator.cs" />
+    <Compile Include="interfaces\ICache.cs" />
     <Compile Include="interfaces\io\IDataReader.cs" />
     <Compile Include="interfaces\ltp\IPropertyReader.cs" />
     <Compile Include="interfaces\messaging\INodeEntryFinder.cs" />

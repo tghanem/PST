@@ -21,7 +21,7 @@ namespace pst.interfaces.messaging
             return new NodePath(copyNodeIds.ToArray());
         }
 
-        public static NodePath OfValue(NID value) => new NodePath(new[] { value });
+        public static NodePath OfValue(params NID[] value) => new NodePath(value);
 
         public int Length => pathNodeIds.Count;
 

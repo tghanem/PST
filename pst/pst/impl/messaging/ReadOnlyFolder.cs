@@ -42,7 +42,7 @@ namespace pst.impl.messaging
                 .ToArray();
         }
 
-        public Maybe<NID[]> GetNodeIdsForMessages(NID folderNodeId)
+        public Maybe<NID[]> GetNodeIdsForContents(NID folderNodeId)
         {
             var entry =
                 nodeEntryFinder.GetEntry(

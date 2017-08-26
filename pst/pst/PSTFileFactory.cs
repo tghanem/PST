@@ -21,6 +21,7 @@ using pst.impl.ltp.hn;
 using pst.impl.ltp.pc;
 using pst.impl.ltp.tc;
 using pst.impl.messaging;
+using pst.impl.messaging.cache;
 using pst.impl.ndb;
 using pst.impl.ndb.bbt;
 using pst.impl.ndb.datatree;
@@ -43,29 +44,34 @@ namespace pst
     {
         public static PSTFile Open(Stream stream)
         {
+            var cachedNodeEntries =
+                new DictionaryBasedCache<NodePath, NodeEntry>();
+
             return
                 new PSTFile(
                     new EntryIdDecoder(
                         new NIDDecoder()),
-                    CreateReadOnlyFolder(stream),
-                    CreateReadOnlyMessage(stream),
-                    CreateReadOnlyAttachment(stream),
-                    CreatePropertyContextBasedReadOnlyComponent(stream),
-                    CreateTagBasedTableContextBasedReadOnlyComponent(stream));
+                    CreateReadOnlyFolder(stream, cachedNodeEntries),
+                    CreateReadOnlyMessage(stream, cachedNodeEntries),
+                    CreateReadOnlyAttachment(stream, cachedNodeEntries),
+                    CreatePropertyContextBasedReadOnlyComponent(stream, cachedNodeEntries),
+                    CreateTagBasedTableContextBasedReadOnlyComponent(stream, cachedNodeEntries));
         }
 
         private static IReadOnlyFolder CreateReadOnlyFolder(
-            Stream dataStream)
+            Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache)
         {
             return
                 new ReadOnlyFolder(
-                    CreateNodeEntryFinder(dataStream),
+                    CreateNodeEntryFinder(dataStream, nodeEntryCache),
                     CreateNIDBasedRowIndexReader(dataStream),
                     new NIDDecoder());
         }
 
         private static IReadOnlyMessage CreateReadOnlyMessage(
-            Stream dataStream)
+            Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache)
         {
             return
                 new ReadOnlyMessage(
@@ -73,46 +79,40 @@ namespace pst
                     CreateNIDBasedTableContextReader(dataStream),
                     CreateNIDBasedRowIndexReader(dataStream),
                     new NIDDecoder(),
-                    CreateNodeEntryFinder(dataStream));
+                    CreateNodeEntryFinder(dataStream, nodeEntryCache));
         }
 
         private static IReadOnlyAttachment CreateReadOnlyAttachment(
-            Stream dataStream)
+            Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache)
         {
             return
                 new ReadOnlyAttachment(
                     new NIDDecoder(),
-                    CreateNodeEntryFinder(dataStream),
-                    CreatePropertyContextBasedReadOnlyComponent(dataStream));
+                    CreateNodeEntryFinder(dataStream, nodeEntryCache),
+                    CreatePropertyContextBasedReadOnlyComponent(dataStream, nodeEntryCache));
         }
 
         private static IPropertyContextBasedReadOnlyComponent CreatePropertyContextBasedReadOnlyComponent(
-            Stream dataStream)
+            Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache)
         {
             return
                 new PropertyContextBasedReadOnlyComponent(
-                    CreateNodeEntryFinder(dataStream),
+                    CreateNodeEntryFinder(dataStream, nodeEntryCache),
                     CreatePropertyIdToNameMap(dataStream),
                     CreatePropertyContextBasedPropertyReader(dataStream));
         }
 
         private static ITableContextBasedReadOnlyComponent<Tag> CreateTagBasedTableContextBasedReadOnlyComponent(
-            Stream dataStream)
+            Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache)
         {
             return
                 new TableContextBasedReadOnlyComponent<Tag>(
-                    CreateNodeEntryFinder(dataStream),
+                    CreateNodeEntryFinder(dataStream, nodeEntryCache),
                     CreatePropertyIdToNameMap(dataStream),
                     CreateTagBasedTableContextBasedPropertyReader(dataStream));
-        }
-
-        private static INodeEntryFinder CreateNodeEntryFinder(
-            Stream dataStream)
-        {
-            return
-                new NodeEntryFinder(
-                    CreateNIDToLNBTEntryMapper(dataStream),
-                    CreateSubnodesEnumerator(dataStream));
         }
 
         private static ITableContextReader CreateNIDBasedTableContextReader(
@@ -133,16 +133,6 @@ namespace pst
                     new DataReader(dataReader),
                     CreateHeaderDecoder(),
                     CreateBlockBTreeEntryFinder(dataReader));
-        }
-
-        private static NIDToLNBTEntryMapper CreateNIDToLNBTEntryMapper(
-            Stream dataStream)
-        {
-            return
-                new NIDToLNBTEntryMapper(
-                    new DataReader(dataStream),
-                    CreateHeaderDecoder(),
-                    CreateNodeBTreeEntryFinder(dataStream));
         }
 
         private static PropertyNameToIdMap CreatePropertyIdToNameMap(
@@ -280,28 +270,6 @@ namespace pst
                     CreateDataBlockReader(dataStream));
         }
 
-        private static ISubNodesEnumerator CreateSubnodesEnumerator(
-            Stream dataStream)
-        {
-            return
-                new SubNodesEnumerator(
-                    new SubnodeBTreeBlockLevelDecider(
-                        CreateDataBlockReader(dataStream)),
-                    new SubnodeBlockLoader(
-                        new SubnodeBlockDecoder(
-                            new BlockTrailerDecoder(
-                                new BIDDecoder())),
-                        CreateDataBlockReader(dataStream)),
-                    new SIEntriesFromSubnodeBlockExtractor(
-                        new SIEntryDecoder(
-                            new NIDDecoder(),
-                            new BIDDecoder())),
-                    new SLEntriesFromSubnodeBlockExtractor(
-                        new SLEntryDecoder(
-                            new NIDDecoder(),
-                            new BIDDecoder())));
-        }
-
         private static IBTreeOnHeapReader<Tag> CreateTagBasedBTreeOnHeapReader(
             Stream dataStream)
         {
@@ -399,6 +367,50 @@ namespace pst
                         new BTPageDecoder(
                             new PageTrailerDecoder(
                                 new BIDDecoder()))));
+        }
+
+        private static INodeEntryFinder CreateNodeEntryFinder(
+            Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache)
+        {
+            return
+                new NodeEntryFinderThatCachesTheNodeEntry(
+                    nodeEntryCache,
+                    new NodeEntryFinder(
+                        CreateNIDToLNBTEntryMapper(dataStream),
+                        CreateSubnodesEnumerator(dataStream)));
+        }
+
+        private static NIDToLNBTEntryMapper CreateNIDToLNBTEntryMapper(
+            Stream dataStream)
+        {
+            return
+                new NIDToLNBTEntryMapper(
+                    new DataReader(dataStream),
+                    CreateHeaderDecoder(),
+                    CreateNodeBTreeEntryFinder(dataStream));
+        }
+
+        private static ISubNodesEnumerator CreateSubnodesEnumerator(
+            Stream dataStream)
+        {
+            return
+                new SubNodesEnumerator(
+                    new SubnodeBTreeBlockLevelDecider(
+                        CreateDataBlockReader(dataStream)),
+                    new SubnodeBlockLoader(
+                        new SubnodeBlockDecoder(
+                            new BlockTrailerDecoder(
+                                new BIDDecoder())),
+                        CreateDataBlockReader(dataStream)),
+                    new SIEntriesFromSubnodeBlockExtractor(
+                        new SIEntryDecoder(
+                            new NIDDecoder(),
+                            new BIDDecoder())),
+                    new SLEntriesFromSubnodeBlockExtractor(
+                        new SLEntryDecoder(
+                            new NIDDecoder(),
+                            new BIDDecoder())));
         }
 
         private static IBTreeEntryFinder<NID, LNBTEntry, BREF> CreateNodeBTreeEntryFinder(

@@ -7,6 +7,6 @@ namespace pst.interfaces.messaging
     {
         Maybe<NID[]> GetNodeIdsForSubFolders(NID folderNodeId);
 
-        Maybe<NID[]> GetNodeIdsForMessages(NID folderNodeId);
+        Maybe<NID[]> GetNodeIdsForContents(NID folderNodeId);
     }
 }
