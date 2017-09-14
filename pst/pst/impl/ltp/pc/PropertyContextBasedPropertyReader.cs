@@ -6,7 +6,7 @@ using pst.interfaces.messaging;
 
 namespace pst.impl.ltp.pc
 {
-    class PropertyContextBasedPropertyReader : IPropertyReader
+    class PropertyContextBasedPropertyReader : IPropertyContextBasedPropertyReader
     {
         private readonly IBTreeOnHeapReader<PropertyId> bthReader;
         private readonly IPropertyValueProcessor propertyValueProcessor;

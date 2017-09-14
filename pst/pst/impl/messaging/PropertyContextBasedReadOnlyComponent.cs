@@ -8,16 +8,16 @@ namespace pst.impl.messaging
     {
         private readonly INodeEntryFinder nodeEntryFinder;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
-        private readonly IPropertyReader propertyReader;
+        private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
 
         public PropertyContextBasedReadOnlyComponent(
             INodeEntryFinder nodeEntryFinder,
             IPropertyNameToIdMap propertyNameToIdMap,
-            IPropertyReader propertyReader)
+            IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader)
         {
             this.nodeEntryFinder = nodeEntryFinder;
             this.propertyNameToIdMap = propertyNameToIdMap;
-            this.propertyReader = propertyReader;
+            this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
         }
 
         public Maybe<PropertyValue> GetProperty(NumericalTaggedPropertyPath propertyPath)
@@ -40,7 +40,7 @@ namespace pst.impl.messaging
             }
 
             return
-                propertyReader.ReadProperty(
+                propertyContextBasedPropertyReader.ReadProperty(
                     nodeEntry.Value.NodeDataBlockId,
                     nodeEntry.Value.SubnodeDataBlockId,
                     new PropertyTag(propertyId.Value, propertyPath.PropertyTag.Type));
@@ -66,7 +66,7 @@ namespace pst.impl.messaging
             }
 
             return
-                propertyReader.ReadProperty(
+                propertyContextBasedPropertyReader.ReadProperty(
                     nodeEntry.Value.NodeDataBlockId,
                     nodeEntry.Value.SubnodeDataBlockId,
                     new PropertyTag(propertyId.Value, propertyPath.PropertyTag.Type));
@@ -82,7 +82,7 @@ namespace pst.impl.messaging
             }
 
             return
-                propertyReader.ReadProperty(
+                propertyContextBasedPropertyReader.ReadProperty(
                     nodeEntry.Value.NodeDataBlockId,
                     nodeEntry.Value.SubnodeDataBlockId,
                     propertyPath.PropertyTag);

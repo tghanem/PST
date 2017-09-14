@@ -3,7 +3,7 @@ using pst.encodables.ndb;
 
 namespace pst.interfaces.ltp
 {
-    interface IPropertyReader
+    interface IPropertyContextBasedPropertyReader
     {
         Maybe<PropertyValue> ReadProperty(BID nodeDataBlockId, BID subnodeDataBlockId, PropertyTag propertyTag);
     }

@@ -13,16 +13,16 @@ namespace pst.impl.messaging
     class PropertyNameToIdMap : IPropertyNameToIdMap
     {
         private readonly IDecoder<NAMEID> nameIdDecoder;
-        private readonly IPropertyReader propertyReader;
+        private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
         private readonly IMapper<NID, Maybe<LNBTEntry>> nidToLNBTEntryMapper;
 
         public PropertyNameToIdMap(
             IDecoder<NAMEID> nameIdDecoder,
-            IPropertyReader propertyReader,
+            IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
             IMapper<NID, Maybe<LNBTEntry>> nidToLNBTEntryMapper)
         {
             this.nameIdDecoder = nameIdDecoder;
-            this.propertyReader = propertyReader;
+            this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
             this.nidToLNBTEntryMapper = nidToLNBTEntryMapper;
         }
 
@@ -37,7 +37,7 @@ namespace pst.impl.messaging
             }
 
             var entryStream =
-                propertyReader.ReadProperty(
+                propertyContextBasedPropertyReader.ReadProperty(
                     lnbtEntryForNameToIdMap.Value.DataBlockId,
                     lnbtEntryForNameToIdMap.Value.SubnodeBlockId,
                     MAPIProperties.PidTagNameidStreamEntry);
@@ -76,13 +76,13 @@ namespace pst.impl.messaging
             }
 
             var entryStream =
-                propertyReader.ReadProperty(
+                propertyContextBasedPropertyReader.ReadProperty(
                     lnbtEntryForNameToIdMap.Value.DataBlockId,
                     lnbtEntryForNameToIdMap.Value.SubnodeBlockId,
                     MAPIProperties.PidTagNameidStreamEntry);
 
             var stringStream =
-                propertyReader.ReadProperty(
+                propertyContextBasedPropertyReader.ReadProperty(
                     lnbtEntryForNameToIdMap.Value.DataBlockId,
                     lnbtEntryForNameToIdMap.Value.SubnodeBlockId,
                     MAPIProperties.PidTagNameidStreamString);

@@ -240,7 +240,7 @@ namespace pst
                     new DataRecordToTCROWIDConverter());
         }
 
-        private static IPropertyReader CreatePropertyContextBasedPropertyReader(
+        private static IPropertyContextBasedPropertyReader CreatePropertyContextBasedPropertyReader(
             Stream dataStream)
         {
             return

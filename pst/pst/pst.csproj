@@ -169,7 +169,7 @@
     <Compile Include="interfaces\IBlockDataObfuscator.cs" />
     <Compile Include="interfaces\ICache.cs" />
     <Compile Include="interfaces\io\IDataReader.cs" />
-    <Compile Include="interfaces\ltp\IPropertyReader.cs" />
+    <Compile Include="interfaces\ltp\IPropertyContextBasedPropertyReader.cs" />
     <Compile Include="interfaces\messaging\INodeEntryFinder.cs" />
     <Compile Include="interfaces\messaging\IReadOnlyAttachment.cs" />
     <Compile Include="interfaces\messaging\IPropertyContextBasedReadOnlyComponent.cs" />
