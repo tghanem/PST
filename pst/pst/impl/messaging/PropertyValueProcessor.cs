@@ -22,7 +22,7 @@ namespace pst.impl.messaging
 
         private readonly IHeapOnNodeReader heapOnNodeReader;
         private readonly ISubNodesEnumerator subnodesEnumerator;
-        private readonly IDataTreeLeafBIDsEnumerator dataTreeLeafBlockIdsEnumerator;
+        private readonly IDataBlockEntryFinder dataBlockEntryFinder;
         private readonly IPropertyTypeMetadataProvider propertyTypeMetadataProvider;
 
         private readonly IDataBlockReader dataBlockReader;
@@ -32,7 +32,7 @@ namespace pst.impl.messaging
             IDecoder<ExternalDataBlock> externalDataBlockDecoder,
             IHeapOnNodeReader heapOnNodeReader,
             ISubNodesEnumerator subnodesEnumerator,
-            IDataTreeLeafBIDsEnumerator dataTreeLeafBlockIdsEnumerator,
+            IDataBlockEntryFinder dataBlockEntryFinder,
             IPropertyTypeMetadataProvider propertyTypeMetadataProvider,
             IDataBlockReader dataBlockReader)
         {
@@ -40,7 +40,7 @@ namespace pst.impl.messaging
             this.externalDataBlockDecoder = externalDataBlockDecoder;
             this.heapOnNodeReader = heapOnNodeReader;
             this.subnodesEnumerator = subnodesEnumerator;
-            this.dataTreeLeafBlockIdsEnumerator = dataTreeLeafBlockIdsEnumerator;
+            this.dataBlockEntryFinder = dataBlockEntryFinder;
             this.propertyTypeMetadataProvider = propertyTypeMetadataProvider;
             this.dataBlockReader = dataBlockReader;
         }
@@ -116,28 +116,38 @@ namespace pst.impl.messaging
                 var subnodeEntry =
                     subnodes.First(s => s.LocalSubnodeId.Value == hnid.NID.Value);
 
-                var dataBlockIds =
-                    dataTreeLeafBlockIdsEnumerator.Enumerate(subnodeEntry.DataBlockId);
+                var dataBlockTree =
+                    dataBlockEntryFinder.Find(subnodeEntry.DataBlockId);
 
-                var stream = new MemoryStream();
+                if (dataBlockTree.Value.ChildBlockIds.HasValueAnd(childBlockIds => childBlockIds.Length > 0))
+                {
+                    return ReadSubnodeBinaryData(dataBlockTree.Value.ChildBlockIds.Value);
+                }
 
-                Array.ForEach(
-                    dataBlockIds,
-                    id =>
-                    {
-                        var externalDataBlock =
-                            dataBlockReader.Read(id);
-
-                        var decodedExternalDataBlock =
-                            externalDataBlockDecoder.Decode(externalDataBlock);
-
-                        stream.Write(decodedExternalDataBlock.Data, 0, decodedExternalDataBlock.Data.Length);
-                    });
-
-                return Maybe<BinaryData>.OfValue(BinaryData.OfValue(stream.ToArray()));
+                return ReadSubnodeBinaryData(subnodeEntry.DataBlockId);
             }
 
             return Maybe<BinaryData>.NoValue();
+        }
+
+        private Maybe<BinaryData> ReadSubnodeBinaryData(params BID[] dataBlockIds)
+        {
+            var stream = new MemoryStream();
+
+            Array.ForEach(
+                dataBlockIds,
+                id =>
+                {
+                    var externalDataBlock =
+                        dataBlockReader.Read(id);
+
+                    var decodedExternalDataBlock =
+                        externalDataBlockDecoder.Decode(externalDataBlock);
+
+                    stream.Write(decodedExternalDataBlock.Data, 0, decodedExternalDataBlock.Data.Length);
+                });
+
+            return Maybe<BinaryData>.OfValue(BinaryData.OfValue(stream.ToArray()));
         }
     }
 }

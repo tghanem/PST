@@ -1,6 +1,6 @@
 ﻿using pst.encodables.ndb;
 
-namespace pst.interfaces.messaging
+namespace pst.interfaces.ndb
 {
     class NodeEntry
     {

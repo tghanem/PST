@@ -2,6 +2,7 @@
 using pst.encodables.ndb;
 using pst.interfaces;
 using pst.interfaces.messaging;
+using pst.interfaces.ndb;
 
 namespace pst.impl.messaging
 {

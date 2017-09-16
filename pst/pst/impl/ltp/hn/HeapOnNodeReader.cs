@@ -16,7 +16,7 @@ namespace pst.impl.ltp.hn
         private readonly IDecoder<HNBITMAPHDR> hnBitmapHDRDecoder;
         private readonly IBlockDataDeObfuscator blockDataDeObfuscator;
         private readonly IHeapOnNodeItemsLoader heapOnNodeItemsLoader;
-        private readonly IDataTreeLeafBIDsEnumerator externalDataBlockIdsLoader;
+        private readonly IDataBlockEntryFinder dataBlockEntryFinder;
 
         private readonly IDataBlockReader dataBlockReader;
 
@@ -27,7 +27,7 @@ namespace pst.impl.ltp.hn
             IDecoder<HNBITMAPHDR> hnBitmapHDRDecoder,
             IBlockDataDeObfuscator blockDataDeObfuscator,
             IHeapOnNodeItemsLoader heapOnNodeItemsLoader,
-            IDataTreeLeafBIDsEnumerator externalDataBlockIdsLoader,
+            IDataBlockEntryFinder dataBlockEntryFinder,
             IDataBlockReader dataBlockReader)
         {
             this.hnHDRDecoder = hnHDRDecoder;
@@ -36,7 +36,7 @@ namespace pst.impl.ltp.hn
             this.hnBitmapHDRDecoder = hnBitmapHDRDecoder;
             this.blockDataDeObfuscator = blockDataDeObfuscator;
             this.heapOnNodeItemsLoader = heapOnNodeItemsLoader;
-            this.externalDataBlockIdsLoader = externalDataBlockIdsLoader;
+            this.dataBlockEntryFinder = dataBlockEntryFinder;
 
             this.dataBlockReader = dataBlockReader;
         }
@@ -86,13 +86,18 @@ namespace pst.impl.ltp.hn
 
         private BinaryData ReadExternalDataBlock(BID blockId, int blockIndex)
         {
-            var externalDataBlockIds =
-                externalDataBlockIdsLoader.Enumerate(blockId);
+            var dataBlockTree = dataBlockEntryFinder.Find(blockId);
 
-            var externalDataBlock =
-                dataBlockReader.Read(externalDataBlockIds[blockIndex]);
+            var actualBlockId = blockId;
 
-            return blockDataDeObfuscator.DeObfuscate(externalDataBlock, blockId);
+            if (dataBlockTree.Value.ChildBlockIds.HasValueAnd(childBlockIds => childBlockIds.Length > 0))
+            {
+                actualBlockId = dataBlockTree.Value.ChildBlockIds.Value[blockIndex];
+            }
+
+            var externalDataBlock = dataBlockReader.Read(actualBlockId);
+
+            return blockDataDeObfuscator.DeObfuscate(externalDataBlock, actualBlockId);
         }
 
         private HNPAGEMAP GetPageMapFromExternalDataBlock(BinaryData block, int pageMapOffset)

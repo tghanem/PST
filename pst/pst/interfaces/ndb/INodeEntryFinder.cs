@@ -1,6 +1,6 @@
 ﻿using pst.core;
 
-namespace pst.interfaces.messaging
+namespace pst.interfaces.ndb
 {
     interface INodeEntryFinder
     {

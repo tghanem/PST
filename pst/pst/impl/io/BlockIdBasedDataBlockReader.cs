@@ -1,8 +1,6 @@
 ﻿using pst.encodables.ndb;
-using pst.encodables.ndb.btree;
-using pst.interfaces;
-using pst.interfaces.btree;
 using pst.interfaces.io;
+using pst.interfaces.ndb;
 using pst.utilities;
 
 namespace pst.impl.io
@@ -10,26 +8,25 @@ namespace pst.impl.io
     class BlockIdBasedDataBlockReader : IDataBlockReader
     {
         private readonly IDataReader dataReader;
-        private readonly IDecoder<Header> headerDecoder;
-        private readonly IBTreeEntryFinder<BID, LBBTEntry, BREF> blockBTreeEntryFinder;
+
+        private readonly IDataBlockEntryFinder dataBlockEntryFinder;
 
         public BlockIdBasedDataBlockReader(
             IDataReader dataReader,
-            IDecoder<Header> headerDecoder,
-            IBTreeEntryFinder<BID, LBBTEntry, BREF> blockBTreeEntryFinder)
+            IDataBlockEntryFinder dataBlockEntryFinder)
         {
             this.dataReader = dataReader;
-            this.blockBTreeEntryFinder = blockBTreeEntryFinder;
-            this.headerDecoder = headerDecoder;
+            this.dataBlockEntryFinder = dataBlockEntryFinder;
         }
 
         public BinaryData Read(BID blockId)
         {
-            var header = headerDecoder.Decode(dataReader.Read(0, 546));
+            var dataBlockEntry = dataBlockEntryFinder.Find(blockId).Value;
 
-            var lbbtEntry = blockBTreeEntryFinder.Find(blockId, header.Root.BBTRootPage);
-
-            return dataReader.Read(lbbtEntry.Value.BlockReference.ByteIndex.Value, lbbtEntry.Value.GetBlockSize());
+            return
+                dataReader.Read(
+                    dataBlockEntry.BlockEntry.BlockReference.ByteIndex.Value,
+                    dataBlockEntry.BlockEntry.GetBlockSize());
         }
     }
 }

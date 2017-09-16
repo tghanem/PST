@@ -3,6 +3,7 @@ using pst.encodables;
 using pst.encodables.ndb;
 using pst.interfaces.messaging;
 using System.Linq;
+using pst.interfaces.ndb;
 
 namespace pst
 {

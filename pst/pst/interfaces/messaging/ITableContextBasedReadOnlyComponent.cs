@@ -1,4 +1,5 @@
 ﻿using pst.core;
+using pst.interfaces.ndb;
 
 namespace pst.interfaces.messaging
 {

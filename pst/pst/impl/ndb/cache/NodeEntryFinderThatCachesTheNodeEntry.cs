@@ -1,8 +1,8 @@
 ﻿using pst.core;
 using pst.interfaces;
-using pst.interfaces.messaging;
+using pst.interfaces.ndb;
 
-namespace pst.impl.messaging.cache
+namespace pst.impl.ndb.cache
 {
     class NodeEntryFinderThatCachesTheNodeEntry : INodeEntryFinder
     {

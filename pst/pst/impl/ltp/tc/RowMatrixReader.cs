@@ -18,7 +18,7 @@ namespace pst.impl.ltp.tc
         private readonly IRowValuesExtractor rowValuesExtractor;
         private readonly ISubNodesEnumerator subnodesEnumerator;
         private readonly IRowIndexReader<TRowId> rowIndexReader;
-        private readonly IDataTreeLeafBIDsEnumerator dataTreeLeafNodesEnumerator;
+        private readonly IDataBlockEntryFinder dataBlockEntryFinder;
 
         private readonly IDecoder<HNID> hnidDecoder;
         private readonly IDecoder<TCINFO> tcinfoDecoder;
@@ -30,12 +30,12 @@ namespace pst.impl.ltp.tc
             IRowValuesExtractor rowValuesExtractor,
             ISubNodesEnumerator subnodesEnumerator,
             IRowIndexReader<TRowId> rowIndexReader,
-            IDataTreeLeafBIDsEnumerator dataTreeLeafNodesEnumerator,
+            IDataBlockEntryFinder dataBlockEntryFinder,
             IDecoder<HNID> hnidDecoder,
             IDecoder<TCINFO> tcinfoDecoder,
             IDataBlockReader dataBlockReader)
         {
-            this.dataTreeLeafNodesEnumerator = dataTreeLeafNodesEnumerator;
+            this.dataBlockEntryFinder = dataBlockEntryFinder;
             this.rowValuesExtractor = rowValuesExtractor;
             this.heapOnNodeReader = heapOnNodeReader;
             this.rowIndexReader = rowIndexReader;
@@ -97,17 +97,24 @@ namespace pst.impl.ltp.tc
                 var slEntry =
                     subnodeIds.First(e => e.LocalSubnodeId.Value == rowMatrixHnid.NID.Value);
 
-                var dataBlocks =
-                    dataTreeLeafNodesEnumerator.Enumerate(slEntry.DataBlockId);
-
                 var numberOfRowsPerBlock =
                     Math.Floor((double)(8 * 1024 - 16) / tcInfo.GroupsOffsets[3]);
 
                 var blockIndex =
                     (int)(tcRowId.Value.RowIndex / numberOfRowsPerBlock);
 
+                var dataBlockTree =
+                    dataBlockEntryFinder.Find(slEntry.DataBlockId);
+
+                var actualBlockId = slEntry.DataBlockId;
+
+                if (dataBlockTree.Value.ChildBlockIds.HasValueAnd(childBlockIds => childBlockIds.Length > 0))
+                {
+                    actualBlockId = dataBlockTree.Value.ChildBlockIds.Value[blockIndex];
+                }
+
                 var dataBlock =
-                    dataBlockReader.Read(dataBlocks[blockIndex]);
+                    dataBlockReader.Read(actualBlockId);
 
                 var tableRow =
                     new TableRow(

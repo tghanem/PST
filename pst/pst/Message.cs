@@ -2,6 +2,7 @@
 using pst.encodables;
 using pst.interfaces.messaging;
 using System.Linq;
+using pst.interfaces.ndb;
 
 namespace pst
 {

@@ -24,11 +24,13 @@ using pst.impl.messaging;
 using pst.impl.messaging.cache;
 using pst.impl.ndb;
 using pst.impl.ndb.bbt;
+using pst.impl.ndb.cache;
 using pst.impl.ndb.datatree;
 using pst.impl.ndb.nbt;
 using pst.impl.ndb.subnodebtree;
 using pst.interfaces;
 using pst.interfaces.btree;
+using pst.interfaces.io;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.hn;
@@ -161,16 +163,6 @@ namespace pst
                     CreateNIDBasedRowMatrixReader(stream));
         }
 
-        private static BlockIdBasedDataBlockReader CreateDataBlockReader(
-            Stream dataReader)
-        {
-            return
-                new BlockIdBasedDataBlockReader(
-                    new DataReader(dataReader),
-                    CreateHeaderDecoder(),
-                    CreateBlockBTreeEntryFinder(dataReader));
-        }
-
         private static PropertyNameToIdMap CreatePropertyIdToNameMap(
             Stream dataStream)
         {
@@ -263,7 +255,7 @@ namespace pst
                         CreateBlockDataDeObfuscator(dataStream)),
                     CreateHeapOnNodeReader(dataStream),
                     CreateSubnodesEnumerator(dataStream),
-                    CreateDataTreeLeafNodesEnumerator(dataStream),
+                    CreateDataBlockEntryFinder(dataStream), 
                     new PropertyTypeMetadataProvider(),
                     CreateDataBlockReader(dataStream));
         }
@@ -277,7 +269,7 @@ namespace pst
                     new RowValuesExtractor(),
                     CreateSubnodesEnumerator(dataStream),
                     CreateTagBasedRowIndexReader(dataStream),
-                    CreateDataTreeLeafNodesEnumerator(dataStream),
+                    CreateDataBlockEntryFinder(dataStream), 
                     new HNIDDecoder(
                         new HIDDecoder(),
                         new NIDDecoder()),
@@ -296,7 +288,7 @@ namespace pst
                     new RowValuesExtractor(),
                     CreateSubnodesEnumerator(dataStream),
                     CreateNIDBasedRowIndexReader(dataStream),
-                    CreateDataTreeLeafNodesEnumerator(dataStream),
+                    CreateDataBlockEntryFinder(dataStream), 
                     new HNIDDecoder(
                         new HIDDecoder(),
                         new NIDDecoder()),
@@ -354,24 +346,34 @@ namespace pst
                     new HNBITMAPHDRDecoder(),
                     CreateBlockDataDeObfuscator(dataStream),
                     new HeapOnNodeItemsLoader(),
-                    CreateDataTreeLeafNodesEnumerator(dataStream),
+                    CreateDataBlockEntryFinder(dataStream), 
                     CreateDataBlockReader(dataStream));
         }
 
-        private static IDataTreeLeafBIDsEnumerator CreateDataTreeLeafNodesEnumerator(
-            Stream dataStream)
+        private static IDataBlockReader CreateDataBlockReader(
+            Stream dataReader)
         {
             return
-                new DataTreeLeafBIDsEnumerator(
-                    new DataTreeBlockLevelDecider(
-                        CreateDataBlockReader(dataStream)),
+                new BlockIdBasedDataBlockReader(
+                    new DataReader(dataReader),
+                    CreateDataBlockEntryFinder(dataReader));
+        }
+
+        private static IDataBlockEntryFinder CreateDataBlockEntryFinder(
+            Stream dataReader)
+        {
+            return
+                new DataBlockEntryFinder(
+                    new DataReader(dataReader),
+                    CreateHeaderDecoder(),
+                    new BIDsFromInternalDataBlockExtractor(
+                        new BIDDecoder()),
                     new InternalDataBlockLoader(
                         new InternalDataBlockDecoder(
                             new BlockTrailerDecoder(
                                 new BIDDecoder())),
-                        CreateDataBlockReader(dataStream)),
-                    new BIDsFromInternalDataBlockExtractor(
-                        new BIDDecoder()));
+                        new DataReader(dataReader)),
+                    CreateBlockBTreeEntryFinder(dataReader));
         }
 
         private static IBTreeEntryFinder<BID, LBBTEntry, BREF> CreateBlockBTreeEntryFinder(

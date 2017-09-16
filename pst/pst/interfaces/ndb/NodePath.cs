@@ -1,9 +1,9 @@
-﻿using pst.encodables.ndb;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using pst.encodables.ndb;
 
-namespace pst.interfaces.messaging
+namespace pst.interfaces.ndb
 {
     class NodePath
     {
@@ -57,7 +57,7 @@ namespace pst.interfaces.messaging
                     pathNodeIds
                     .SelectMany(
                         nid =>
-                        BitConverter.GetBytes(nid.Value))
+                        BitConverter.GetBytes((int) nid.Value))
                     .ToArray())
                 .ToLower()
                 .Replace("-", "")

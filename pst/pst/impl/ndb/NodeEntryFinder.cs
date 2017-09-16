@@ -1,12 +1,11 @@
-﻿using pst.core;
+﻿using System.Linq;
+using pst.core;
 using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.interfaces;
-using pst.interfaces.messaging;
 using pst.interfaces.ndb;
-using System.Linq;
 
-namespace pst.impl.messaging
+namespace pst.impl.ndb
 {
     class NodeEntryFinder : INodeEntryFinder
     {

@@ -1,5 +1,6 @@
 ﻿using pst.core;
 using pst.interfaces.messaging;
+using pst.interfaces.ndb;
 using pst.utilities;
 
 namespace pst

@@ -1,6 +1,7 @@
 ﻿using pst.core;
 using pst.interfaces.ltp;
 using pst.interfaces.messaging;
+using pst.interfaces.ndb;
 
 namespace pst.impl.messaging
 {

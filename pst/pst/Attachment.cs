@@ -1,6 +1,7 @@
 ﻿using pst.core;
 using pst.encodables;
 using pst.interfaces.messaging;
+using pst.interfaces.ndb;
 
 namespace pst
 {

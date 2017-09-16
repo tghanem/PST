@@ -28,6 +28,8 @@ namespace pst.core
 
         public bool HasNoValue => value == null;
 
+        public bool HasValueAnd(Func<T, bool> predicate) => HasValue && predicate(Value);
+
         public static Maybe<T> OfValue(T value)
             => new Maybe<T>(value);
 
