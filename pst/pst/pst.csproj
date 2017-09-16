@@ -151,6 +151,7 @@
     <Compile Include="impl\messaging\TableContextBasedReadOnlyComponent.cs" />
     <Compile Include="impl\ndb\bbt\IBBTEntriesFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\bbt\LBBTEntriesFromBTPageExtractor.cs" />
+    <Compile Include="impl\ndb\cache\DataBlockEntryFinderThatCachesTheDataBlockEntry.cs" />
     <Compile Include="impl\ndb\cache\NodeEntryFinderThatCachesTheNodeEntry.cs" />
     <Compile Include="impl\ndb\DataBlockEntryFinder.cs" />
     <Compile Include="impl\ndb\datatree\BIDsFromInternalDataBlockExtractor.cs" />
@@ -209,6 +210,7 @@
     <Compile Include="PSTFile.cs" />
     <Compile Include="PSTFileFactory.cs" />
     <Compile Include="impl\ndb\subnodebtree\SIEntriesFromSubnodeBlockExtractor.cs" />
+    <Compile Include="PSTFileFactoryForBlockBTree.cs" />
     <Compile Include="Recipient.cs" />
     <Compile Include="StringPropertyTag.cs" />
     <Compile Include="utilities\BinaryData.cs" />
