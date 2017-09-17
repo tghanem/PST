@@ -1,6 +1,6 @@
-﻿using pst.encodables.ndb;
-using pst.interfaces;
+﻿using pst.interfaces;
 using pst.interfaces.ltp.tc;
+using pst.interfaces.ndb;
 using System;
 using System.Collections.Generic;
 
@@ -22,9 +22,9 @@ namespace pst.impl.ltp.tc
             this.rowMatrixReader = rowMatrixReader;
         }
 
-        public TableRow[] GetAllRows(BID nodeBlockId, BID subnodeBlockId)
+        public TableRow[] GetAllRows(NodePath nodePath)
         {
-            var rowIds = rowIndexReader.GetAllRowIds(nodeBlockId);
+            var rowIds = rowIndexReader.GetAllRowIds(nodePath);
 
             var rows = new List<TableRow>();
 
@@ -32,7 +32,7 @@ namespace pst.impl.ltp.tc
                 rowIds,
                 id =>
                 {
-                    var row = rowMatrixReader.GetRow(nodeBlockId, subnodeBlockId, rowIdDecoder.Decode(id.RowId));
+                    var row = rowMatrixReader.GetRow(nodePath, rowIdDecoder.Decode(id.RowId));
 
                     rows.Add(row.Value);
                 });

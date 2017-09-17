@@ -88,8 +88,7 @@ namespace pst
         {
             return
                 new ReadOnlyFolder(
-                    CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    CreateNIDBasedRowIndexReader(dataStream, dataBlockEntryCache),
+                    CreateNIDBasedRowIndexReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     new NIDDecoder());
         }
 
@@ -100,9 +99,8 @@ namespace pst
         {
             return
                 new ReadOnlyMessage(
-                    CreateSubnodesEnumerator(dataStream, dataBlockEntryCache),
-                    CreateNIDBasedTableContextReader(dataStream, dataBlockEntryCache),
-                    CreateNIDBasedRowIndexReader(dataStream, dataBlockEntryCache),
+                    CreateNIDBasedTableContextReader(dataStream, nodeEntryCache, dataBlockEntryCache),
+                    CreateNIDBasedRowIndexReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     new NIDDecoder(),
                     CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
@@ -147,7 +145,7 @@ namespace pst
                     new PropertyContextBasedReadOnlyComponent(
                         CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
                         CreatePropertyIdToNameMap(dataStream, nodeEntryCache, dataBlockEntryCache),
-                        CreatePropertyContextBasedPropertyReader(dataStream, dataBlockEntryCache)));
+                        CreatePropertyContextBasedPropertyReader(dataStream, nodeEntryCache, dataBlockEntryCache)));
         }
 
         private static ITableContextBasedReadOnlyComponent<Tag> CreateTagBasedTableContextBasedReadOnlyComponent(
@@ -157,20 +155,20 @@ namespace pst
         {
             return
                 new TableContextBasedReadOnlyComponent<Tag>(
-                    CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
                     CreatePropertyIdToNameMap(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    CreateTagBasedTableContextBasedPropertyReader(dataStream, dataBlockEntryCache));
+                    CreateTagBasedTableContextBasedPropertyReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 
         private static ITableContextReader CreateNIDBasedTableContextReader(
             Stream stream,
+            ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
                 new TableContextReader<NID>(
                     new NIDDecoder(),
-                    CreateNIDBasedRowIndexReader(stream, dataBlockEntryCache),
-                    CreateNIDBasedRowMatrixReader(stream, dataBlockEntryCache));
+                    CreateNIDBasedRowIndexReader(stream, nodeEntryCache, dataBlockEntryCache),
+                    CreateNIDBasedRowMatrixReader(stream, nodeEntryCache, dataBlockEntryCache));
         }
 
         private static PropertyNameToIdMap CreatePropertyIdToNameMap(
@@ -181,8 +179,7 @@ namespace pst
             return
                 new PropertyNameToIdMap(
                     new NAMEIDDecoder(),
-                    CreatePropertyContextBasedPropertyReader(dataStream, dataBlockEntryCache),
-                    CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache));
+                    CreatePropertyContextBasedPropertyReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 
         private static IDecoder<Header> CreateHeaderDecoder()
@@ -211,16 +208,18 @@ namespace pst
 
         private static ITableContextBasedPropertyReader<Tag> CreateTagBasedTableContextBasedPropertyReader(
             Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
                 new TableContextBasedPropertyReader<Tag>(
-                    CreateTagBasedRowMatrixReader(dataStream, dataBlockEntryCache),
-                    CreatePropertyValueProcessor(dataStream, dataBlockEntryCache));
+                    CreateTagBasedRowMatrixReader(dataStream, nodeEntryCache, dataBlockEntryCache),
+                    CreatePropertyValueProcessor(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 
         private static IRowIndexReader<Tag> CreateTagBasedRowIndexReader(
             Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
@@ -228,13 +227,14 @@ namespace pst
                     new TCINFODecoder(
                         new HIDDecoder(),
                         new TCOLDESCDecoder()),
-                    CreateHeapOnNodeReader(dataStream, dataBlockEntryCache),
-                    CreateTagBasedBTreeOnHeapReader(dataStream, dataBlockEntryCache),
+                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
+                    CreateTagBasedBTreeOnHeapReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     new DataRecordToTCROWIDConverter());
         }
 
         private static IRowIndexReader<NID> CreateNIDBasedRowIndexReader(
             Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
@@ -242,23 +242,25 @@ namespace pst
                     new TCINFODecoder(
                         new HIDDecoder(),
                         new TCOLDESCDecoder()),
-                    CreateHeapOnNodeReader(dataStream, dataBlockEntryCache),
-                    CreateNIDBasedBTreeOnHeapReader(dataStream, dataBlockEntryCache),
+                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
+                    CreateNIDBasedBTreeOnHeapReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     new DataRecordToTCROWIDConverter());
         }
 
         private static IPropertyContextBasedPropertyReader CreatePropertyContextBasedPropertyReader(
             Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
                 new PropertyContextBasedPropertyReader(
-                    CreatePropertyIdBasedBTreeOnHeapReader(dataStream, dataBlockEntryCache),
-                    CreatePropertyValueProcessor(dataStream, dataBlockEntryCache));
+                    CreatePropertyIdBasedBTreeOnHeapReader(dataStream, nodeEntryCache, dataBlockEntryCache),
+                    CreatePropertyValueProcessor(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 
         private static IPropertyValueProcessor CreatePropertyValueProcessor(
             Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
@@ -270,23 +272,24 @@ namespace pst
                         new BlockTrailerDecoder(
                             new BIDDecoder()),
                         CreateBlockDataDeObfuscator(dataStream)),
-                    CreateHeapOnNodeReader(dataStream, dataBlockEntryCache),
-                    CreateSubnodesEnumerator(dataStream, dataBlockEntryCache),
+                    CreateDataBlockReader(dataStream, dataBlockEntryCache),
                     CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
-                    new PropertyTypeMetadataProvider(),
-                    CreateDataBlockReader(dataStream, dataBlockEntryCache));
+                    CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
+                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
+                    new PropertyTypeMetadataProvider());
         }
 
         private static IRowMatrixReader<Tag> CreateTagBasedRowMatrixReader(
             Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
                 new RowMatrixReader<Tag>(
-                    CreateHeapOnNodeReader(dataStream, dataBlockEntryCache),
+                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     new RowValuesExtractor(),
-                    CreateSubnodesEnumerator(dataStream, dataBlockEntryCache),
-                    CreateTagBasedRowIndexReader(dataStream, dataBlockEntryCache),
+                    CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
+                    CreateTagBasedRowIndexReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
                     new HNIDDecoder(
                         new HIDDecoder(),
@@ -299,14 +302,15 @@ namespace pst
 
         private static IRowMatrixReader<NID> CreateNIDBasedRowMatrixReader(
             Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
                 new RowMatrixReader<NID>(
-                    CreateHeapOnNodeReader(dataStream, dataBlockEntryCache),
+                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     new RowValuesExtractor(),
-                    CreateSubnodesEnumerator(dataStream, dataBlockEntryCache),
-                    CreateNIDBasedRowIndexReader(dataStream, dataBlockEntryCache),
+                    CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
+                    CreateNIDBasedRowIndexReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
                     new HNIDDecoder(
                         new HIDDecoder(),
@@ -319,6 +323,7 @@ namespace pst
 
         private static IBTreeOnHeapReader<Tag> CreateTagBasedBTreeOnHeapReader(
             Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
@@ -327,11 +332,12 @@ namespace pst
                     new TagDecoder(),
                     new BTHHEADERDecoder(
                         new HIDDecoder()),
-                    CreateHeapOnNodeReader(dataStream, dataBlockEntryCache));
+                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 
         private static IBTreeOnHeapReader<NID> CreateNIDBasedBTreeOnHeapReader(
             Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
@@ -340,11 +346,12 @@ namespace pst
                     new NIDDecoder(),
                     new BTHHEADERDecoder(
                         new HIDDecoder()),
-                    CreateHeapOnNodeReader(dataStream, dataBlockEntryCache));
+                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 
         private static IBTreeOnHeapReader<PropertyId> CreatePropertyIdBasedBTreeOnHeapReader(
             Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
@@ -353,11 +360,12 @@ namespace pst
                     new PropertyIdDecoder(),
                     new BTHHEADERDecoder(
                         new HIDDecoder()),
-                    CreateHeapOnNodeReader(dataStream, dataBlockEntryCache));
+                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 
         private static IHeapOnNodeReader CreateHeapOnNodeReader(
             Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
@@ -369,6 +377,7 @@ namespace pst
                     new HNBITMAPHDRDecoder(),
                     CreateBlockDataDeObfuscator(dataStream),
                     new HeapOnNodeItemsLoader(),
+                    CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
                     CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
                     CreateDataBlockReader(dataStream, dataBlockEntryCache));
         }

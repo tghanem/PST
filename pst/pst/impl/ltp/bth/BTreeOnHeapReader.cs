@@ -1,10 +1,10 @@
 ﻿using pst.core;
 using pst.encodables.ltp.bth;
 using pst.encodables.ltp.hn;
-using pst.encodables.ndb;
 using pst.interfaces;
 using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.hn;
+using pst.interfaces.ndb;
 using System;
 using System.Collections.Generic;
 
@@ -29,16 +29,16 @@ namespace pst.impl.ltp.bth
             this.bthHeaderDecoder = bthHeaderDecoder;
         }
 
-        public Maybe<DataRecord> ReadDataRecord(BID blockId, TKey key)
+        public Maybe<DataRecord> ReadDataRecord(NodePath nodePath, TKey key)
         {
-            var hnHeader = heapOnNodeReader.GetHeapOnNodeHeader(blockId);
+            var hnHeader = heapOnNodeReader.GetHeapOnNodeHeader(nodePath);
 
-            return ReadDataRecord(blockId, hnHeader.UserRoot, key);
+            return ReadDataRecord(nodePath, hnHeader.UserRoot, key);
         }
 
-        public Maybe<DataRecord> ReadDataRecord(BID blockId, HID userRoot, TKey key)
+        public Maybe<DataRecord> ReadDataRecord(NodePath nodePath, HID userRoot, TKey key)
         {
-            var userRootHeapItem = heapOnNodeReader.GetHeapItem(blockId, userRoot);
+            var userRootHeapItem = heapOnNodeReader.GetHeapItem(nodePath, userRoot);
 
             var bthHeader =
                 bthHeaderDecoder.Decode(userRootHeapItem);
@@ -48,7 +48,7 @@ namespace pst.impl.ltp.bth
 
             return
                 FindDataRecord(
-                    blockId,
+                    nodePath,
                     bthHeader.Root,
                     key,
                     bthHeader.Key,
@@ -56,7 +56,7 @@ namespace pst.impl.ltp.bth
                     bthHeader.IndexDepth);
         }
 
-        public DataRecord[] ReadAllDataRecords(BID blockId, Maybe<HID> userRoot)
+        public DataRecord[] ReadAllDataRecords(NodePath nodePath, Maybe<HID> userRoot)
         {
             BTHHEADER bthHeader;
 
@@ -64,16 +64,16 @@ namespace pst.impl.ltp.bth
             {
                 bthHeader =
                     bthHeaderDecoder
-                    .Decode(heapOnNodeReader.GetHeapItem(blockId, userRoot.Value));
+                    .Decode(heapOnNodeReader.GetHeapItem(nodePath, userRoot.Value));
             }
             else
             {
                 var hnHeader =
-                    heapOnNodeReader.GetHeapOnNodeHeader(blockId);
+                    heapOnNodeReader.GetHeapOnNodeHeader(nodePath);
 
                 bthHeader =
                     bthHeaderDecoder
-                    .Decode(heapOnNodeReader.GetHeapItem(blockId, hnHeader.UserRoot));
+                    .Decode(heapOnNodeReader.GetHeapItem(nodePath, hnHeader.UserRoot));
             }
 
             if (bthHeader.Root.Value == 0)
@@ -82,7 +82,7 @@ namespace pst.impl.ltp.bth
             var dataRecords = new List<DataRecord>();
 
             Enumerate(
-                blockId,
+                nodePath,
                 bthHeader.Root,
                 bthHeader.Key,
                 bthHeader.SizeOfDataValue,
@@ -93,7 +93,7 @@ namespace pst.impl.ltp.bth
         }
 
         private void Enumerate(
-            BID blockId,
+            NodePath nodePath,
             HID nodeId,
             int keySize,
             int dataSize,
@@ -101,7 +101,7 @@ namespace pst.impl.ltp.bth
             List<DataRecord> dataRecords)
         {
             var node =
-                heapOnNodeReader.GetHeapItem(blockId, nodeId);
+                heapOnNodeReader.GetHeapItem(nodePath, nodeId);
 
             if (currentDepth > 0)
             {
@@ -114,7 +114,7 @@ namespace pst.impl.ltp.bth
                         var hid = hidDecoder.Decode(item.Take(keySize, 4));
 
                         Enumerate(
-                            blockId,
+                            nodePath,
                             hid,
                             keySize,
                             dataSize,
@@ -139,7 +139,7 @@ namespace pst.impl.ltp.bth
         }
 
         private Maybe<DataRecord> FindDataRecord(
-            BID blockId,
+            NodePath nodePath,
             HID nodeId,
             TKey keyToFind,
             int bthKeySize,
@@ -147,7 +147,7 @@ namespace pst.impl.ltp.bth
             int currentDepth)
         {
             var node =
-                heapOnNodeReader.GetHeapItem(blockId, nodeId);
+                heapOnNodeReader.GetHeapItem(nodePath, nodeId);
 
             if (currentDepth > 0)
             {
@@ -164,7 +164,7 @@ namespace pst.impl.ltp.bth
                     {
                         return
                             FindDataRecord(
-                                blockId,
+                                nodePath,
                                 nodeId,
                                 keyToFind,
                                 bthKeySize,
@@ -179,7 +179,7 @@ namespace pst.impl.ltp.bth
                 {
                     return
                         FindDataRecord(
-                            blockId,
+                            nodePath,
                             nodeId,
                             keyToFind,
                             bthKeySize,

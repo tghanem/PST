@@ -11,52 +11,37 @@ namespace pst.impl.messaging
 {
     class ReadOnlyFolder : IReadOnlyFolder
     {
-        private readonly INodeEntryFinder nodeEntryFinder;
         private readonly IRowIndexReader<NID> rowIndexReader;
         private readonly IDecoder<NID> nidDecoder;
 
         public ReadOnlyFolder(
-            INodeEntryFinder nodeEntryFinder,
             IRowIndexReader<NID> rowIndexReader,
             IDecoder<NID> nidDecoder)
         {
-            this.nodeEntryFinder = nodeEntryFinder;
             this.rowIndexReader = rowIndexReader;
             this.nidDecoder = nidDecoder;
         }
 
         public Maybe<NID[]> GetNodeIdsForSubFolders(NID folderNodeId)
         {
-            var entry =
-                nodeEntryFinder.GetEntry(
-                    NodePath.OfValue(folderNodeId.ChangeType(Globals.NID_TYPE_HIERARCHY_TABLE)));
-
-            if (entry.HasNoValue)
-            {
-                return Maybe<NID[]>.NoValue();
-            }
+            var nodePath =
+                NodePath.OfValue(folderNodeId.ChangeType(Globals.NID_TYPE_HIERARCHY_TABLE));
 
             return
                 rowIndexReader
-                .GetAllRowIds(entry.Value.NodeDataBlockId)
+                .GetAllRowIds(nodePath)
                 .Select(rowId => nidDecoder.Decode(rowId.RowId))
                 .ToArray();
         }
 
         public Maybe<NID[]> GetNodeIdsForContents(NID folderNodeId)
         {
-            var entry =
-                nodeEntryFinder.GetEntry(
-                    NodePath.OfValue(folderNodeId.ChangeType(Globals.NID_TYPE_CONTENTS_TABLE)));
-
-            if (entry.HasNoValue)
-            {
-                return Maybe<NID[]>.NoValue();
-            }
+            var nodePath =
+                NodePath.OfValue(folderNodeId.ChangeType(Globals.NID_TYPE_CONTENTS_TABLE));
 
             return
                 rowIndexReader
-                .GetAllRowIds(entry.Value.NodeDataBlockId)
+                .GetAllRowIds(nodePath)
                 .Select(rowId => nidDecoder.Decode(rowId.RowId))
                 .ToArray();
         }

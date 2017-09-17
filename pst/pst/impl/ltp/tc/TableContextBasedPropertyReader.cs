@@ -1,8 +1,8 @@
 ﻿using pst.core;
-using pst.encodables.ndb;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.tc;
 using pst.interfaces.messaging;
+using pst.interfaces.ndb;
 
 namespace pst.impl.ltp.tc
 {
@@ -19,9 +19,9 @@ namespace pst.impl.ltp.tc
             this.propertyValueProcessor = propertyValueProcessor;
         }
 
-        public Maybe<PropertyValue> ReadProperty(BID nodeDataBlockId, BID subnodeDataBlockId, TRowId rowId, PropertyTag propertyTag)
+        public Maybe<PropertyValue> ReadProperty(NodePath nodePath, TRowId rowId, PropertyTag propertyTag)
         {
-            var row = rowMatrixReader.GetRow(nodeDataBlockId, subnodeDataBlockId, rowId);
+            var row = rowMatrixReader.GetRow(nodePath, rowId);
 
             if (row.HasNoValue)
             {
@@ -35,7 +35,7 @@ namespace pst.impl.ltp.tc
 
             var propertyValue = row.Value.Values[propertyTag.Value];
 
-            return propertyValueProcessor.Process(nodeDataBlockId, subnodeDataBlockId, propertyTag.Type, propertyValue);
+            return propertyValueProcessor.Process(nodePath, propertyTag.Type, propertyValue);
         }
     }
 }

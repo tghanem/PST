@@ -7,21 +7,18 @@ namespace pst.impl.messaging
 {
     class TableContextBasedReadOnlyComponent<TComponentId> : ITableContextBasedReadOnlyComponent<TComponentId>
     {
-        private readonly INodeEntryFinder nodeEntryFinder;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly ITableContextBasedPropertyReader<TComponentId> propertyReader;
 
         public TableContextBasedReadOnlyComponent(
-            INodeEntryFinder nodeEntryFinder,
             IPropertyNameToIdMap propertyNameToIdMap,
             ITableContextBasedPropertyReader<TComponentId> propertyReader)
         {
-            this.nodeEntryFinder = nodeEntryFinder;
             this.propertyNameToIdMap = propertyNameToIdMap;
             this.propertyReader = propertyReader;
         }
 
-        public Maybe<PropertyValue> GetProperty(NodePath subnodePath, TComponentId componentId, NumericalPropertyTag propertyTag)
+        public Maybe<PropertyValue> GetProperty(NodePath nodePath, TComponentId componentId, NumericalPropertyTag propertyTag)
         {
             var propertyId = propertyNameToIdMap.GetPropertyId(propertyTag.Set, propertyTag.Id);
 
@@ -30,22 +27,14 @@ namespace pst.impl.messaging
                 return Maybe<PropertyValue>.NoValue();
             }
 
-            var entry = nodeEntryFinder.GetEntry(subnodePath);
-
-            if (entry.HasNoValue)
-            {
-                return Maybe<PropertyValue>.NoValue();
-            }
-
             return
                 propertyReader.ReadProperty(
-                    entry.Value.NodeDataBlockId,
-                    entry.Value.SubnodeDataBlockId,
+                    nodePath,
                     componentId,
                     new PropertyTag(propertyId.Value, propertyTag.Type));
         }
 
-        public Maybe<PropertyValue> GetProperty(NodePath subnodePath, TComponentId componentId, StringPropertyTag propertyTag)
+        public Maybe<PropertyValue> GetProperty(NodePath nodePath, TComponentId componentId, StringPropertyTag propertyTag)
         {
             var propertyId = propertyNameToIdMap.GetPropertyId(propertyTag.Set, propertyTag.Name);
 
@@ -54,34 +43,18 @@ namespace pst.impl.messaging
                 return Maybe<PropertyValue>.NoValue();
             }
 
-            var entry = nodeEntryFinder.GetEntry(subnodePath);
-
-            if (entry.HasNoValue)
-            {
-                return Maybe<PropertyValue>.NoValue();
-            }
-
             return
                 propertyReader.ReadProperty(
-                    entry.Value.NodeDataBlockId,
-                    entry.Value.SubnodeDataBlockId,
+                    nodePath,
                     componentId,
                     new PropertyTag(propertyId.Value, propertyTag.Type));
         }
 
-        public Maybe<PropertyValue> GetProperty(NodePath subnodePath, TComponentId componentId, PropertyTag propertyTag)
+        public Maybe<PropertyValue> GetProperty(NodePath nodePath, TComponentId componentId, PropertyTag propertyTag)
         {
-            var entry = nodeEntryFinder.GetEntry(subnodePath);
-
-            if (entry.HasNoValue)
-            {
-                return Maybe<PropertyValue>.NoValue();
-            }
-
             return
                 propertyReader.ReadProperty(
-                    entry.Value.NodeDataBlockId,
-                    entry.Value.SubnodeDataBlockId,
+                    nodePath,
                     componentId,
                     propertyTag);
         }

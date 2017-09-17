@@ -1,15 +1,15 @@
 ﻿using pst.core;
-using pst.encodables.ndb;
+using pst.interfaces.ndb;
 
 namespace pst.interfaces.ltp
 {
     interface IPropertyContextBasedPropertyReader
     {
-        Maybe<PropertyValue> ReadProperty(BID nodeDataBlockId, BID subnodeDataBlockId, PropertyTag propertyTag);
+        Maybe<PropertyValue> ReadProperty(NodePath nodePath, PropertyTag propertyTag);
     }
 
     interface ITableContextBasedPropertyReader<TRowId>
     {
-        Maybe<PropertyValue> ReadProperty(BID nodeDataBlockId, BID subnodeDataBlockId, TRowId rowId, PropertyTag propertyTag);
+        Maybe<PropertyValue> ReadProperty(NodePath nodePath, TRowId rowId, PropertyTag propertyTag);
     }
 }

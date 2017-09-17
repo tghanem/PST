@@ -13,32 +13,20 @@ namespace pst.impl.messaging
     {
         private readonly IDecoder<NAMEID> nameIdDecoder;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
-        private readonly INodeEntryFinder nodeEntryFinder;
 
         public PropertyNameToIdMap(
             IDecoder<NAMEID> nameIdDecoder,
-            IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
-            INodeEntryFinder nodeEntryFinder)
+            IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader)
         {
             this.nameIdDecoder = nameIdDecoder;
             this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
-            this.nodeEntryFinder = nodeEntryFinder;
         }
 
         public Maybe<PropertyId> GetPropertyId(Guid propertySet, int numericalId)
         {
-            var lnbtEntryForNameToIdMap =
-                nodeEntryFinder.GetEntry(NodePath.OfValue(Globals.NID_NAME_TO_ID_MAP));
-
-            if (lnbtEntryForNameToIdMap.HasNoValue)
-            {
-                return Maybe<PropertyId>.NoValue();
-            }
-
             var entryStream =
                 propertyContextBasedPropertyReader.ReadProperty(
-                    lnbtEntryForNameToIdMap.Value.NodeDataBlockId,
-                    lnbtEntryForNameToIdMap.Value.SubnodeDataBlockId,
+                    NodePath.OfValue(Globals.NID_NAME_TO_ID_MAP),
                     MAPIProperties.PidTagNameidStreamEntry);
 
             if (entryStream.HasNoValue)
@@ -66,24 +54,14 @@ namespace pst.impl.messaging
 
         public Maybe<PropertyId> GetPropertyId(Guid propertySet, string propertyName)
         {
-            var lnbtEntryForNameToIdMap =
-                nodeEntryFinder.GetEntry(NodePath.OfValue(Globals.NID_NAME_TO_ID_MAP));
-
-            if (lnbtEntryForNameToIdMap.HasNoValue)
-            {
-                return Maybe<PropertyId>.NoValue();
-            }
-
             var entryStream =
                 propertyContextBasedPropertyReader.ReadProperty(
-                    lnbtEntryForNameToIdMap.Value.NodeDataBlockId,
-                    lnbtEntryForNameToIdMap.Value.SubnodeDataBlockId,
+                    NodePath.OfValue(Globals.NID_NAME_TO_ID_MAP),
                     MAPIProperties.PidTagNameidStreamEntry);
 
             var stringStream =
                 propertyContextBasedPropertyReader.ReadProperty(
-                    lnbtEntryForNameToIdMap.Value.NodeDataBlockId,
-                    lnbtEntryForNameToIdMap.Value.SubnodeDataBlockId,
+                    NodePath.OfValue(Globals.NID_NAME_TO_ID_MAP),
                     MAPIProperties.PidTagNameidStreamString);
 
             if (entryStream.HasNoValue || stringStream.HasNoValue)

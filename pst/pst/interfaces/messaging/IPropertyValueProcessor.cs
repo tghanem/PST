@@ -1,10 +1,10 @@
-﻿using pst.encodables.ndb;
+﻿using pst.interfaces.ndb;
 using pst.utilities;
 
 namespace pst.interfaces.messaging
 {
     interface IPropertyValueProcessor
     {
-        PropertyValue Process(BID dataBlockId, BID subnodeDataBlockId, PropertyType propertyType, BinaryData propertyValue);
+        PropertyValue Process(NodePath nodePath, PropertyType propertyType, BinaryData propertyValue);
     }
 }

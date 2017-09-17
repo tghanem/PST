@@ -19,33 +19,31 @@ namespace pst.impl.messaging
     {
         private readonly IDecoder<HNID> hnidDecoder;
         private readonly IDecoder<ExternalDataBlock> externalDataBlockDecoder;
-
-        private readonly IHeapOnNodeReader heapOnNodeReader;
-        private readonly ISubNodesEnumerator subnodesEnumerator;
-        private readonly IDataBlockEntryFinder dataBlockEntryFinder;
-        private readonly IPropertyTypeMetadataProvider propertyTypeMetadataProvider;
-
         private readonly IDataBlockReader dataBlockReader;
+        private readonly IDataBlockEntryFinder dataBlockEntryFinder;
+        private readonly IHeapOnNodeReader heapOnNodeReader;
+        private readonly INodeEntryFinder nodeEntryFinder;
+        private readonly IPropertyTypeMetadataProvider propertyTypeMetadataProvider;
 
         public PropertyValueProcessor(
             IDecoder<HNID> hnidDecoder,
             IDecoder<ExternalDataBlock> externalDataBlockDecoder,
-            IHeapOnNodeReader heapOnNodeReader,
-            ISubNodesEnumerator subnodesEnumerator,
+            IDataBlockReader dataBlockReader,
             IDataBlockEntryFinder dataBlockEntryFinder,
-            IPropertyTypeMetadataProvider propertyTypeMetadataProvider,
-            IDataBlockReader dataBlockReader)
+            INodeEntryFinder nodeEntryFinder,
+            IHeapOnNodeReader heapOnNodeReader,
+            IPropertyTypeMetadataProvider propertyTypeMetadataProvider)
         {
             this.hnidDecoder = hnidDecoder;
             this.externalDataBlockDecoder = externalDataBlockDecoder;
             this.heapOnNodeReader = heapOnNodeReader;
-            this.subnodesEnumerator = subnodesEnumerator;
+            this.nodeEntryFinder = nodeEntryFinder;
             this.dataBlockEntryFinder = dataBlockEntryFinder;
             this.propertyTypeMetadataProvider = propertyTypeMetadataProvider;
             this.dataBlockReader = dataBlockReader;
         }
 
-        public PropertyValue Process(BID dataBlockId, BID subnodeDataBlockId, PropertyType propertyType, BinaryData propertyValue)
+        public PropertyValue Process(NodePath nodePath, PropertyType propertyType, BinaryData propertyValue)
         {
             if (propertyTypeMetadataProvider.IsFixedLength(propertyType))
             {
@@ -56,25 +54,25 @@ namespace pst.impl.messaging
                 {
                     return new PropertyValue(propertyValue);
                 }
-                else
-                {
-                    var hnid = hnidDecoder.Decode(propertyValue);
 
-                    var heapItem = heapOnNodeReader.GetHeapItem(dataBlockId, hnid.HID);
+                var hnid = hnidDecoder.Decode(propertyValue);
 
-                    return new PropertyValue(heapItem);
-                }
+                var heapItem = heapOnNodeReader.GetHeapItem(nodePath, hnid.HID);
+
+                return new PropertyValue(heapItem);
             }
-            else if (propertyTypeMetadataProvider.IsMultiValueFixedLength(propertyType))
+
+            if (propertyTypeMetadataProvider.IsMultiValueFixedLength(propertyType))
             {
                 return new PropertyValue(propertyValue);
             }
-            else if (propertyTypeMetadataProvider.IsVariableLength(propertyType) ||
-                     propertyTypeMetadataProvider.IsMultiValueVariableLength(propertyType))
+
+            if (propertyTypeMetadataProvider.IsVariableLength(propertyType) ||
+                propertyTypeMetadataProvider.IsMultiValueVariableLength(propertyType))
             {
                 var hnid = hnidDecoder.Decode(propertyValue);
 
-                var value = GetHNIDBinaryData(dataBlockId, subnodeDataBlockId, hnid);
+                var value = GetHNIDBinaryData(nodePath, hnid);
 
                 if (value.HasNoValue)
                 {
@@ -83,11 +81,12 @@ namespace pst.impl.messaging
 
                 return new PropertyValue(value.Value);
             }
-            else if (propertyType.Value == Globals.PtypObject)
+
+            if (propertyType.Value == Globals.PtypObject)
             {
                 var hnid = hnidDecoder.Decode(propertyValue);
 
-                var heapItem = heapOnNodeReader.GetHeapItem(dataBlockId, hnid.HID);
+                var heapItem = heapOnNodeReader.GetHeapItem(nodePath, hnid.HID);
 
                 return new PropertyValue(heapItem);
             }
@@ -95,7 +94,7 @@ namespace pst.impl.messaging
             return PropertyValue.Empty;
         }
 
-        private Maybe<BinaryData> GetHNIDBinaryData(BID dataBlockId, BID subnodeDataBlockId, HNID hnid)
+        private Maybe<BinaryData> GetHNIDBinaryData(NodePath nodePath, HNID hnid)
         {
             if (hnid.IsHID)
             {
@@ -104,17 +103,17 @@ namespace pst.impl.messaging
                     return Maybe<BinaryData>.NoValue();
                 }
 
-                var heapItem = heapOnNodeReader.GetHeapItem(dataBlockId, hnid.HID);
+                var heapItem = heapOnNodeReader.GetHeapItem(nodePath, hnid.HID);
 
                 return Maybe<BinaryData>.OfValue(heapItem);
             }
-            else if (hnid.IsNID)
+
+            if (hnid.IsNID)
             {
-                var subnodes =
-                    subnodesEnumerator.Enumerate(subnodeDataBlockId);
+                var nodeEntry = nodeEntryFinder.GetEntry(nodePath);
 
                 var subnodeEntry =
-                    subnodes.First(s => s.LocalSubnodeId.Value == hnid.NID.Value);
+                    nodeEntry.Value.ChildNodes.First(s => s.LocalSubnodeId.Value == hnid.NID.Value);
 
                 var dataBlockTree =
                     dataBlockEntryFinder.Find(subnodeEntry.DataBlockId);

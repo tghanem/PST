@@ -12,7 +12,6 @@ namespace pst.impl.messaging
 {
     class ReadOnlyMessage : IReadOnlyMessage
     {
-        private readonly ISubNodesEnumerator subnodesEnumerator;
         private readonly ITableContextReader tableContextReader;
         private readonly IRowIndexReader<NID> rowIndexReader;
         private readonly IDecoder<NID> nidDecoder;
@@ -20,13 +19,11 @@ namespace pst.impl.messaging
         private readonly INodeEntryFinder nodeEntryFinder;
 
         public ReadOnlyMessage(
-            ISubNodesEnumerator subnodesEnumerator,
             ITableContextReader tableContextReader,
             IRowIndexReader<NID> rowIndexReader,
             IDecoder<NID> nidDecoder,
             INodeEntryFinder nodeEntryFinder)
         {
-            this.subnodesEnumerator = subnodesEnumerator;
             this.tableContextReader = tableContextReader;
             this.rowIndexReader = rowIndexReader;
             this.nidDecoder = nidDecoder;
@@ -42,11 +39,8 @@ namespace pst.impl.messaging
                 return Maybe<NID>.NoValue();
             }
 
-            var subnodes =
-                subnodesEnumerator.Enumerate(entry.Value.SubnodeDataBlockId);
-
             var recipientTableEntry =
-                subnodes.First(s => s.LocalSubnodeId.Type == Globals.NID_TYPE_RECIPIENT_TABLE);
+                entry.Value.ChildNodes.First(s => s.LocalSubnodeId.Type == Globals.NID_TYPE_RECIPIENT_TABLE);
 
             return recipientTableEntry.LocalSubnodeId;
         }
@@ -60,14 +54,12 @@ namespace pst.impl.messaging
                 return Maybe<Tag[]>.NoValue();
             }
 
-            var subnodes =
-                subnodesEnumerator.Enumerate(entry.Value.SubnodeDataBlockId);
-
             var recipientTableEntry =
-                subnodes.First(s => s.LocalSubnodeId.Type == Globals.NID_TYPE_RECIPIENT_TABLE);
+                entry.Value.ChildNodes.First(s => s.LocalSubnodeId.Type == Globals.NID_TYPE_RECIPIENT_TABLE);
 
             return
-                tableContextReader.GetAllRows(recipientTableEntry.DataBlockId, recipientTableEntry.SubnodeBlockId)
+                tableContextReader
+                .GetAllRows(messageNodePath.Add(recipientTableEntry.LocalSubnodeId))
                 .Select(rowId => Tag.OfValue(rowId.RowId))
                 .ToArray();
         }
@@ -81,14 +73,12 @@ namespace pst.impl.messaging
                 return Maybe<NID[]>.NoValue();
             }
 
-            var subnodes =
-                subnodesEnumerator.Enumerate(entry.Value.SubnodeDataBlockId);
-
             var attachmentsTableEntry =
-                subnodes.First(s => s.LocalSubnodeId.Type == Globals.NID_TYPE_ATTACHMENT_TABLE);
+                entry.Value.ChildNodes.First(s => s.LocalSubnodeId.Type == Globals.NID_TYPE_ATTACHMENT_TABLE);
 
             return
-                rowIndexReader.GetAllRowIds(attachmentsTableEntry.DataBlockId)
+                rowIndexReader
+                .GetAllRowIds(messageNodePath.Add(attachmentsTableEntry.LocalSubnodeId))
                 .Select(rowId => nidDecoder.Decode(rowId.RowId))
                 .ToArray();
         }

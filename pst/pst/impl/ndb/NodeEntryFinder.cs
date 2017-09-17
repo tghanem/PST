@@ -1,5 +1,6 @@
 ﻿using pst.core;
 using pst.encodables.ndb;
+using pst.encodables.ndb.blocks.subnode;
 using pst.encodables.ndb.btree;
 using pst.interfaces;
 using pst.interfaces.btree;
@@ -44,7 +45,12 @@ namespace pst.impl.ndb
                 return GetEntry(nodePath, 1, lnbtEntry.Value.SubnodeBlockId);
             }
 
-            return new NodeEntry(lnbtEntry.Value.DataBlockId, lnbtEntry.Value.SubnodeBlockId);
+            var subnodes =
+                lnbtEntry.Value.SubnodeBlockId.Equals(BID.Zero)
+                ? new SLEntry[0]
+                : subnodesEnumerator.Enumerate(lnbtEntry.Value.SubnodeBlockId);
+
+            return new NodeEntry(lnbtEntry.Value.DataBlockId, lnbtEntry.Value.SubnodeBlockId, subnodes);
         }
 
         private Maybe<NodeEntry> GetEntry(
@@ -63,7 +69,12 @@ namespace pst.impl.ndb
                 return GetEntry(nodePath, currentDepth + 1, subnodeEntry.SubnodeBlockId);
             }
 
-            return Maybe<NodeEntry>.OfValue(new NodeEntry(subnodeEntry.DataBlockId, subnodeEntry.SubnodeBlockId));
+            var subnodes =
+                subnodeEntry.SubnodeBlockId.Equals(BID.Zero)
+                ? new SLEntry[0]
+                : subnodesEnumerator.Enumerate(subnodeEntry.SubnodeBlockId);
+
+            return Maybe<NodeEntry>.OfValue(new NodeEntry(subnodeEntry.DataBlockId, subnodeEntry.SubnodeBlockId, subnodes));
         }
     }
 }

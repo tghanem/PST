@@ -1,5 +1,5 @@
 ﻿using pst.core;
-using pst.encodables.ndb;
+using pst.interfaces.ndb;
 using pst.utilities;
 using System.Collections.Generic;
 
@@ -20,6 +20,6 @@ namespace pst.interfaces.ltp.tc
 
     interface IRowMatrixReader<TRowId>
     {
-        Maybe<TableRow> GetRow(BID nodeDataBlockId, BID subnodeDataBlockId, TRowId rowId);
+        Maybe<TableRow> GetRow(NodePath nodePath, TRowId rowId);
     }
 }

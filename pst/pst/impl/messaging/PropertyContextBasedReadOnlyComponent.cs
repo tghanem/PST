@@ -33,17 +33,9 @@ namespace pst.impl.messaging
                 return Maybe<PropertyValue>.NoValue();
             }
 
-            var nodeEntry = nodeEntryFinder.GetEntry(propertyPath.NodePath);
-
-            if (nodeEntry.HasNoValue)
-            {
-                return Maybe<PropertyValue>.NoValue();
-            }
-
             return
                 propertyContextBasedPropertyReader.ReadProperty(
-                    nodeEntry.Value.NodeDataBlockId,
-                    nodeEntry.Value.SubnodeDataBlockId,
+                    propertyPath.NodePath,
                     new PropertyTag(propertyId.Value, propertyPath.PropertyTag.Type));
         }
 
@@ -59,17 +51,9 @@ namespace pst.impl.messaging
                 return Maybe<PropertyValue>.NoValue();
             }
 
-            var nodeEntry = nodeEntryFinder.GetEntry(propertyPath.NodePath);
-
-            if (nodeEntry.HasNoValue)
-            {
-                return Maybe<PropertyValue>.NoValue();
-            }
-
             return
                 propertyContextBasedPropertyReader.ReadProperty(
-                    nodeEntry.Value.NodeDataBlockId,
-                    nodeEntry.Value.SubnodeDataBlockId,
+                    propertyPath.NodePath,
                     new PropertyTag(propertyId.Value, propertyPath.PropertyTag.Type));
         }
 
@@ -84,8 +68,7 @@ namespace pst.impl.messaging
 
             return
                 propertyContextBasedPropertyReader.ReadProperty(
-                    nodeEntry.Value.NodeDataBlockId,
-                    nodeEntry.Value.SubnodeDataBlockId,
+                    propertyPath.NodePath,
                     propertyPath.PropertyTag);
         }
     }

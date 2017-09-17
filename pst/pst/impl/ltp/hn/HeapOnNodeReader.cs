@@ -16,8 +16,8 @@ namespace pst.impl.ltp.hn
         private readonly IDecoder<HNBITMAPHDR> hnBitmapHDRDecoder;
         private readonly IBlockDataDeObfuscator blockDataDeObfuscator;
         private readonly IHeapOnNodeItemsLoader heapOnNodeItemsLoader;
+        private readonly INodeEntryFinder nodeEntryFinder;
         private readonly IDataBlockEntryFinder dataBlockEntryFinder;
-
         private readonly IDataBlockReader dataBlockReader;
 
         public HeapOnNodeReader(
@@ -27,6 +27,7 @@ namespace pst.impl.ltp.hn
             IDecoder<HNBITMAPHDR> hnBitmapHDRDecoder,
             IBlockDataDeObfuscator blockDataDeObfuscator,
             IHeapOnNodeItemsLoader heapOnNodeItemsLoader,
+            INodeEntryFinder nodeEntryFinder,
             IDataBlockEntryFinder dataBlockEntryFinder,
             IDataBlockReader dataBlockReader)
         {
@@ -36,23 +37,29 @@ namespace pst.impl.ltp.hn
             this.hnBitmapHDRDecoder = hnBitmapHDRDecoder;
             this.blockDataDeObfuscator = blockDataDeObfuscator;
             this.heapOnNodeItemsLoader = heapOnNodeItemsLoader;
+            this.nodeEntryFinder = nodeEntryFinder;
             this.dataBlockEntryFinder = dataBlockEntryFinder;
-
             this.dataBlockReader = dataBlockReader;
         }
 
-        public HNHDR GetHeapOnNodeHeader(BID blockId)
+        public HNHDR GetHeapOnNodeHeader(NodePath nodePath)
         {
+            var nodeEntry =
+                nodeEntryFinder.GetEntry(nodePath);
+
             var externalBlock =
-                ReadExternalDataBlock(blockId, 0);
+                ReadExternalDataBlock(nodeEntry.Value.NodeDataBlockId, 0);
 
             return hnHDRDecoder.Decode(externalBlock.Take(12));
         }
 
-        public BinaryData GetHeapItem(BID blockId, HID hid)
+        public BinaryData GetHeapItem(NodePath nodePath, HID hid)
         {
+            var nodeEntry =
+                nodeEntryFinder.GetEntry(nodePath);
+
             var externalBlock =
-                ReadExternalDataBlock(blockId, hid.BlockIndex);
+                ReadExternalDataBlock(nodeEntry.Value.NodeDataBlockId, hid.BlockIndex);
 
             int pageMapOffset;
 
