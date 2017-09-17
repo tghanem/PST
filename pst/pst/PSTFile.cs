@@ -13,7 +13,7 @@ namespace pst
         private readonly IPropertyContextBasedReadOnlyComponent propertyContextBasedReadOnlyComponent;
         private readonly ITableContextBasedReadOnlyComponent<Tag> readOnlyComponentForRecipient;
 
-        internal PSTFile(
+        private PSTFile(
             IDecoder<EntryId> entryIdDecoder,
             IReadOnlyFolder readOnlyFolder,
             IReadOnlyMessage readOnlyMessage,

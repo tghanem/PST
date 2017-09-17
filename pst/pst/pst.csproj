@@ -169,6 +169,7 @@
     <Compile Include="interfaces\ICache.cs" />
     <Compile Include="interfaces\io\IDataReader.cs" />
     <Compile Include="interfaces\ltp\IPropertyContextBasedPropertyReader.cs" />
+    <Compile Include="interfaces\ltp\ITableContextBasedPropertyReader.cs" />
     <Compile Include="interfaces\ndb\DataBlockEntry.cs" />
     <Compile Include="interfaces\ndb\IDataBlockEntryFinder.cs" />
     <Compile Include="interfaces\ndb\INodeEntryFinder.cs" />
@@ -210,7 +211,11 @@
     <Compile Include="PSTFileFactory.cs" />
     <Compile Include="impl\ndb\subnodebtree\SIEntriesFromSubnodeBlockExtractor.cs" />
     <Compile Include="PSTFileFactoryForBlockBTree.cs" />
+    <Compile Include="PSTFileFactoryForBTH.cs" />
+    <Compile Include="PSTFileFactoryForMisc.cs" />
+    <Compile Include="PSTFileFactoryForPropertyReaders.cs" />
     <Compile Include="PSTFileFactoryForNodeBTree.cs" />
+    <Compile Include="PSTFileFactoryForTableContext.cs" />
     <Compile Include="Recipient.cs" />
     <Compile Include="StringPropertyTag.cs" />
     <Compile Include="utilities\BinaryData.cs" />

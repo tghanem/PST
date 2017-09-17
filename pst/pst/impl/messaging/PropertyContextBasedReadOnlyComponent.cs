@@ -1,22 +1,18 @@
 ﻿using pst.core;
 using pst.interfaces.ltp;
 using pst.interfaces.messaging;
-using pst.interfaces.ndb;
 
 namespace pst.impl.messaging
 {
     class PropertyContextBasedReadOnlyComponent : IPropertyContextBasedReadOnlyComponent
     {
-        private readonly INodeEntryFinder nodeEntryFinder;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
 
         public PropertyContextBasedReadOnlyComponent(
-            INodeEntryFinder nodeEntryFinder,
             IPropertyNameToIdMap propertyNameToIdMap,
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader)
         {
-            this.nodeEntryFinder = nodeEntryFinder;
             this.propertyNameToIdMap = propertyNameToIdMap;
             this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
         }
@@ -59,13 +55,6 @@ namespace pst.impl.messaging
 
         public Maybe<PropertyValue> GetProperty(TaggedPropertyPath propertyPath)
         {
-            var nodeEntry = nodeEntryFinder.GetEntry(propertyPath.NodePath);
-
-            if (nodeEntry.HasNoValue)
-            {
-                return Maybe<PropertyValue>.NoValue();
-            }
-
             return
                 propertyContextBasedPropertyReader.ReadProperty(
                     propertyPath.NodePath,
