@@ -1,7 +1,6 @@
 ﻿using pst.core;
 using pst.interfaces.ltp;
 using pst.interfaces.messaging;
-using pst.interfaces.ndb;
 
 namespace pst.impl.messaging
 {
@@ -18,9 +17,10 @@ namespace pst.impl.messaging
             this.propertyReader = propertyReader;
         }
 
-        public Maybe<PropertyValue> GetProperty(NodePath nodePath, TComponentId componentId, NumericalPropertyTag propertyTag)
+        public Maybe<PropertyValue> GetProperty(TComponentId componentId, NumericalTaggedPropertyPath propertyPath)
         {
-            var propertyId = propertyNameToIdMap.GetPropertyId(propertyTag.Set, propertyTag.Id);
+            var propertyId =
+                propertyNameToIdMap.GetPropertyId(propertyPath.PropertyTag.Set, propertyPath.PropertyTag.Id);
 
             if (propertyId.HasNoValue)
             {
@@ -29,14 +29,15 @@ namespace pst.impl.messaging
 
             return
                 propertyReader.ReadProperty(
-                    nodePath,
+                    propertyPath.NodePath,
                     componentId,
-                    new PropertyTag(propertyId.Value, propertyTag.Type));
+                    new PropertyTag(propertyId.Value, propertyPath.PropertyTag.Type));
         }
 
-        public Maybe<PropertyValue> GetProperty(NodePath nodePath, TComponentId componentId, StringPropertyTag propertyTag)
+        public Maybe<PropertyValue> GetProperty(TComponentId componentId, StringTaggedPropertyPath propertyPath)
         {
-            var propertyId = propertyNameToIdMap.GetPropertyId(propertyTag.Set, propertyTag.Name);
+            var propertyId =
+                propertyNameToIdMap.GetPropertyId(propertyPath.PropertyTag.Set, propertyPath.PropertyTag.Name);
 
             if (propertyId.HasNoValue)
             {
@@ -45,18 +46,18 @@ namespace pst.impl.messaging
 
             return
                 propertyReader.ReadProperty(
-                    nodePath,
+                    propertyPath.NodePath,
                     componentId,
-                    new PropertyTag(propertyId.Value, propertyTag.Type));
+                    new PropertyTag(propertyId.Value, propertyPath.PropertyTag.Type));
         }
 
-        public Maybe<PropertyValue> GetProperty(NodePath nodePath, TComponentId componentId, PropertyTag propertyTag)
+        public Maybe<PropertyValue> GetProperty(TComponentId componentId, TaggedPropertyPath propertyPath)
         {
             return
                 propertyReader.ReadProperty(
-                    nodePath,
+                    propertyPath.NodePath,
                     componentId,
-                    propertyTag);
+                    propertyPath.PropertyTag);
         }
     }
 }

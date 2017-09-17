@@ -41,12 +41,19 @@ namespace pst
         private static ITableContextBasedReadOnlyComponent<Tag> CreateTagBasedTableContextBasedReadOnlyComponent(
             Stream dataStream,
             ICache<NodePath, NodeEntry> nodeEntryCache,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache)
+            ICache<BID, DataBlockEntry> dataBlockEntryCache,
+            ICache<NumericalTaggedPropertyPath, PropertyValue> numericalTaggedPropertyCache,
+            ICache<StringTaggedPropertyPath, PropertyValue> stringTaggedPropertyCache,
+            ICache<TaggedPropertyPath, PropertyValue> taggedPropertyCache)
         {
             return
-                new TableContextBasedReadOnlyComponent<Tag>(
-                    CreatePropertyIdToNameMap(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    CreateTagBasedTableContextBasedPropertyReader(dataStream, nodeEntryCache, dataBlockEntryCache));
+                new TableContextBasedReadOnlyComponentThatCachesThePropertyValue<Tag>(
+                    numericalTaggedPropertyCache,
+                    stringTaggedPropertyCache,
+                    taggedPropertyCache,
+                    new TableContextBasedReadOnlyComponent<Tag>(
+                        CreatePropertyIdToNameMap(dataStream, nodeEntryCache, dataBlockEntryCache),
+                        CreateTagBasedTableContextBasedPropertyReader(dataStream, nodeEntryCache, dataBlockEntryCache)));
         }
 
         private static ITableContextBasedPropertyReader<Tag> CreateTagBasedTableContextBasedPropertyReader(

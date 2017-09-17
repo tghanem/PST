@@ -2,8 +2,6 @@
 using pst.tests.Properties;
 using System.IO;
 using System.Linq;
-using System.Text;
-using pst.utilities;
 
 namespace pst.tests
 {
@@ -136,12 +134,7 @@ namespace pst.tests
             return folder.GetMessages().First(m => m.GetSubjectUnicode() == messageSubject);
         }
 
-        private Folder GetFolderSut()
-        {
-            return GetFolderSut("FolderWithSingleMessage");
-        }
-
-        private Folder GetFolderSut(string folderName)
+        private Folder GetFolderSut(string folderName = "FolderWithSingleMessage")
         {
             var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));
 

@@ -1,6 +1,5 @@
 ﻿using pst.core;
 using pst.encodables;
-using pst.encodables.ndb;
 using pst.interfaces.messaging;
 using pst.interfaces.ndb;
 
@@ -24,17 +23,17 @@ namespace pst
 
         public Maybe<PropertyValue> GetProperty(NumericalPropertyTag propertyTag)
         {
-            return readOnlyComponent.GetProperty(recipientTableSubnodePath, recipientRowId, propertyTag);
+            return readOnlyComponent.GetProperty(recipientRowId, new NumericalTaggedPropertyPath(recipientTableSubnodePath, propertyTag));
         }
 
         public Maybe<PropertyValue> GetProperty(StringPropertyTag propertyTag)
         {
-            return readOnlyComponent.GetProperty(recipientTableSubnodePath, recipientRowId, propertyTag);
+            return readOnlyComponent.GetProperty(recipientRowId, new StringTaggedPropertyPath(recipientTableSubnodePath, propertyTag));
         }
 
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
-            return readOnlyComponent.GetProperty(recipientTableSubnodePath, recipientRowId, propertyTag);
+            return readOnlyComponent.GetProperty(recipientRowId, new TaggedPropertyPath(recipientTableSubnodePath, propertyTag));
         }
     }
 }

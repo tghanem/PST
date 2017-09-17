@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
 using pst.tests.Properties;
+using pst.utilities;
 using System.IO;
 using System.Text;
-using pst.utilities;
 
 namespace pst.tests
 {

@@ -58,7 +58,10 @@ namespace pst
                     CreateTagBasedTableContextBasedReadOnlyComponent(
                         stream,
                         cachedNodeEntries,
-                        dataBlockEntryCache));
+                        dataBlockEntryCache,
+                        numericalTaggedPropertyCache,
+                        stringTaggedPropertyCache,
+                        taggedPropertyCache));
         }
 
         private static IReadOnlyFolder CreateReadOnlyFolder(
