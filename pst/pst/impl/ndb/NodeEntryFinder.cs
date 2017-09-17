@@ -1,22 +1,30 @@
-﻿using System.Linq;
-using pst.core;
+﻿using pst.core;
 using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.interfaces;
+using pst.interfaces.btree;
+using pst.interfaces.io;
 using pst.interfaces.ndb;
+using System.Linq;
 
 namespace pst.impl.ndb
 {
     class NodeEntryFinder : INodeEntryFinder
     {
-        private readonly IMapper<NID, Maybe<LNBTEntry>> nidToLNBTEntryMapper;
+        private readonly IDataReader dataReader;
+        private readonly IDecoder<Header> headerDecoder;
+        private readonly IBTreeEntryFinder<NID, LNBTEntry, BREF> nodeBTreeEntryFinder;
         private readonly ISubNodesEnumerator subnodesEnumerator;
 
         public NodeEntryFinder(
-            IMapper<NID, Maybe<LNBTEntry>> nidToLNBTEntryMapper,
+            IDataReader dataReader,
+            IDecoder<Header> headerDecoder,
+            IBTreeEntryFinder<NID, LNBTEntry, BREF> nodeBTreeEntryFinder,
             ISubNodesEnumerator subnodesEnumerator)
         {
-            this.nidToLNBTEntryMapper = nidToLNBTEntryMapper;
+            this.dataReader = dataReader;
+            this.headerDecoder = headerDecoder;
+            this.nodeBTreeEntryFinder = nodeBTreeEntryFinder;
             this.subnodesEnumerator = subnodesEnumerator;
         }
 
@@ -27,7 +35,9 @@ namespace pst.impl.ndb
                 return Maybe<NodeEntry>.NoValue();
             }
 
-            var lnbtEntry = nidToLNBTEntryMapper.Map(nodePath[0]);
+            var header = headerDecoder.Decode(dataReader.Read(0, 546));
+
+            var lnbtEntry = nodeBTreeEntryFinder.Find(nodePath[0], header.Root.NBTRootPage);
 
             if (nodePath.Length > 1)
             {

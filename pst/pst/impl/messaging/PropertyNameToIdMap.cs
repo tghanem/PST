@@ -1,9 +1,8 @@
 ﻿using pst.core;
 using pst.encodables.messaging;
-using pst.encodables.ndb;
-using pst.encodables.ndb.btree;
 using pst.interfaces;
 using pst.interfaces.ltp;
+using pst.interfaces.ndb;
 using pst.utilities;
 using System;
 using System.Text;
@@ -14,22 +13,22 @@ namespace pst.impl.messaging
     {
         private readonly IDecoder<NAMEID> nameIdDecoder;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
-        private readonly IMapper<NID, Maybe<LNBTEntry>> nidToLNBTEntryMapper;
+        private readonly INodeEntryFinder nodeEntryFinder;
 
         public PropertyNameToIdMap(
             IDecoder<NAMEID> nameIdDecoder,
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
-            IMapper<NID, Maybe<LNBTEntry>> nidToLNBTEntryMapper)
+            INodeEntryFinder nodeEntryFinder)
         {
             this.nameIdDecoder = nameIdDecoder;
             this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
-            this.nidToLNBTEntryMapper = nidToLNBTEntryMapper;
+            this.nodeEntryFinder = nodeEntryFinder;
         }
 
         public Maybe<PropertyId> GetPropertyId(Guid propertySet, int numericalId)
         {
             var lnbtEntryForNameToIdMap =
-                nidToLNBTEntryMapper.Map(Globals.NID_NAME_TO_ID_MAP);
+                nodeEntryFinder.GetEntry(NodePath.OfValue(Globals.NID_NAME_TO_ID_MAP));
 
             if (lnbtEntryForNameToIdMap.HasNoValue)
             {
@@ -38,8 +37,8 @@ namespace pst.impl.messaging
 
             var entryStream =
                 propertyContextBasedPropertyReader.ReadProperty(
-                    lnbtEntryForNameToIdMap.Value.DataBlockId,
-                    lnbtEntryForNameToIdMap.Value.SubnodeBlockId,
+                    lnbtEntryForNameToIdMap.Value.NodeDataBlockId,
+                    lnbtEntryForNameToIdMap.Value.SubnodeDataBlockId,
                     MAPIProperties.PidTagNameidStreamEntry);
 
             if (entryStream.HasNoValue)
@@ -68,7 +67,7 @@ namespace pst.impl.messaging
         public Maybe<PropertyId> GetPropertyId(Guid propertySet, string propertyName)
         {
             var lnbtEntryForNameToIdMap =
-                nidToLNBTEntryMapper.Map(Globals.NID_NAME_TO_ID_MAP);
+                nodeEntryFinder.GetEntry(NodePath.OfValue(Globals.NID_NAME_TO_ID_MAP));
 
             if (lnbtEntryForNameToIdMap.HasNoValue)
             {
@@ -77,14 +76,14 @@ namespace pst.impl.messaging
 
             var entryStream =
                 propertyContextBasedPropertyReader.ReadProperty(
-                    lnbtEntryForNameToIdMap.Value.DataBlockId,
-                    lnbtEntryForNameToIdMap.Value.SubnodeBlockId,
+                    lnbtEntryForNameToIdMap.Value.NodeDataBlockId,
+                    lnbtEntryForNameToIdMap.Value.SubnodeDataBlockId,
                     MAPIProperties.PidTagNameidStreamEntry);
 
             var stringStream =
                 propertyContextBasedPropertyReader.ReadProperty(
-                    lnbtEntryForNameToIdMap.Value.DataBlockId,
-                    lnbtEntryForNameToIdMap.Value.SubnodeBlockId,
+                    lnbtEntryForNameToIdMap.Value.NodeDataBlockId,
+                    lnbtEntryForNameToIdMap.Value.SubnodeDataBlockId,
                     MAPIProperties.PidTagNameidStreamString);
 
             if (entryStream.HasNoValue || stringStream.HasNoValue)

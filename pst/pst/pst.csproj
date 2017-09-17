@@ -76,7 +76,6 @@
     <Compile Include="encodables\EntryId.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="impl\btree\BTreeEntryFinder.cs" />
-    <Compile Include="impl\btree\NIDToLNBTEntryMapper.cs" />
     <Compile Include="impl\converters\DataRecordToTCROWIDConverter.cs" />
     <Compile Include="impl\decoders\EntryIdDecoder.cs" />
     <Compile Include="impl\decoders\ltp\bth\BTHHEADERDecoder.cs" />
@@ -211,6 +210,7 @@
     <Compile Include="PSTFileFactory.cs" />
     <Compile Include="impl\ndb\subnodebtree\SIEntriesFromSubnodeBlockExtractor.cs" />
     <Compile Include="PSTFileFactoryForBlockBTree.cs" />
+    <Compile Include="PSTFileFactoryForNodeBTree.cs" />
     <Compile Include="Recipient.cs" />
     <Compile Include="StringPropertyTag.cs" />
     <Compile Include="utilities\BinaryData.cs" />

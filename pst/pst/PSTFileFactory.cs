@@ -1,8 +1,6 @@
 ﻿using pst.encodables;
 using pst.encodables.ndb;
-using pst.encodables.ndb.btree;
 using pst.impl;
-using pst.impl.btree;
 using pst.impl.converters;
 using pst.impl.decoders;
 using pst.impl.decoders.ltp.bth;
@@ -12,8 +10,6 @@ using pst.impl.decoders.messaging;
 using pst.impl.decoders.ndb;
 using pst.impl.decoders.ndb.blocks;
 using pst.impl.decoders.ndb.blocks.data;
-using pst.impl.decoders.ndb.blocks.subnode;
-using pst.impl.decoders.ndb.btree;
 using pst.impl.io;
 using pst.impl.ltp;
 using pst.impl.ltp.bth;
@@ -22,12 +18,7 @@ using pst.impl.ltp.pc;
 using pst.impl.ltp.tc;
 using pst.impl.messaging;
 using pst.impl.messaging.cache;
-using pst.impl.ndb;
-using pst.impl.ndb.cache;
-using pst.impl.ndb.nbt;
-using pst.impl.ndb.subnodebtree;
 using pst.interfaces;
-using pst.interfaces.btree;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.hn;
@@ -155,7 +146,7 @@ namespace pst
                     taggedPropertyCache,
                     new PropertyContextBasedReadOnlyComponent(
                         CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
-                        CreatePropertyIdToNameMap(dataStream, dataBlockEntryCache),
+                        CreatePropertyIdToNameMap(dataStream, nodeEntryCache, dataBlockEntryCache),
                         CreatePropertyContextBasedPropertyReader(dataStream, dataBlockEntryCache)));
         }
 
@@ -167,7 +158,7 @@ namespace pst
             return
                 new TableContextBasedReadOnlyComponent<Tag>(
                     CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    CreatePropertyIdToNameMap(dataStream, dataBlockEntryCache),
+                    CreatePropertyIdToNameMap(dataStream, nodeEntryCache, dataBlockEntryCache),
                     CreateTagBasedTableContextBasedPropertyReader(dataStream, dataBlockEntryCache));
         }
 
@@ -184,13 +175,14 @@ namespace pst
 
         private static PropertyNameToIdMap CreatePropertyIdToNameMap(
             Stream dataStream,
+            ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
                 new PropertyNameToIdMap(
                     new NAMEIDDecoder(),
                     CreatePropertyContextBasedPropertyReader(dataStream, dataBlockEntryCache),
-                    CreateNIDToLNBTEntryMapper(dataStream));
+                    CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 
         private static IDecoder<Header> CreateHeaderDecoder()
@@ -379,84 +371,6 @@ namespace pst
                     new HeapOnNodeItemsLoader(),
                     CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
                     CreateDataBlockReader(dataStream, dataBlockEntryCache));
-        }
-
-
-
-        private static INodeEntryFinder CreateNodeEntryFinder(
-            Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache)
-        {
-            return
-                new NodeEntryFinderThatCachesTheNodeEntry(
-                    nodeEntryCache,
-                    new NodeEntryFinder(
-                        CreateNIDToLNBTEntryMapper(dataStream),
-                        CreateSubnodesEnumerator(dataStream, dataBlockEntryCache)));
-        }
-
-        private static NIDToLNBTEntryMapper CreateNIDToLNBTEntryMapper(
-            Stream dataStream)
-        {
-            return
-                new NIDToLNBTEntryMapper(
-                    new DataReader(dataStream),
-                    CreateHeaderDecoder(),
-                    CreateNodeBTreeEntryFinder(dataStream));
-        }
-
-        private static ISubNodesEnumerator CreateSubnodesEnumerator(
-            Stream dataStream,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache)
-        {
-            return
-                new SubNodesEnumerator(
-                    new SubnodeBTreeBlockLevelDecider(
-                        CreateDataBlockReader(dataStream, dataBlockEntryCache)),
-                    new SubnodeBlockLoader(
-                        new SubnodeBlockDecoder(
-                            new BlockTrailerDecoder(
-                                new BIDDecoder())),
-                        CreateDataBlockReader(dataStream, dataBlockEntryCache)),
-                    new SIEntriesFromSubnodeBlockExtractor(
-                        new SIEntryDecoder(
-                            new NIDDecoder(),
-                            new BIDDecoder())),
-                    new SLEntriesFromSubnodeBlockExtractor(
-                        new SLEntryDecoder(
-                            new NIDDecoder(),
-                            new BIDDecoder())));
-        }
-
-        private static IBTreeEntryFinder<NID, LNBTEntry, BREF> CreateNodeBTreeEntryFinder(
-            Stream dataStream)
-        {
-            return
-                new BTreeEntryFinder<NID, LNBTEntry, INBTEntry, BREF, BTPage>(
-                    new FuncBasedExtractor<LNBTEntry, NID>(
-                        entry => entry.NodeId),
-                    new FuncBasedExtractor<INBTEntry, NID>(
-                        entry => entry.Key),
-                    new FuncBasedExtractor<INBTEntry, BREF>(
-                        entry => entry.ChildPageBlockReference),
-                    new INBTEntriesFromBTPageExtractor(
-                        new INBTEntryDecoder(
-                            new NIDDecoder(),
-                            new BREFDecoder(
-                                new BIDDecoder(),
-                                new IBDecoder()))),
-                    new LNBTEntriesFromBTPageExtractor(
-                        new LNBTEntryDecoder(
-                            new NIDDecoder(),
-                            new BIDDecoder())),
-                    new FuncBasedExtractor<BTPage, int>(
-                        page => page.PageLevel),
-                    new BTPageLoader(
-                        new DataReader(dataStream),
-                        new BTPageDecoder(
-                            new PageTrailerDecoder(
-                                new BIDDecoder()))));
         }
     }
 }
