@@ -7,6 +7,7 @@ using pst.impl.decoders.messaging;
 using pst.impl.decoders.ndb;
 using pst.impl.ltp.bth;
 using pst.impl.ltp.hn;
+using pst.impl.ndb;
 using pst.interfaces;
 using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.hn;
@@ -71,11 +72,12 @@ namespace pst
                     new HNPAGEHDRDecoder(),
                     new HNPAGEMAPDecoder(),
                     new HNBITMAPHDRDecoder(),
-                    CreateBlockDataDeObfuscator(dataStream),
                     new HeapOnNodeItemsLoader(),
-                    CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
-                    CreateDataBlockReader(dataStream, dataBlockEntryCache));
+                    new ExternalDataBlockReader(
+                        CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
+                        CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
+                        CreateDataBlockReader(dataStream, dataBlockEntryCache),
+                        CreateBlockDataDeObfuscator(dataStream)));
         }
     }
 }

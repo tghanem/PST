@@ -1,7 +1,7 @@
-﻿using pst.interfaces.ltp.hn;
-using System.Collections.Generic;
-using pst.encodables.ltp.hn;
+﻿using pst.encodables.ltp.hn;
+using pst.interfaces.ltp.hn;
 using pst.utilities;
+using System.Collections.Generic;
 
 namespace pst.impl.ltp.hn
 {
@@ -15,15 +15,11 @@ namespace pst.impl.ltp.hn
 
             for (int i = 0; i < offsets.Length - 1; i++)
             {
-                var itemData =
-                    pageData.Take(offsets[i], offsets[i + 1] - offsets[i]);
+                var itemData = pageData.Take(offsets[i], offsets[i + 1] - offsets[i]);
 
-                var hid =
-                    new HID(Globals.NID_TYPE_HID, i + 1, pageIndex);
+                var hid = new HID(Globals.NID_TYPE_HID, i + 1, pageIndex);
 
-                items.Add(
-                    hid,
-                    itemData);
+                items.Add(hid, itemData);
             }
 
             return items;

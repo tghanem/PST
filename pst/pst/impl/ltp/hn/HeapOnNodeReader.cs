@@ -1,7 +1,5 @@
 ﻿using pst.encodables.ltp.hn;
-using pst.encodables.ndb;
 using pst.interfaces;
-using pst.interfaces.io;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.ndb;
 using pst.utilities;
@@ -14,52 +12,35 @@ namespace pst.impl.ltp.hn
         private readonly IDecoder<HNPAGEHDR> hnPageHDRDecoder;
         private readonly IDecoder<HNPAGEMAP> hnPageMapDecoder;
         private readonly IDecoder<HNBITMAPHDR> hnBitmapHDRDecoder;
-        private readonly IBlockDataDeObfuscator blockDataDeObfuscator;
         private readonly IHeapOnNodeItemsLoader heapOnNodeItemsLoader;
-        private readonly INodeEntryFinder nodeEntryFinder;
-        private readonly IDataBlockEntryFinder dataBlockEntryFinder;
-        private readonly IDataBlockReader dataBlockReader;
+        private readonly IExternalDataBlockReader externalDataBlockReader;
 
         public HeapOnNodeReader(
             IDecoder<HNHDR> hnHDRDecoder,
             IDecoder<HNPAGEHDR> hnPageHDRDecoder,
             IDecoder<HNPAGEMAP> hnPageMapDecoder,
             IDecoder<HNBITMAPHDR> hnBitmapHDRDecoder,
-            IBlockDataDeObfuscator blockDataDeObfuscator,
             IHeapOnNodeItemsLoader heapOnNodeItemsLoader,
-            INodeEntryFinder nodeEntryFinder,
-            IDataBlockEntryFinder dataBlockEntryFinder,
-            IDataBlockReader dataBlockReader)
+            IExternalDataBlockReader externalDataBlockReader)
         {
             this.hnHDRDecoder = hnHDRDecoder;
             this.hnPageHDRDecoder = hnPageHDRDecoder;
             this.hnPageMapDecoder = hnPageMapDecoder;
             this.hnBitmapHDRDecoder = hnBitmapHDRDecoder;
-            this.blockDataDeObfuscator = blockDataDeObfuscator;
             this.heapOnNodeItemsLoader = heapOnNodeItemsLoader;
-            this.nodeEntryFinder = nodeEntryFinder;
-            this.dataBlockEntryFinder = dataBlockEntryFinder;
-            this.dataBlockReader = dataBlockReader;
+            this.externalDataBlockReader = externalDataBlockReader;
         }
 
         public HNHDR GetHeapOnNodeHeader(NodePath nodePath)
         {
-            var nodeEntry =
-                nodeEntryFinder.GetEntry(nodePath);
-
-            var externalBlock =
-                ReadExternalDataBlock(nodeEntry.Value.NodeDataBlockId, 0);
+            var externalBlock = externalDataBlockReader.Read(nodePath, 0);
 
             return hnHDRDecoder.Decode(externalBlock.Take(12));
         }
 
         public BinaryData GetHeapItem(NodePath nodePath, HID hid)
         {
-            var nodeEntry =
-                nodeEntryFinder.GetEntry(nodePath);
-
-            var externalBlock =
-                ReadExternalDataBlock(nodeEntry.Value.NodeDataBlockId, hid.BlockIndex);
+            var externalBlock = externalDataBlockReader.Read(nodePath, hid.BlockIndex);
 
             int pageMapOffset;
 
@@ -84,27 +65,9 @@ namespace pst.impl.ltp.hn
 
             var pageMap = GetPageMapFromExternalDataBlock(externalBlock, pageMapOffset);
 
-            var items =
-                heapOnNodeItemsLoader
-                .Load(hid.BlockIndex, pageMap, externalBlock);
+            var items = heapOnNodeItemsLoader.Load(hid.BlockIndex, pageMap, externalBlock);
 
             return items[hid];
-        }
-
-        private BinaryData ReadExternalDataBlock(BID blockId, int blockIndex)
-        {
-            var dataBlockTree = dataBlockEntryFinder.Find(blockId);
-
-            var actualBlockId = blockId;
-
-            if (dataBlockTree.Value.ChildBlockIds.HasValueAnd(childBlockIds => childBlockIds.Length > 0))
-            {
-                actualBlockId = dataBlockTree.Value.ChildBlockIds.Value[blockIndex];
-            }
-
-            var externalDataBlock = dataBlockReader.Read(actualBlockId);
-
-            return blockDataDeObfuscator.DeObfuscate(externalDataBlock, actualBlockId);
         }
 
         private HNPAGEMAP GetPageMapFromExternalDataBlock(BinaryData block, int pageMapOffset)

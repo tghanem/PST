@@ -1,7 +1,7 @@
 ﻿using pst.encodables.ndb;
 using pst.utilities;
 
-namespace pst.interfaces.io
+namespace pst.interfaces.ndb
 {
     interface IDataBlockReader
     {

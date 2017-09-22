@@ -2,7 +2,7 @@
 using pst.encodables.ndb.blocks.subnode;
 using pst.interfaces;
 using pst.interfaces.btree;
-using pst.interfaces.io;
+using pst.interfaces.ndb;
 
 namespace pst.impl.ndb.subnodebtree
 {
