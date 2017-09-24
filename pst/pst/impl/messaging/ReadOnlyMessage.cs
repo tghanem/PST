@@ -40,7 +40,7 @@ namespace pst.impl.messaging
             }
 
             var recipientTableEntry =
-                entry.Value.ChildNodes.First(s => s.LocalSubnodeId.Type == Globals.NID_TYPE_RECIPIENT_TABLE);
+                entry.Value.ChildNodes.First(s => s.LocalSubnodeId.Type == Constants.NID_TYPE_RECIPIENT_TABLE);
 
             return recipientTableEntry.LocalSubnodeId;
         }
@@ -55,7 +55,7 @@ namespace pst.impl.messaging
             }
 
             var recipientTableEntry =
-                entry.Value.ChildNodes.First(s => s.LocalSubnodeId.Type == Globals.NID_TYPE_RECIPIENT_TABLE);
+                entry.Value.ChildNodes.First(s => s.LocalSubnodeId.Type == Constants.NID_TYPE_RECIPIENT_TABLE);
 
             return
                 tableContextReader
@@ -74,7 +74,7 @@ namespace pst.impl.messaging
             }
 
             var attachmentsTableEntry =
-                entry.Value.ChildNodes.First(s => s.LocalSubnodeId.Type == Globals.NID_TYPE_ATTACHMENT_TABLE);
+                entry.Value.ChildNodes.First(s => s.LocalSubnodeId.Type == Constants.NID_TYPE_ATTACHMENT_TABLE);
 
             return
                 rowIndexReader

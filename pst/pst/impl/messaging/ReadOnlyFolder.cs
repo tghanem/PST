@@ -25,7 +25,7 @@ namespace pst.impl.messaging
         public Maybe<NID[]> GetNodeIdsForSubFolders(NID folderNodeId)
         {
             var nodePath =
-                NodePath.OfValue(folderNodeId.ChangeType(Globals.NID_TYPE_HIERARCHY_TABLE));
+                NodePath.OfValue(folderNodeId.ChangeType(Constants.NID_TYPE_HIERARCHY_TABLE));
 
             return
                 rowIndexReader
@@ -37,7 +37,7 @@ namespace pst.impl.messaging
         public Maybe<NID[]> GetNodeIdsForContents(NID folderNodeId)
         {
             var nodePath =
-                NodePath.OfValue(folderNodeId.ChangeType(Globals.NID_TYPE_CONTENTS_TABLE));
+                NodePath.OfValue(folderNodeId.ChangeType(Constants.NID_TYPE_CONTENTS_TABLE));
 
             return
                 rowIndexReader

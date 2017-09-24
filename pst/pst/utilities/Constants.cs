@@ -2,7 +2,7 @@
 
 namespace pst.utilities
 {
-    static class Globals
+    static class Constants
     {
         public static readonly NID NID_MESSAGE_STORE = new NID(0x21);
         public static readonly NID NID_ROOT_FOLDER = new NID(0x122);
@@ -51,6 +51,23 @@ namespace pst.utilities
         public const int NDB_CRYPT_NONE = 0x00;
         public const int NDB_CRYPT_PERMUTE = 0x01;
         public const int NDB_CRYPT_CYCLIC = 0x02;
+
+        public const int SUDT_NULL = 0x00;
+        public const int SUDT_MSG_ADD = 0x01;
+        public const int SUDT_MSG_MOD = 0x02;
+        public const int SUDT_MSG_DEL = 0x03;
+        public const int SUDT_MSG_MOV = 0x04;
+        public const int SUDT_FLD_ADD = 0x05;
+        public const int SUDT_FLD_MOD = 0x06;
+        public const int SUDT_FLD_DEL = 0x07;
+        public const int SUDT_FLD_MOV = 0x08;
+        public const int SUDT_SRCH_ADD = 0x09;
+        public const int SUDT_SRCH_MOD = 0x0A;
+        public const int SUDT_SRCH_DEL = 0x0B;
+        public const int SUDT_MSG_ROW_MOD = 0x0C;
+        public const int SUDT_MSG_SPAM = 0x0D;
+        public const int SUDT_IDX_MSG_DEL = 0x0E;
+        public const int SUDT_MSG_IDX = 0x0F;
 
         public static readonly byte[] mpbbCrypt =
         {

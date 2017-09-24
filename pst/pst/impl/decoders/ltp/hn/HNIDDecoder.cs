@@ -22,7 +22,7 @@ namespace pst.impl.decoders.ltp.hn
         {
             var hid = hidDecoder.Decode(encodedData);
 
-            if (hid.Type == Globals.NID_TYPE_HID)
+            if (hid.Type == Constants.NID_TYPE_HID)
             {
                 return new HNID(hid, null);
             }

@@ -27,17 +27,17 @@ namespace pst.utilities
         {
             var header = GetHeader();
 
-            if (header.CryptMethod == Globals.NDB_CRYPT_NONE)
+            if (header.CryptMethod == Constants.NDB_CRYPT_NONE)
             {
                 return noEncoding.Obfuscate(blockData, blockId);
             }
 
-            if (header.CryptMethod == Globals.NDB_CRYPT_CYCLIC)
+            if (header.CryptMethod == Constants.NDB_CRYPT_CYCLIC)
             {
                 return cyclicEncoding.Obfuscate(blockData, blockId);
             }
 
-            if (header.CryptMethod == Globals.NDB_CRYPT_PERMUTE)
+            if (header.CryptMethod == Constants.NDB_CRYPT_PERMUTE)
             {
                 return permutativeEncoding.Obfuscate(blockData, blockId);
             }
@@ -49,17 +49,17 @@ namespace pst.utilities
         {
             var header = GetHeader();
 
-            if (header.CryptMethod == Globals.NDB_CRYPT_NONE)
+            if (header.CryptMethod == Constants.NDB_CRYPT_NONE)
             {
                 return noEncoding.DeObfuscate(blockData, blockId);
             }
 
-            if (header.CryptMethod == Globals.NDB_CRYPT_CYCLIC)
+            if (header.CryptMethod == Constants.NDB_CRYPT_CYCLIC)
             {
                 return cyclicEncoding.DeObfuscate(blockData, blockId);
             }
 
-            if (header.CryptMethod == Globals.NDB_CRYPT_PERMUTE)
+            if (header.CryptMethod == Constants.NDB_CRYPT_PERMUTE)
             {
                 return permutativeEncoding.DeObfuscate(blockData, blockId);
             }

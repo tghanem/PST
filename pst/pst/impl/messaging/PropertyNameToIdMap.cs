@@ -26,7 +26,7 @@ namespace pst.impl.messaging
         {
             var entryStream =
                 propertyContextBasedPropertyReader.ReadProperty(
-                    NodePath.OfValue(Globals.NID_NAME_TO_ID_MAP),
+                    NodePath.OfValue(Constants.NID_NAME_TO_ID_MAP),
                     MAPIProperties.PidTagNameidStreamEntry);
 
             if (entryStream.HasNoValue)
@@ -56,12 +56,12 @@ namespace pst.impl.messaging
         {
             var entryStream =
                 propertyContextBasedPropertyReader.ReadProperty(
-                    NodePath.OfValue(Globals.NID_NAME_TO_ID_MAP),
+                    NodePath.OfValue(Constants.NID_NAME_TO_ID_MAP),
                     MAPIProperties.PidTagNameidStreamEntry);
 
             var stringStream =
                 propertyContextBasedPropertyReader.ReadProperty(
-                    NodePath.OfValue(Globals.NID_NAME_TO_ID_MAP),
+                    NodePath.OfValue(Constants.NID_NAME_TO_ID_MAP),
                     MAPIProperties.PidTagNameidStreamString);
 
             if (entryStream.HasNoValue || stringStream.HasNoValue)

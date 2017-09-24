@@ -82,7 +82,7 @@ namespace pst.impl.messaging
                 return new PropertyValue(value.Value);
             }
 
-            if (propertyType.Value == Globals.PtypObject)
+            if (propertyType.Value == Constants.PtypObject)
             {
                 var hnid = hnidDecoder.Decode(propertyValue);
 

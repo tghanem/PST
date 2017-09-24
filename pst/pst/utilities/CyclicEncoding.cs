@@ -27,11 +27,11 @@ namespace pst.utilities
             for (var i = 0; i < blockData.Length; i++)
             {
                 var b = (byte)(blockData.Value[i] + (byte)w);
-                b = Globals.mpbbCrypt[b];
+                b = Constants.mpbbCrypt[b];
                 b = (byte)(b + (byte)(w >> 8));
-                b = Globals.mpbbCrypt[b + 256];
+                b = Constants.mpbbCrypt[b + 256];
                 b = (byte)(b - (byte)(w >> 8));
-                b = Globals.mpbbCrypt[b + 512];
+                b = Constants.mpbbCrypt[b + 512];
                 b = (byte)(b - (byte)w);
 
                 stream.WriteByte(b);

@@ -23,7 +23,7 @@ namespace pst.utilities
 
             for (var i = 0; i < data.Length; i++)
             {
-                decodedData[i] = Globals.mpbbCrypt[baseIndex + data.Value[i]];
+                decodedData[i] = Constants.mpbbCrypt[baseIndex + data.Value[i]];
             }
 
             return BinaryData.OfValue(decodedData);

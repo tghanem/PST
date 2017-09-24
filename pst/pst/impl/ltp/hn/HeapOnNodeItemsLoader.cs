@@ -17,7 +17,7 @@ namespace pst.impl.ltp.hn
             {
                 var itemData = pageData.Take(offsets[i], offsets[i + 1] - offsets[i]);
 
-                var hid = new HID(Globals.NID_TYPE_HID, i + 1, pageIndex);
+                var hid = new HID(Constants.NID_TYPE_HID, i + 1, pageIndex);
 
                 items.Add(hid, itemData);
             }
