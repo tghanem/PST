@@ -141,7 +141,10 @@
     <Compile Include="impl\ltp\tc\TableContextBasedPropertyReader.cs" />
     <Compile Include="impl\ltp\tc\TableContextReader.cs" />
     <Compile Include="impl\messaging\cache\PropertyContextBasedReadOnlyComponentThatCachesThePropertyValue.cs" />
+    <Compile Include="impl\messaging\cache\PropertyContextBasedCachedPropertyState.cs" />
+    <Compile Include="impl\messaging\cache\PropertyOperations.cs" />
     <Compile Include="impl\messaging\cache\TableContextBasedReadOnlyComponentThatCachesThePropertyValue.cs" />
+    <Compile Include="impl\messaging\cache\TableContextBasedCachedPropertyState.cs" />
     <Compile Include="impl\messaging\PropertyNameToIdMap.cs" />
     <Compile Include="impl\messaging\PropertyValueProcessor.cs" />
     <Compile Include="impl\messaging\PropertyContextBasedReadOnlyComponent.cs" />

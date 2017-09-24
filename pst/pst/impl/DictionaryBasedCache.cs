@@ -16,22 +16,34 @@ namespace pst.impl
 
         public Maybe<TValue> GetOrAdd(TKey key, Func<Maybe<TValue>> getValue)
         {
-            lock (cache)
+            if (cache.ContainsKey(key))
             {
-                if (cache.ContainsKey(key))
-                {
-                    return cache[key];
-                }
-
-                var value = getValue();
-
-                if (value.HasValue)
-                {
-                    cache.Add(key, value.Value);
-                }
-
-                return value;
+                return cache[key];
             }
+
+            var value = getValue();
+
+            if (value.HasValue)
+            {
+                cache.Add(key, value.Value);
+            }
+
+            return value;
+        }
+
+        public void Add(TKey key, TValue value)
+        {
+            cache.Add(key, value);
+        }
+
+        public bool HasValue(TKey key)
+        {
+            return cache.ContainsKey(key);
+        }
+
+        public TValue GetValue(TKey key)
+        {
+            return cache[key];
         }
     }
 }

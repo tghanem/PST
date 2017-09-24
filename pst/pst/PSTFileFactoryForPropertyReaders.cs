@@ -24,9 +24,9 @@ namespace pst
             Stream dataStream,
             ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache,
-            ICache<NumericalTaggedPropertyPath, PropertyValue> numericalTaggedPropertyCache,
-            ICache<StringTaggedPropertyPath, PropertyValue> stringTaggedPropertyCache,
-            ICache<TaggedPropertyPath, PropertyValue> taggedPropertyCache)
+            ICache<NumericalTaggedPropertyPath, PropertyContextBasedCachedPropertyState> numericalTaggedPropertyCache,
+            ICache<StringTaggedPropertyPath, PropertyContextBasedCachedPropertyState> stringTaggedPropertyCache,
+            ICache<TaggedPropertyPath, PropertyContextBasedCachedPropertyState> taggedPropertyCache)
         {
             return
                 new PropertyContextBasedReadOnlyComponentThatCachesThePropertyValue(
@@ -42,9 +42,9 @@ namespace pst
             Stream dataStream,
             ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache,
-            ICache<NumericalTaggedPropertyPath, PropertyValue> numericalTaggedPropertyCache,
-            ICache<StringTaggedPropertyPath, PropertyValue> stringTaggedPropertyCache,
-            ICache<TaggedPropertyPath, PropertyValue> taggedPropertyCache)
+            ICache<NumericalTaggedPropertyPath, TableContextBasedCachedPropertyState<Tag>> numericalTaggedPropertyCache,
+            ICache<StringTaggedPropertyPath, TableContextBasedCachedPropertyState<Tag>> stringTaggedPropertyCache,
+            ICache<TaggedPropertyPath, TableContextBasedCachedPropertyState<Tag>> taggedPropertyCache)
         {
             return
                 new TableContextBasedReadOnlyComponentThatCachesThePropertyValue<Tag>(

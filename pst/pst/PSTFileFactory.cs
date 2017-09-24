@@ -1,8 +1,10 @@
-﻿using pst.encodables.ndb;
+﻿using pst.encodables;
+using pst.encodables.ndb;
 using pst.impl;
 using pst.impl.decoders;
 using pst.impl.decoders.ndb;
 using pst.impl.messaging;
+using pst.impl.messaging.cache;
 using pst.interfaces;
 using pst.interfaces.messaging;
 using pst.interfaces.ndb;
@@ -17,17 +19,26 @@ namespace pst
             var cachedNodeEntries =
                 new DictionaryBasedCache<NodePath, NodeEntry>();
 
-            var numericalTaggedPropertyCache =
-                new DictionaryBasedCache<NumericalTaggedPropertyPath, PropertyValue>();
-
-            var stringTaggedPropertyCache =
-                new DictionaryBasedCache<StringTaggedPropertyPath, PropertyValue>();
-
-            var taggedPropertyCache =
-                new DictionaryBasedCache<TaggedPropertyPath, PropertyValue>();
-
             var dataBlockEntryCache =
                 new DictionaryBasedCache<BID, DataBlockEntry>();
+
+            var propertyContextBasedNumericalTaggedPropertyCache =
+                new DictionaryBasedCache<NumericalTaggedPropertyPath, PropertyContextBasedCachedPropertyState>();
+
+            var propertyContextBasedStringTaggedPropertyCache =
+                new DictionaryBasedCache<StringTaggedPropertyPath, PropertyContextBasedCachedPropertyState>();
+
+            var propertyContextBasedTaggedPropertyCache =
+                new DictionaryBasedCache<TaggedPropertyPath, PropertyContextBasedCachedPropertyState>();
+
+            var tableContextBasedNumericalTaggedPropertyCache =
+                new DictionaryBasedCache<NumericalTaggedPropertyPath, TableContextBasedCachedPropertyState<Tag>>();
+
+            var tableContextBasedStringTaggedPropertyCache =
+                new DictionaryBasedCache<StringTaggedPropertyPath, TableContextBasedCachedPropertyState<Tag>>();
+
+            var tableContextBasedTaggedPropertyCache =
+                new DictionaryBasedCache<TaggedPropertyPath, TableContextBasedCachedPropertyState<Tag>>();
 
             return
                 new PSTFile(
@@ -45,23 +56,23 @@ namespace pst
                         stream,
                         cachedNodeEntries,
                         dataBlockEntryCache,
-                        numericalTaggedPropertyCache,
-                        stringTaggedPropertyCache,
-                        taggedPropertyCache),
+                        propertyContextBasedNumericalTaggedPropertyCache,
+                        propertyContextBasedStringTaggedPropertyCache,
+                        propertyContextBasedTaggedPropertyCache),
                     CreatePropertyContextBasedReadOnlyComponent(
                         stream,
                         cachedNodeEntries,
                         dataBlockEntryCache,
-                        numericalTaggedPropertyCache,
-                        stringTaggedPropertyCache,
-                        taggedPropertyCache),
+                        propertyContextBasedNumericalTaggedPropertyCache,
+                        propertyContextBasedStringTaggedPropertyCache,
+                        propertyContextBasedTaggedPropertyCache),
                     CreateTagBasedTableContextBasedReadOnlyComponent(
                         stream,
                         cachedNodeEntries,
                         dataBlockEntryCache,
-                        numericalTaggedPropertyCache,
-                        stringTaggedPropertyCache,
-                        taggedPropertyCache));
+                        tableContextBasedNumericalTaggedPropertyCache,
+                        tableContextBasedStringTaggedPropertyCache,
+                        tableContextBasedTaggedPropertyCache));
         }
 
         private static IReadOnlyFolder CreateReadOnlyFolder(
@@ -92,9 +103,9 @@ namespace pst
             Stream dataStream,
             ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache,
-            ICache<NumericalTaggedPropertyPath, PropertyValue> numericalTaggedPropertyCache,
-            ICache<StringTaggedPropertyPath, PropertyValue> stringTaggedPropertyCache,
-            ICache<TaggedPropertyPath, PropertyValue> taggedPropertyCache)
+            ICache<NumericalTaggedPropertyPath, PropertyContextBasedCachedPropertyState> numericalTaggedPropertyCache,
+            ICache<StringTaggedPropertyPath, PropertyContextBasedCachedPropertyState> stringTaggedPropertyCache,
+            ICache<TaggedPropertyPath, PropertyContextBasedCachedPropertyState> taggedPropertyCache)
         {
             return
                 new ReadOnlyAttachment(

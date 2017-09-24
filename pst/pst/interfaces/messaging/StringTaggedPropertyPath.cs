@@ -1,7 +1,7 @@
-﻿using System;
+﻿using pst.interfaces.ndb;
+using System;
 using System.Linq;
 using System.Text;
-using pst.interfaces.ndb;
 
 namespace pst.interfaces.messaging
 {
