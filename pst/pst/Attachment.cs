@@ -10,19 +10,19 @@ namespace pst
         private readonly NodePath attachmentNodePath;
         private readonly IReadOnlyMessage readOnlyMessage;
         private readonly IReadOnlyAttachment readOnlyAttachment;
-        private readonly IPropertyContextBasedReadOnlyComponent readOnlyComponent;
+        private readonly IPropertyContextBasedComponent propertyContextBasedComponent;
         private readonly ITableContextBasedReadOnlyComponent<Tag> readOnlyComponentForRecipient;
 
         internal Attachment(
             NodePath attachmentNodePath,
             IReadOnlyMessage readOnlyMessage,
             IReadOnlyAttachment readOnlyAttachment,
-            IPropertyContextBasedReadOnlyComponent readOnlyComponent,
+            IPropertyContextBasedComponent propertyContextBasedComponent,
             ITableContextBasedReadOnlyComponent<Tag> readOnlyComponentForRecipient)
         {
             this.attachmentNodePath = attachmentNodePath;
             this.readOnlyMessage = readOnlyMessage;
-            this.readOnlyComponent = readOnlyComponent;
+            this.propertyContextBasedComponent = propertyContextBasedComponent;
             this.readOnlyAttachment = readOnlyAttachment;
             this.readOnlyComponentForRecipient = readOnlyComponentForRecipient;
         }
@@ -42,27 +42,27 @@ namespace pst
                     attachmentNodePath.Add(embeddedMessageNID.Value),
                     readOnlyMessage,
                     readOnlyAttachment,
-                    readOnlyComponent, readOnlyComponentForRecipient);
+                    propertyContextBasedComponent, readOnlyComponentForRecipient);
         }
 
         public Maybe<PropertyValue> GetProperty(NumericalPropertyTag propertyTag)
         {
             return
-                readOnlyComponent.GetProperty(
+                propertyContextBasedComponent.GetProperty(
                     new NumericalTaggedPropertyPath(attachmentNodePath, propertyTag));
         }
 
         public Maybe<PropertyValue> GetProperty(StringPropertyTag propertyTag)
         {
             return
-                readOnlyComponent.GetProperty(
+                propertyContextBasedComponent.GetProperty(
                     new StringTaggedPropertyPath(attachmentNodePath, propertyTag));
         }
 
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
             return
-                readOnlyComponent.GetProperty(
+                propertyContextBasedComponent.GetProperty(
                     new TaggedPropertyPath(attachmentNodePath, propertyTag));
         }
     }

@@ -4,7 +4,6 @@ using pst.encodables.ndb.blocks.subnode;
 using pst.encodables.ndb.btree;
 using pst.interfaces;
 using pst.interfaces.btree;
-using pst.interfaces.io;
 using pst.interfaces.ndb;
 using System.Linq;
 
@@ -12,19 +11,16 @@ namespace pst.impl.ndb
 {
     class NodeEntryFinder : INodeEntryFinder
     {
-        private readonly IDataReader dataReader;
-        private readonly IDecoder<Header> headerDecoder;
+        private readonly IHeaderReader headerReader;
         private readonly IBTreeEntryFinder<NID, LNBTEntry, BREF> nodeBTreeEntryFinder;
         private readonly ISubNodesEnumerator subnodesEnumerator;
 
         public NodeEntryFinder(
-            IDataReader dataReader,
-            IDecoder<Header> headerDecoder,
+            IHeaderReader headerReader,
             IBTreeEntryFinder<NID, LNBTEntry, BREF> nodeBTreeEntryFinder,
             ISubNodesEnumerator subnodesEnumerator)
         {
-            this.dataReader = dataReader;
-            this.headerDecoder = headerDecoder;
+            this.headerReader = headerReader;
             this.nodeBTreeEntryFinder = nodeBTreeEntryFinder;
             this.subnodesEnumerator = subnodesEnumerator;
         }
@@ -36,7 +32,7 @@ namespace pst.impl.ndb
                 return Maybe<NodeEntry>.NoValue();
             }
 
-            var header = headerDecoder.Decode(dataReader.Read(0, 546));
+            var header = headerReader.GetHeader();
 
             var lnbtEntry = nodeBTreeEntryFinder.Find(nodePath[0], header.Root.NBTRootPage);
 

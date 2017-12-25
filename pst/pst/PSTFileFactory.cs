@@ -44,10 +44,11 @@ namespace pst
                 new PSTFile(
                     new EntryIdDecoder(
                         new NIDDecoder()),
-                    CreateReadOnlyFolder(
+                    CreateFolder(
                         stream,
                         cachedNodeEntries,
                         dataBlockEntryCache),
+                    CreateHeaderBasedStringEncoder(stream), 
                     CreateReadOnlyMessage(
                         stream,
                         cachedNodeEntries,
@@ -59,7 +60,7 @@ namespace pst
                         propertyContextBasedNumericalTaggedPropertyCache,
                         propertyContextBasedStringTaggedPropertyCache,
                         propertyContextBasedTaggedPropertyCache),
-                    CreatePropertyContextBasedReadOnlyComponent(
+                    CreatePropertyContextBasedComponent(
                         stream,
                         cachedNodeEntries,
                         dataBlockEntryCache,
@@ -75,13 +76,13 @@ namespace pst
                         tableContextBasedTaggedPropertyCache));
         }
 
-        private static IReadOnlyFolder CreateReadOnlyFolder(
+        private static IFolder CreateFolder(
             Stream dataStream,
             ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
-                new ReadOnlyFolder(
+                new impl.messaging.Folder(
                     CreateNIDBasedRowIndexReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     new NIDDecoder());
         }
@@ -114,7 +115,7 @@ namespace pst
                         dataStream,
                         nodeEntryCache,
                         dataBlockEntryCache),
-                    CreatePropertyContextBasedReadOnlyComponent(
+                    CreatePropertyContextBasedComponent(
                         dataStream,
                         nodeEntryCache,
                         dataBlockEntryCache, numericalTaggedPropertyCache, stringTaggedPropertyCache, taggedPropertyCache));

@@ -7,31 +7,31 @@ namespace pst
 {
     public class MessageStore
     {
-        private readonly IPropertyContextBasedReadOnlyComponent propertyContextBasedReadOnlyComponent;
+        private readonly IPropertyContextBasedComponent propertyContextBasedComponent;
 
-        internal MessageStore(IPropertyContextBasedReadOnlyComponent propertyContextBasedReadOnlyComponent)
+        internal MessageStore(IPropertyContextBasedComponent propertyContextBasedComponent)
         {
-            this.propertyContextBasedReadOnlyComponent = propertyContextBasedReadOnlyComponent;
+            this.propertyContextBasedComponent = propertyContextBasedComponent;
         }
 
         public Maybe<PropertyValue> GetProperty(NumericalPropertyTag propertyTag)
         {
             return
-                propertyContextBasedReadOnlyComponent.GetProperty(
+                propertyContextBasedComponent.GetProperty(
                     new NumericalTaggedPropertyPath(NodePath.OfValue(Constants.NID_MESSAGE_STORE), propertyTag));
         }
 
         public Maybe<PropertyValue> GetProperty(StringPropertyTag propertyTag)
         {
             return
-                propertyContextBasedReadOnlyComponent.GetProperty(
+                propertyContextBasedComponent.GetProperty(
                     new StringTaggedPropertyPath(NodePath.OfValue(Constants.NID_MESSAGE_STORE), propertyTag));
         }
 
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
             return
-                propertyContextBasedReadOnlyComponent.GetProperty(
+                propertyContextBasedComponent.GetProperty(
                     new TaggedPropertyPath(NodePath.OfValue(Constants.NID_MESSAGE_STORE), propertyTag));
         }
     }

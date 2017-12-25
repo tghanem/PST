@@ -31,6 +31,11 @@ namespace pst.impl
             return value;
         }
 
+        public void Remove(TKey key)
+        {
+            cache.Remove(key);
+        }
+
         public void Add(TKey key, TValue value)
         {
             cache.Add(key, value);

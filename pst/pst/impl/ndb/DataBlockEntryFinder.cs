@@ -13,20 +13,20 @@ namespace pst.impl.ndb
     class DataBlockEntryFinder : IDataBlockEntryFinder
     {
         private readonly IDataReader dataReader;
-        private readonly IDecoder<Header> headerDecoder;
+        private readonly IHeaderReader headerReader;
         private readonly IExtractor<InternalDataBlock, BID[]> blockIdsFromInternalDataBlockExtractor;
         private readonly IBTreeNodeLoader<InternalDataBlock, LBBTEntry> internalDataBlockLoader;
         private readonly IBTreeEntryFinder<BID, LBBTEntry, BREF> blockBTreeEntryFinder;
 
         public DataBlockEntryFinder(
             IDataReader dataReader,
-            IDecoder<Header> headerDecoder,
+            IHeaderReader headerReader,
             IExtractor<InternalDataBlock, BID[]> blockIdsFromInternalDataBlockExtractor,
             IBTreeNodeLoader<InternalDataBlock, LBBTEntry> internalDataBlockLoader,
             IBTreeEntryFinder<BID, LBBTEntry, BREF> blockBTreeEntryFinder)
         {
             this.dataReader = dataReader;
-            this.headerDecoder = headerDecoder;
+            this.headerReader = headerReader;
             this.blockIdsFromInternalDataBlockExtractor = blockIdsFromInternalDataBlockExtractor;
             this.internalDataBlockLoader = internalDataBlockLoader;
             this.blockBTreeEntryFinder = blockBTreeEntryFinder;
@@ -94,7 +94,7 @@ namespace pst.impl.ndb
 
         private Maybe<LBBTEntry> GetDataBlockEntry(BID blockId)
         {
-            var header = headerDecoder.Decode(dataReader.Read(0, 546));
+            var header = headerReader.GetHeader();
 
             return blockBTreeEntryFinder.Find(blockId, header.Root.BBTRootPage);
         }

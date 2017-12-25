@@ -29,8 +29,7 @@ namespace pst
                 new NodeEntryFinderThatCachesTheNodeEntry(
                     nodeEntryCache,
                     new NodeEntryFinder(
-                        new DataReader(dataStream),
-                        CreateHeaderDecoder(),
+                        CreateHeaderReader(dataStream), 
                         CreateNodeBTreeEntryFinder(dataStream),
                         CreateSubnodesEnumerator(dataStream, dataBlockEntryCache)));
         }

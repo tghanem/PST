@@ -3,8 +3,10 @@ using pst.encodables.ndb;
 
 namespace pst.interfaces.messaging
 {
-    interface IReadOnlyFolder
+    interface IFolder
     {
+        NID NewFolderNodeId();
+
         Maybe<NID[]> GetNodeIdsForSubFolders(NID folderNodeId);
 
         Maybe<NID[]> GetNodeIdsForContents(NID folderNodeId);

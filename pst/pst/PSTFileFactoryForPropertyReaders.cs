@@ -20,7 +20,7 @@ namespace pst
 {
     public partial class PSTFile
     {
-        private static IPropertyContextBasedReadOnlyComponent CreatePropertyContextBasedReadOnlyComponent(
+        private static IPropertyContextBasedComponent CreatePropertyContextBasedComponent(
             Stream dataStream,
             ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache,
@@ -29,11 +29,11 @@ namespace pst
             ICache<TaggedPropertyPath, PropertyContextBasedCachedPropertyState> taggedPropertyCache)
         {
             return
-                new PropertyContextBasedReadOnlyComponentThatCachesThePropertyValue(
+                new PropertyContextBasedComponentThatCachesThePropertyValue(
                     numericalTaggedPropertyCache,
                     stringTaggedPropertyCache,
                     taggedPropertyCache,
-                    new PropertyContextBasedReadOnlyComponent(
+                    new PropertyContextBasedComponent(
                         CreatePropertyIdToNameMap(dataStream, nodeEntryCache, dataBlockEntryCache),
                         CreatePropertyContextBasedPropertyReader(dataStream, nodeEntryCache, dataBlockEntryCache)));
         }

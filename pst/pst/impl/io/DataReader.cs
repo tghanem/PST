@@ -13,6 +13,11 @@ namespace pst.impl.io
             this.stream = stream;
         }
 
+        public bool CanRead(long offset)
+        {
+            return offset < stream.Length;
+        }
+
         public BinaryData Read(long offset, int count)
         {
             var buffer = new byte[count];

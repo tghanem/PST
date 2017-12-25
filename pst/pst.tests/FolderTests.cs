@@ -60,6 +60,25 @@ namespace pst.tests
             Assert.IsTrue(result.Value.Value.ToBoolean());
         }
 
+        [Test]
+        public void ShouldCorrectlyDetectNewlyAddedFolder()
+        {
+            //Arrange
+            var memoryStream = new MemoryStream(Resources.user1_test_lab);
+
+            var sut = PSTFile.Open(memoryStream);
+
+            //Act
+            sut.GetRootMailboxFolder().NewFolder("NewFolder");
+
+            sut.Save();
+
+            sut = PSTFile.Open(memoryStream);
+
+            //Assert
+            Assert.IsTrue(sut.GetRootMailboxFolder().GetSubFolders().Any(f => f.GetDisplayNameUnicode() == "NewFolder"));
+        }
+
         private Folder GetFolderSut(string folderName)
         {
             var sut = PSTFile.Open(new MemoryStream(Resources.user1_test_lab));

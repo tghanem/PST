@@ -5,19 +5,19 @@ using System;
 
 namespace pst.impl.messaging.cache
 {
-    class PropertyContextBasedReadOnlyComponentThatCachesThePropertyValue : IPropertyContextBasedReadOnlyComponent
+    class PropertyContextBasedComponentThatCachesThePropertyValue : IPropertyContextBasedComponent
     {
         private readonly ICache<NumericalTaggedPropertyPath, PropertyContextBasedCachedPropertyState> numericalTaggedPropertyCache;
         private readonly ICache<StringTaggedPropertyPath, PropertyContextBasedCachedPropertyState> stringTaggedPropertyCache;
         private readonly ICache<TaggedPropertyPath, PropertyContextBasedCachedPropertyState> taggedPropertyCache;
 
-        private readonly IPropertyContextBasedReadOnlyComponent actualPropertyContextBasedReadOnlyComponent;
+        private readonly IPropertyContextBasedComponent actualPropertyContextBasedReadOnlyComponent;
 
-        public PropertyContextBasedReadOnlyComponentThatCachesThePropertyValue(
+        public PropertyContextBasedComponentThatCachesThePropertyValue(
             ICache<NumericalTaggedPropertyPath, PropertyContextBasedCachedPropertyState> numericalTaggedPropertyCache,
             ICache<StringTaggedPropertyPath, PropertyContextBasedCachedPropertyState> stringTaggedPropertyCache,
             ICache<TaggedPropertyPath, PropertyContextBasedCachedPropertyState> taggedPropertyCache,
-            IPropertyContextBasedReadOnlyComponent actualPropertyContextBasedReadOnlyComponent)
+            IPropertyContextBasedComponent actualPropertyContextBasedReadOnlyComponent)
         {
             this.numericalTaggedPropertyCache = numericalTaggedPropertyCache;
             this.stringTaggedPropertyCache = stringTaggedPropertyCache;
@@ -52,6 +52,21 @@ namespace pst.impl.messaging.cache
                     () => actualPropertyContextBasedReadOnlyComponent.GetProperty(propertyPath));
         }
 
+        public void SetProperty(NumericalTaggedPropertyPath propertyPath, PropertyValue propertyvalue)
+        {
+            SetProperty(propertyPath, numericalTaggedPropertyCache, propertyvalue);
+        }
+
+        public void SetProperty(StringTaggedPropertyPath propertyPath, PropertyValue propertyvalue)
+        {
+            SetProperty(propertyPath, stringTaggedPropertyCache, propertyvalue);
+        }
+
+        public void SetProperty(TaggedPropertyPath propertyPath, PropertyValue propertyvalue)
+        {
+            SetProperty(propertyPath, taggedPropertyCache, propertyvalue);
+        }
+
         private Maybe<PropertyValue> GetProperty<TPropertyPath>(
             TPropertyPath propertyPath,
             ICache<TPropertyPath, PropertyContextBasedCachedPropertyState> cache,
@@ -81,6 +96,38 @@ namespace pst.impl.messaging.cache
             }
 
             return propertyValue;
+        }
+
+        private void SetProperty<TPropertyPath>(
+            TPropertyPath propertyPath,
+            ICache<TPropertyPath, PropertyContextBasedCachedPropertyState> cache,
+            PropertyValue newPropertyValue)
+        {
+            if (!cache.HasValue(propertyPath))
+            {
+                cache.Add(
+                    propertyPath,
+                    new PropertyContextBasedCachedPropertyState(PropertyOperations.New, newPropertyValue));
+
+                return;
+            }
+
+            var oldPropertyValue = cache.GetValue(propertyPath);
+
+            if (oldPropertyValue.LastOperationOnProperty == PropertyOperations.Deleted ||
+                oldPropertyValue.LastOperationOnProperty == PropertyOperations.Read ||
+                oldPropertyValue.LastOperationOnProperty == PropertyOperations.Updated)
+            {
+                cache.Add(
+                    propertyPath,
+                    new PropertyContextBasedCachedPropertyState(PropertyOperations.Updated, newPropertyValue));
+            }
+            else
+            {
+                cache.Add(
+                    propertyPath,
+                    new PropertyContextBasedCachedPropertyState(PropertyOperations.New, newPropertyValue));
+            }
         }
     }
 }

@@ -13,6 +13,11 @@
 
         public static IB OfValue(long value) => new IB(value);
 
+        public IB Add(long value)
+        {
+            return new IB(Value + value);
+        }
+
         public override string ToString()
         {
             return $"0x{Value:x}".ToLower();

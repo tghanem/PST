@@ -1,4 +1,5 @@
 ﻿using pst.encodables.ndb;
+using pst.impl;
 using pst.impl.decoders.ndb;
 using pst.impl.io;
 using pst.interfaces;
@@ -14,11 +15,26 @@ namespace pst
         {
             return
                 new EncodingThatDetectsTypeFromTheHeader(
-                    new DataReader(dataStream),
-                    CreateHeaderDecoder(),
+                    CreateHeaderReader(dataStream), 
                     new PermutativeEncoding(),
                     new CyclicEncoding(),
                     new NoEncoding());
+        }
+
+        private static IEncoder<string> CreateHeaderBasedStringEncoder(
+            Stream dataStream)
+        {
+            return
+                new HeaderBasedStringEncoder(
+                    CreateHeaderReader(dataStream));
+        }
+
+        private static IHeaderReader CreateHeaderReader(Stream dataStream)
+        {
+            return
+                new HeaderReader(
+                    new DataReader(dataStream),
+                    CreateHeaderDecoder());
         }
 
         private static IDecoder<Header> CreateHeaderDecoder()

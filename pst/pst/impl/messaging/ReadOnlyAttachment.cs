@@ -10,12 +10,12 @@ namespace pst.impl.messaging
     {
         private readonly IDecoder<NID> nidDecoder;
         private readonly INodeEntryFinder nodeEntryFinder;
-        private readonly IPropertyContextBasedReadOnlyComponent readOnlyComponent;
+        private readonly IPropertyContextBasedComponent readOnlyComponent;
 
         public ReadOnlyAttachment(
             IDecoder<NID> nidDecoder,
             INodeEntryFinder nodeEntryFinder,
-            IPropertyContextBasedReadOnlyComponent readOnlyComponent)
+            IPropertyContextBasedComponent readOnlyComponent)
         {
             this.nidDecoder = nidDecoder;
             this.nodeEntryFinder = nodeEntryFinder;

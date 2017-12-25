@@ -13,7 +13,6 @@ using pst.impl.ndb.cache;
 using pst.impl.ndb.datatree;
 using pst.interfaces;
 using pst.interfaces.btree;
-using pst.interfaces.io;
 using pst.interfaces.ndb;
 using System.IO;
 
@@ -39,7 +38,7 @@ namespace pst
                 new DataBlockEntryFinderThatCachesTheDataBlockEntry(
                     new DataBlockEntryFinder(
                         new DataReader(dataReader),
-                        CreateHeaderDecoder(),
+                        CreateHeaderReader(dataReader), 
                         new BIDsFromInternalDataBlockExtractor(
                             new BIDDecoder()),
                         new InternalDataBlockLoader(

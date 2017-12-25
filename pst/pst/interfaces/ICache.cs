@@ -5,6 +5,8 @@ namespace pst.interfaces
 {
     interface ICache<TKey, TValue> where TValue : class
     {
+        void Remove(TKey key);
+
         void Add(TKey key, TValue value);
 
         bool HasValue(TKey key);

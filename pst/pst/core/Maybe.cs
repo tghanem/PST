@@ -2,7 +2,7 @@
 
 namespace pst.core
 {
-    public struct Maybe<T> where T : class
+    public struct Maybe<T>
     {
         public T Value
         {
@@ -18,25 +18,38 @@ namespace pst.core
         }
 
         private readonly T value;
+        private readonly bool hasValue;
 
-        private Maybe(T value)
+        private Maybe(T value, bool hasValue)
         {
             this.value = value;
+            this.hasValue = hasValue;
         }
 
-        public bool HasValue => value != null;
+        public bool HasValue => hasValue;
 
-        public bool HasNoValue => value == null;
+        public bool HasNoValue => !hasValue;
 
         public bool HasValueAnd(Func<T, bool> predicate) => HasValue && predicate(Value);
 
         public static Maybe<T> OfValue(T value)
-            => new Maybe<T>(value);
+        {
+            if (value == null)
+            {
+                throw new Exception("BUG: Cannot instantiate a Maybe<T> of null value");
+            }
+
+            return new Maybe<T>(value, hasValue: true);
+        }
 
         public static Maybe<T> NoValue()
-            => new Maybe<T>(null);
+        {
+            return new Maybe<T>(default(T), hasValue: false);
+        }
 
         public static implicit operator Maybe<T>(T value)
-            => new Maybe<T>(value);
+        {
+            return new Maybe<T>(value, hasValue: value != null);
+        }
     }
 }

@@ -4,12 +4,12 @@ using pst.interfaces.messaging;
 
 namespace pst.impl.messaging
 {
-    class PropertyContextBasedReadOnlyComponent : IPropertyContextBasedReadOnlyComponent
+    class PropertyContextBasedComponent : IPropertyContextBasedComponent
     {
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
 
-        public PropertyContextBasedReadOnlyComponent(
+        public PropertyContextBasedComponent(
             IPropertyNameToIdMap propertyNameToIdMap,
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader)
         {
@@ -59,6 +59,21 @@ namespace pst.impl.messaging
                 propertyContextBasedPropertyReader.ReadProperty(
                     propertyPath.NodePath,
                     propertyPath.PropertyTag);
+        }
+
+        public void SetProperty(NumericalTaggedPropertyPath propertyPath, PropertyValue propertyvalue)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetProperty(StringTaggedPropertyPath propertyPath, PropertyValue propertyvalue)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetProperty(TaggedPropertyPath propertyPath, PropertyValue propertyvalue)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -9,17 +9,22 @@ using System.Linq;
 
 namespace pst.impl.messaging
 {
-    class ReadOnlyFolder : IReadOnlyFolder
+    class Folder : IFolder
     {
         private readonly IRowIndexReader<NID> rowIndexReader;
         private readonly IDecoder<NID> nidDecoder;
 
-        public ReadOnlyFolder(
+        public Folder(
             IRowIndexReader<NID> rowIndexReader,
             IDecoder<NID> nidDecoder)
         {
             this.rowIndexReader = rowIndexReader;
             this.nidDecoder = nidDecoder;
+        }
+
+        public NID NewFolderNodeId()
+        {
+            throw new System.NotImplementedException();
         }
 
         public Maybe<NID[]> GetNodeIdsForSubFolders(NID folderNodeId)
