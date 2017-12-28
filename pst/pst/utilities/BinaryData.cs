@@ -14,6 +14,21 @@ namespace pst.utilities
             Value = value;
         }
 
+        public static BinaryData OfSize(int size)
+            => new BinaryData(new byte[size]);
+
+        public static BinaryData OfSize(int size, byte value)
+        {
+            var newArray = new byte[size];
+
+            for (var i = 0; i < newArray.Length; i++)
+            {
+                newArray[i] = value;
+            }
+
+            return new BinaryData(newArray);
+        }
+
         public static BinaryData Empty()
             => new BinaryData(new byte[0]);
 
@@ -26,7 +41,7 @@ namespace pst.utilities
         public static BinaryData OfValue(byte[] value)
             => new BinaryData(value);
 
-        public static implicit operator byte[](BinaryData data)
+        public static implicit operator byte[] (BinaryData data)
             => data.Value;
 
         public BinaryData Take(int count)

@@ -1,11 +1,11 @@
 ﻿using pst.encodables.ndb.btree;
 using pst.utilities;
 
-namespace pst.encodables.ndb
+namespace pst.encodables.ndb.maps
 {
-    class AMap
+    class FMap
     {
-        public AMap(BinaryData data, PageTrailer pageTrailer)
+        public FMap(BinaryData data, PageTrailer pageTrailer)
         {
             Data = data;
             PageTrailer = pageTrailer;

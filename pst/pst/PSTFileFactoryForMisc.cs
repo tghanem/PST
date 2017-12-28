@@ -3,7 +3,7 @@ using pst.impl;
 using pst.impl.decoders.ndb;
 using pst.impl.io;
 using pst.interfaces;
-using pst.utilities;
+using pst.utilities.encodings;
 using System.IO;
 
 namespace pst
@@ -15,7 +15,7 @@ namespace pst
         {
             return
                 new EncodingThatDetectsTypeFromTheHeader(
-                    CreateHeaderReader(dataStream), 
+                    CreateHeaderUsageProvider(dataStream),
                     new PermutativeEncoding(),
                     new CyclicEncoding(),
                     new NoEncoding());
@@ -26,13 +26,13 @@ namespace pst
         {
             return
                 new HeaderBasedStringEncoder(
-                    CreateHeaderReader(dataStream));
+                    CreateHeaderUsageProvider(dataStream));
         }
 
-        private static IHeaderReader CreateHeaderReader(Stream dataStream)
+        private static IHeaderUsageProvider CreateHeaderUsageProvider(Stream dataStream)
         {
             return
-                new HeaderReader(
+                new HeaderUsageProvider(
                     new DataReader(dataStream),
                     CreateHeaderDecoder());
         }

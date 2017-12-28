@@ -1,10 +1,9 @@
 ﻿using pst.interfaces;
-using System;
 using System.IO;
 
 namespace pst.utilities
 {
-    class BinaryDataGenerator : IDisposable
+    class BinaryDataGenerator
     {
         private readonly MemoryStream valueStream;
 
@@ -16,6 +15,8 @@ namespace pst.utilities
         public static BinaryDataGenerator New()
             => new BinaryDataGenerator(new MemoryStream());
 
+        public long DataSize => valueStream.Length;
+
         public BinaryData GetData()
             => BinaryData.OfValue(valueStream.ToArray());
 
@@ -26,15 +27,25 @@ namespace pst.utilities
             => Append(typeEncoder.Encode(typeValue).Take(countOfEncodedDataToAppend));
 
         public BinaryDataGenerator Append(BinaryData data)
-        {
-            valueStream.Write(data.Value, 0, data.Length);
+            => Append(data.Value);
 
+        public BinaryDataGenerator FillTo(int size)
+        {
+            var data = new byte[size];
+            valueStream.Write(data, 0, data.Length);
             return this;
         }
 
-        public void Dispose()
+        public BinaryDataGenerator Append(byte[] data)
         {
-            valueStream.Dispose();
+            valueStream.Write(data, 0, data.Length);
+            return this;
+        }
+
+        public BinaryDataGenerator WriteTo(Stream stream)
+        {
+            valueStream.CopyTo(stream);
+            return this;
         }
     }
 }

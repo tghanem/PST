@@ -38,7 +38,7 @@ namespace pst
                 new DataBlockEntryFinderThatCachesTheDataBlockEntry(
                     new DataBlockEntryFinder(
                         new DataReader(dataReader),
-                        CreateHeaderReader(dataReader), 
+                        CreateHeaderUsageProvider(dataReader), 
                         new BIDsFromInternalDataBlockExtractor(
                             new BIDDecoder()),
                         new InternalDataBlockLoader(

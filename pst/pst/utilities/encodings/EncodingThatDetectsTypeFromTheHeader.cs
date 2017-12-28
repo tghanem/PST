@@ -1,8 +1,8 @@
-﻿using pst.encodables.ndb;
+﻿using System;
+using pst.encodables.ndb;
 using pst.interfaces;
-using System;
 
-namespace pst.utilities
+namespace pst.utilities.encodings
 {
     class EncodingThatDetectsTypeFromTheHeader : IBlockDataObfuscator, IBlockDataDeObfuscator
     {

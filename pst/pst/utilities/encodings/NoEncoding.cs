@@ -1,7 +1,7 @@
 ﻿using pst.encodables.ndb;
 using pst.interfaces;
 
-namespace pst.utilities
+namespace pst.utilities.encodings
 {
     class NoEncoding : IEncoding
     {

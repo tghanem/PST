@@ -16,6 +16,14 @@ namespace pst.utilities
 
         public const int NID_TYPE_HID = 0x00;
 
+        public const int ptypeBBT = 0x80;
+        public const int ptypeNBT = 0x81;
+        public const int ptypeFMap = 0x82;
+        public const int ptypePMap = 0x83;
+        public const int ptypeAMap = 0x84;
+        public const int ptypeFPMap = 0x85;
+        public const int ptypeDL = 0x86;
+
         public const int PtypInteger16 = 0x0002;
         public const int PtypInteger32 = 0x0003;
         public const int PtypFloating32 = 0x0004;

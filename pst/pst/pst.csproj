@@ -65,7 +65,7 @@
     <Compile Include="encodables\messaging\search\SUDMSGSpam.cs" />
     <Compile Include="encodables\messaging\search\SUDSRCHAddDel.cs" />
     <Compile Include="encodables\messaging\search\SUDSRCHMod.cs" />
-    <Compile Include="encodables\ndb\AMap.cs" />
+    <Compile Include="encodables\ndb\maps\AMap.cs" />
     <Compile Include="encodables\ndb\blocks\BlockTrailer.cs" />
     <Compile Include="encodables\ndb\blocks\data\ExternalDataBlock.cs" />
     <Compile Include="encodables\ndb\blocks\data\InternalDataBlock.cs" />
@@ -73,6 +73,9 @@
     <Compile Include="encodables\ndb\blocks\subnode\SLEntry.cs" />
     <Compile Include="encodables\ndb\blocks\subnode\SubnodeBlock.cs" />
     <Compile Include="encodables\ndb\Header.cs" />
+    <Compile Include="encodables\ndb\maps\FMap.cs" />
+    <Compile Include="encodables\ndb\maps\FPMap.cs" />
+    <Compile Include="encodables\ndb\maps\PMap.cs" />
     <Compile Include="encodables\ndb\Root.cs" />
     <Compile Include="encodables\ndb\IB.cs" />
     <Compile Include="encodables\ndb\BID.cs" />
@@ -152,7 +155,7 @@
     <Compile Include="impl\encoders\ndb\NIDEncoder.cs" />
     <Compile Include="impl\FuncBasedExtractor.cs" />
     <Compile Include="impl\HeaderBasedStringEncoder.cs" />
-    <Compile Include="impl\HeaderReader.cs" />
+    <Compile Include="impl\HeaderUsageProvider.cs" />
     <Compile Include="impl\io\BlockIdBasedDataBlockReader.cs" />
     <Compile Include="impl\io\DataReader.cs" />
     <Compile Include="impl\ltp\bth\BTreeOnHeapReader.cs" />
@@ -176,11 +179,13 @@
     <Compile Include="impl\messaging\Folder.cs" />
     <Compile Include="impl\messaging\ReadOnlyMessage.cs" />
     <Compile Include="impl\messaging\TableContextBasedReadOnlyComponent.cs" />
+    <Compile Include="impl\ndb\allocation\AMapBasedStreamExtender.cs" />
     <Compile Include="impl\ndb\bbt\IBBTEntriesFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\bbt\LBBTEntriesFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\cache\DataBlockEntryFinderThatCachesTheDataBlockEntry.cs" />
     <Compile Include="impl\ndb\cache\NodeEntryFinderThatCachesTheNodeEntry.cs" />
-    <Compile Include="impl\ndb\AllocationFinder.cs" />
+    <Compile Include="impl\ndb\allocation\AllocationFinder.cs" />
+    <Compile Include="impl\ndb\allocation\DataAllocator.cs" />
     <Compile Include="impl\ndb\DataBlockEntryFinder.cs" />
     <Compile Include="impl\ndb\datatree\BIDsFromInternalDataBlockExtractor.cs" />
     <Compile Include="impl\ndb\datatree\InternalDataBlockLoader.cs" />
@@ -197,12 +202,15 @@
     <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
     <Compile Include="interfaces\IBlockDataObfuscator.cs" />
     <Compile Include="interfaces\ICache.cs" />
-    <Compile Include="interfaces\IHeaderReader.cs" />
+    <Compile Include="interfaces\IHeaderUsageProvider.cs" />
     <Compile Include="interfaces\io\IDataReader.cs" />
     <Compile Include="interfaces\ltp\IPropertyContextBasedPropertyReader.cs" />
     <Compile Include="interfaces\ltp\ITableContextBasedPropertyReader.cs" />
+    <Compile Include="interfaces\ndb\allocation\IBlockIdGenerator.cs" />
     <Compile Include="interfaces\ndb\DataBlockEntry.cs" />
-    <Compile Include="interfaces\ndb\IAllocationFinder.cs" />
+    <Compile Include="interfaces\ndb\allocation\IAllocationFinder.cs" />
+    <Compile Include="interfaces\ndb\allocation\IAMapAllocationReserver.cs" />
+    <Compile Include="interfaces\ndb\allocation\IDataAllocator.cs" />
     <Compile Include="interfaces\ndb\IDataBlockEntryFinder.cs" />
     <Compile Include="interfaces\ndb\IDataBlockReader.cs" />
     <Compile Include="interfaces\ndb\IExternalDataBlockReader.cs" />
@@ -214,6 +222,7 @@
     <Compile Include="interfaces\messaging\IPropertyNameToIdMap.cs" />
     <Compile Include="interfaces\messaging\IPropertyValueProcessor.cs" />
     <Compile Include="interfaces\messaging\ITableContextBasedReadOnlyComponent.cs" />
+    <Compile Include="interfaces\ndb\allocation\IStreamExtender.cs" />
     <Compile Include="interfaces\ndb\NodeEntry.cs" />
     <Compile Include="interfaces\ndb\NodePath.cs" />
     <Compile Include="interfaces\messaging\NumericalTaggedPropertyPath.cs" />
@@ -258,12 +267,12 @@
     <Compile Include="utilities\BinaryDataGenerator.cs" />
     <Compile Include="utilities\BinaryDataParser.cs" />
     <Compile Include="utilities\Crc32.cs" />
-    <Compile Include="utilities\CyclicEncoding.cs" />
-    <Compile Include="utilities\EncodingThatDetectsTypeFromTheHeader.cs" />
+    <Compile Include="utilities\encodings\CyclicEncoding.cs" />
+    <Compile Include="utilities\encodings\EncodingThatDetectsTypeFromTheHeader.cs" />
     <Compile Include="utilities\ExtensionMethods.cs" />
     <Compile Include="utilities\Constants.cs" />
-    <Compile Include="utilities\NoEncoding.cs" />
-    <Compile Include="utilities\PermutativeEncoding.cs" />
+    <Compile Include="utilities\encodings\NoEncoding.cs" />
+    <Compile Include="utilities\encodings\PermutativeEncoding.cs" />
     <Compile Include="impl\messaging\PropertyTypeMetadataProvider.cs" />
     <Compile Include="encodables\Tag.cs" />
   </ItemGroup>

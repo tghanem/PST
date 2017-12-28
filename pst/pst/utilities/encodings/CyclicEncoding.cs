@@ -1,8 +1,8 @@
-﻿using pst.encodables.ndb;
+﻿using System.IO;
+using pst.encodables.ndb;
 using pst.interfaces;
-using System.IO;
 
-namespace pst.utilities
+namespace pst.utilities.encodings
 {
     class CyclicEncoding : IEncoding
     {
