@@ -1,8 +1,8 @@
-﻿using pst.interfaces.ltp.tc;
-using System.Collections.Generic;
-using pst.encodables.ltp.tc;
+﻿using pst.encodables.ltp.tc;
+using pst.interfaces.ltp.tc;
 using pst.utilities;
 using System;
+using System.Collections.Generic;
 
 namespace pst.impl.ltp.tc
 {
@@ -18,6 +18,7 @@ namespace pst.impl.ltp.tc
 
             var ceb =
                 rowData.Take(rowData.Length - cebSize, cebSize)
+                .Value
                 .ToBits();
 
             var values = new Dictionary<int, BinaryData>();

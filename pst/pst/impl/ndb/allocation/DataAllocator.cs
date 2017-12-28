@@ -7,17 +7,17 @@ namespace pst.impl.ndb.allocation
     class DataAllocator : IDataAllocator
     {
         private readonly IAllocationFinder allocationFinder;
-        private readonly IStreamExtender amapBasedStreamExtender;
-        private readonly IAMapAllocationReserver amapAllocationReserver;
+        private readonly IStreamExtender streamExtender;
+        private readonly IAllocationReserver allocationReserver;
 
         public DataAllocator(
             IAllocationFinder allocationFinder,
-            IStreamExtender amapBasedStreamExtender,
-            IAMapAllocationReserver amapAllocationReserver)
+            IStreamExtender streamExtender,
+            IAllocationReserver allocationReserver)
         {
             this.allocationFinder = allocationFinder;
-            this.amapBasedStreamExtender = amapBasedStreamExtender;
-            this.amapAllocationReserver = amapAllocationReserver;
+            this.streamExtender = streamExtender;
+            this.allocationReserver = allocationReserver;
         }
 
         public IB Allocate(int sizeOfDataInBytes)
@@ -31,10 +31,10 @@ namespace pst.impl.ndb.allocation
 
             if (allocationInfo.HasValue)
             {
-                return amapAllocationReserver.Reserve(allocationInfo.Value);
+                return allocationReserver.Reserve(allocationInfo.Value);
             }
 
-            var extensionOffset = amapBasedStreamExtender.ExtendSingle();
+            var extensionOffset = streamExtender.ExtendSingle();
 
             var postExtensionAllocationInfo = allocationFinder.Find(extensionOffset, sizeOfDataInBytes);
 
@@ -43,7 +43,7 @@ namespace pst.impl.ndb.allocation
                 throw new Exception("Unexpected error: could not allocate requested data size");
             }
 
-            return amapAllocationReserver.Reserve(postExtensionAllocationInfo.Value);
+            return allocationReserver.Reserve(postExtensionAllocationInfo.Value);
         }
     }
 }

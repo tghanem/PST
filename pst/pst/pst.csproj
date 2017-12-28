@@ -130,6 +130,7 @@
     <Compile Include="impl\decoders\TagDecoder.cs" />
     <Compile Include="impl\DictionaryBasedCache.cs" />
     <Compile Include="impl\encoders\ndb\blocks\BlockTrailerEncoder.cs" />
+    <Compile Include="impl\encoders\ndb\maps\MapEncoder.cs" />
     <Compile Include="impl\encoders\ndb\RootEncoder.cs" />
     <Compile Include="impl\encoders\primitives\Int64Encoder.cs" />
     <Compile Include="impl\decoders\ndb\BIDDecoder.cs" />
@@ -158,6 +159,7 @@
     <Compile Include="impl\HeaderUsageProvider.cs" />
     <Compile Include="impl\io\BlockIdBasedDataBlockReader.cs" />
     <Compile Include="impl\io\DataReader.cs" />
+    <Compile Include="impl\io\StreamBasedRegionUpdater.cs" />
     <Compile Include="impl\ltp\bth\BTreeOnHeapReader.cs" />
     <Compile Include="impl\ltp\hn\HeapOnNodeItemsLoader.cs" />
     <Compile Include="impl\ltp\hn\HeapOnNodeReader.cs" />
@@ -179,12 +181,13 @@
     <Compile Include="impl\messaging\Folder.cs" />
     <Compile Include="impl\messaging\ReadOnlyMessage.cs" />
     <Compile Include="impl\messaging\TableContextBasedReadOnlyComponent.cs" />
+    <Compile Include="impl\ndb\allocation\AMapBasedAllocationReserver.cs" />
     <Compile Include="impl\ndb\allocation\AMapBasedStreamExtender.cs" />
     <Compile Include="impl\ndb\bbt\IBBTEntriesFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\bbt\LBBTEntriesFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\cache\DataBlockEntryFinderThatCachesTheDataBlockEntry.cs" />
     <Compile Include="impl\ndb\cache\NodeEntryFinderThatCachesTheNodeEntry.cs" />
-    <Compile Include="impl\ndb\allocation\AllocationFinder.cs" />
+    <Compile Include="impl\ndb\allocation\AMapBasedAllocationFinder.cs" />
     <Compile Include="impl\ndb\allocation\DataAllocator.cs" />
     <Compile Include="impl\ndb\DataBlockEntryFinder.cs" />
     <Compile Include="impl\ndb\datatree\BIDsFromInternalDataBlockExtractor.cs" />
@@ -204,12 +207,13 @@
     <Compile Include="interfaces\ICache.cs" />
     <Compile Include="interfaces\IHeaderUsageProvider.cs" />
     <Compile Include="interfaces\io\IDataReader.cs" />
+    <Compile Include="interfaces\io\IStreamRegionUpdater.cs" />
     <Compile Include="interfaces\ltp\IPropertyContextBasedPropertyReader.cs" />
     <Compile Include="interfaces\ltp\ITableContextBasedPropertyReader.cs" />
     <Compile Include="interfaces\ndb\allocation\IBlockIdGenerator.cs" />
     <Compile Include="interfaces\ndb\DataBlockEntry.cs" />
     <Compile Include="interfaces\ndb\allocation\IAllocationFinder.cs" />
-    <Compile Include="interfaces\ndb\allocation\IAMapAllocationReserver.cs" />
+    <Compile Include="interfaces\ndb\allocation\IAllocationReserver.cs" />
     <Compile Include="interfaces\ndb\allocation\IDataAllocator.cs" />
     <Compile Include="interfaces\ndb\IDataBlockEntryFinder.cs" />
     <Compile Include="interfaces\ndb\IDataBlockReader.cs" />
@@ -252,6 +256,7 @@
     <Compile Include="PSTFile.cs" />
     <Compile Include="PSTFileFactory.cs" />
     <Compile Include="impl\ndb\subnodebtree\SIEntriesFromSubnodeBlockExtractor.cs" />
+    <Compile Include="PSTFileFactoryForAllocation.cs" />
     <Compile Include="PSTFileFactoryForBlockBTree.cs" />
     <Compile Include="PSTFileFactoryForBTH.cs" />
     <Compile Include="PSTFileFactoryForMisc.cs" />

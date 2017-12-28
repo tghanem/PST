@@ -6,11 +6,16 @@ namespace pst.utilities
 {
     class BinaryDataParser
     {
-        private readonly MemoryStream valueStream;
+        private readonly Stream stream;
 
-        private BinaryDataParser(MemoryStream valueStream)
+        private BinaryDataParser(Stream stream)
         {
-            this.valueStream = valueStream;
+            this.stream = stream;
+        }
+
+        public static BinaryDataParser OfValue(Stream stream)
+        {
+            return new BinaryDataParser(stream);
         }
 
         public static BinaryDataParser OfValue(BinaryData data)
@@ -20,7 +25,7 @@ namespace pst.utilities
 
         public BinaryDataParser Skip(int count)
         {
-            valueStream.Position += count;
+            stream.Position += count;
 
             return this;
         }
@@ -41,7 +46,7 @@ namespace pst.utilities
         {
             var buffer = new byte[count];
 
-            valueStream.Read(buffer, 0, count);
+            stream.Read(buffer, 0, count);
 
             return BinaryData.OfValue(buffer);
         }
@@ -50,7 +55,7 @@ namespace pst.utilities
         {
             var buffer = new byte[count];
 
-            valueStream.Read(buffer, 0, count);
+            stream.Read(buffer, 0, count);
 
             return typeDecoder.Decode(BinaryData.OfValue(buffer));
         }
@@ -70,13 +75,13 @@ namespace pst.utilities
 
         public TType TakeAtWithoutChangingStreamPosition<TType>(int offset, int count, IDecoder<TType> typeDecoder)
         {
-            var position = valueStream.Position;
+            var position = stream.Position;
 
-            valueStream.Seek(offset, SeekOrigin.Begin);
+            stream.Seek(offset, SeekOrigin.Begin);
 
             var typeValue = TakeAndSkip(count, typeDecoder);
 
-            valueStream.Position = position;
+            stream.Position = position;
 
             return typeValue;
         }

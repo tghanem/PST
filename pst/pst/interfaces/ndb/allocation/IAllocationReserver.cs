@@ -2,7 +2,7 @@
 
 namespace pst.interfaces.ndb.allocation
 {
-    interface IAMapAllocationReserver
+    interface IAllocationReserver
     {
         IB Reserve(AllocationInfo allocationInfo);
     }

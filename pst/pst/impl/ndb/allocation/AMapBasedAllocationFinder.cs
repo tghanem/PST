@@ -4,16 +4,17 @@ using pst.encodables.ndb.maps;
 using pst.interfaces;
 using pst.interfaces.io;
 using pst.interfaces.ndb.allocation;
+using pst.utilities;
 using System;
 
 namespace pst.impl.ndb.allocation
 {
-    class AllocationFinder : IAllocationFinder
+    class AMapBasedAllocationFinder : IAllocationFinder
     {
         private readonly IDataReader dataReader;
         private readonly IDecoder<AMap> amapDecoder;
 
-        public AllocationFinder(IDataReader dataReader, IDecoder<AMap> amapDecoder)
+        public AMapBasedAllocationFinder(IDataReader dataReader, IDecoder<AMap> amapDecoder)
         {
             this.dataReader = dataReader;
             this.amapDecoder = amapDecoder;
@@ -24,11 +25,11 @@ namespace pst.impl.ndb.allocation
             return Find(IB.OfValue(0x4400), sizeOfDataInBytes);
         }
 
-        public Maybe<AllocationInfo> Find(IB amapOffset, int sizeOfDataInBytes)
+        public Maybe<AllocationInfo> Find(IB mapOffset, int sizeOfDataInBytes)
         {
             var numberOfConsequtiveBitsToFind = Convert.ToInt32(Math.Ceiling(sizeOfDataInBytes / 64.0));
 
-            return SearchAMap(amapOffset, numberOfConsequtiveBitsToFind);
+            return SearchAMap(mapOffset, numberOfConsequtiveBitsToFind);
         }
 
         private Maybe<AllocationInfo> SearchAMap(IB mapOffset, int numberOfContiguousBitsToFind)
@@ -54,7 +55,7 @@ namespace pst.impl.ndb.allocation
 
         private Maybe<int> SearchAMap(AMap map, int numberOfContiguousBitsToFind)
         {
-            var bits = map.Data.ToBits();
+            var bits = map.Data.Value.ToBits();
 
             for (var i = 0; i < bits.Length; i++)
             {

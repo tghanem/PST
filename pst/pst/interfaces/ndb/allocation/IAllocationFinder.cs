@@ -5,14 +5,14 @@ namespace pst.interfaces.ndb.allocation
 {
     class AllocationInfo
     {
-        public AllocationInfo(IB aMapOffset, int bitStartIndex, int bitEndIndex)
+        public AllocationInfo(IB mapOffset, int bitStartIndex, int bitEndIndex)
         {
-            AMapOffset = aMapOffset;
+            MapOffset = mapOffset;
             BitStartIndex = bitStartIndex;
             BitEndIndex = bitEndIndex;
         }
 
-        public IB AMapOffset { get; }
+        public IB MapOffset { get; }
 
         public int BitStartIndex { get; }
 
@@ -23,6 +23,6 @@ namespace pst.interfaces.ndb.allocation
     {
         Maybe<AllocationInfo> Find(int sizeOfDataInBytes);
 
-        Maybe<AllocationInfo> Find(IB amapOffset, int sizeOfDataInBytes);
+        Maybe<AllocationInfo> Find(IB mapOffset, int sizeOfDataInBytes);
     }
 }

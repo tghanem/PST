@@ -115,25 +115,6 @@ namespace pst.utilities
             return slices.ToArray();
         }
 
-        public int[] ToBits()
-        {
-            var bits = new List<int>();
-
-            foreach (var b in Value)
-            {
-                bits.Add(b & 0x01);
-                bits.Add((b & 0x02) >> 1);
-                bits.Add((b & 0x04) >> 2);
-                bits.Add((b & 0x08) >> 3);
-                bits.Add((b & 0x10) >> 4);
-                bits.Add((b & 0x20) >> 5);
-                bits.Add((b & 0x40) >> 6);
-                bits.Add((b & 0x80) >> 7);
-            }
-
-            return bits.ToArray();
-        }
-
         public override bool Equals(object obj)
         {
             var data = obj as BinaryData;
