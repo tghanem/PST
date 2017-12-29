@@ -1,13 +1,13 @@
-﻿using pst.core;
+﻿using System;
+using pst.core;
 using pst.encodables.ndb;
 using pst.encodables.ndb.maps;
 using pst.interfaces;
 using pst.interfaces.io;
-using pst.interfaces.ndb.allocation;
+using pst.interfaces.rawallocation;
 using pst.utilities;
-using System;
 
-namespace pst.impl.ndb.allocation
+namespace pst.impl.rawallocation
 {
     class AMapBasedAllocationFinder : IAllocationFinder
     {

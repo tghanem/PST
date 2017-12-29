@@ -6,9 +6,9 @@ using pst.impl.encoders.ndb.btree;
 using pst.impl.encoders.ndb.maps;
 using pst.impl.encoders.primitives;
 using pst.impl.io;
-using pst.impl.ndb.allocation;
-using pst.interfaces.ndb.allocation;
 using System.IO;
+using pst.impl.rawallocation;
+using pst.interfaces.rawallocation;
 
 namespace pst
 {

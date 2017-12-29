@@ -30,7 +30,7 @@ namespace pst
 
             for (var i = 0; i < offsets.Length; i++)
             {
-                var length = 0;
+                int length;
 
                 if (i < offsets.Length - 1)
                 {

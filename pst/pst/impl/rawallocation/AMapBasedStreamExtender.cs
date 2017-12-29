@@ -1,13 +1,13 @@
-﻿using pst.encodables.ndb;
+﻿using System;
+using System.IO;
+using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.encodables.ndb.maps;
 using pst.interfaces;
-using pst.interfaces.ndb.allocation;
+using pst.interfaces.rawallocation;
 using pst.utilities;
-using System;
-using System.IO;
 
-namespace pst.impl.ndb.allocation
+namespace pst.impl.rawallocation
 {
     class AMapBasedStreamExtender : IStreamExtender
     {

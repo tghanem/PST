@@ -3,10 +3,10 @@ using pst.encodables.ndb.btree;
 using pst.encodables.ndb.maps;
 using pst.interfaces;
 using pst.interfaces.io;
-using pst.interfaces.ndb.allocation;
+using pst.interfaces.rawallocation;
 using pst.utilities;
 
-namespace pst.impl.ndb.allocation
+namespace pst.impl.rawallocation
 {
     class AMapBasedAllocationReserver : IAllocationReserver
     {
@@ -27,7 +27,7 @@ namespace pst.impl.ndb.allocation
                 {
                     var bits = map.Data.Value.ToBits();
 
-                    for (var i = allocationInfo.BitStartIndex; i < allocationInfo.BitEndIndex; i++)
+                    for (var i = allocationInfo.BitStartIndex; i <= allocationInfo.BitEndIndex; i++)
                     {
                         bits[i] = 1;
                     }

@@ -1,6 +1,6 @@
 ﻿using pst.encodables.ndb;
 
-namespace pst.interfaces.ndb.allocation
+namespace pst.interfaces.rawallocation
 {
     interface IStreamExtender
     {

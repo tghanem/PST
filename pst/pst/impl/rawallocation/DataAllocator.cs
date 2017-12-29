@@ -1,8 +1,8 @@
-﻿using pst.encodables.ndb;
-using pst.interfaces.ndb.allocation;
-using System;
+﻿using System;
+using pst.encodables.ndb;
+using pst.interfaces.rawallocation;
 
-namespace pst.impl.ndb.allocation
+namespace pst.impl.rawallocation
 {
     class DataAllocator : IDataAllocator
     {
