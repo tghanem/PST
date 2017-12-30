@@ -1,4 +1,5 @@
-﻿using pst.interfaces;
+﻿using System;
+using pst.interfaces;
 using System.IO;
 
 namespace pst.utilities
@@ -33,6 +34,22 @@ namespace pst.utilities
         {
             var data = new byte[size];
             valueStream.Write(data, 0, data.Length);
+            return this;
+        }
+
+        public BinaryDataGenerator Append(int data)
+        {
+            return Append(BitConverter.GetBytes(data));
+        }
+
+        public BinaryDataGenerator Append(short data)
+        {
+            return Append(BitConverter.GetBytes(data));
+        }
+
+        public BinaryDataGenerator Append(byte data)
+        {
+            valueStream.WriteByte(data);
             return this;
         }
 

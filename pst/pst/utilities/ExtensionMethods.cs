@@ -1,13 +1,59 @@
 ﻿using pst.encodables.ndb;
+using pst.encodables.ndb.btree;
 using pst.interfaces;
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace pst.utilities
 {
     static class ExtensionMethods
     {
+        public static BinaryData Encode<T>(this T[] array, IEncoder<T> typeEncoder)
+        {
+            var generator = BinaryDataGenerator.New();
+
+            foreach (var element in array)
+            {
+                generator.Append(element, typeEncoder);
+            }
+
+            return generator.GetData();
+        }
+
+        public static T[][] Slice<T>(this T[] array, int numberOfItemsInSlice)
+        {
+            var slices = new List<T[]>();
+
+            var numberOfWholeSlices = array.Length / numberOfItemsInSlice;
+
+            for (var i = 0; i < numberOfWholeSlices; i += numberOfItemsInSlice)
+            {
+                var slice = new T[numberOfItemsInSlice];
+
+                Array.Copy(array, i * numberOfItemsInSlice, slice, 0, numberOfItemsInSlice);
+
+                slices.Add(slice);
+            }
+
+            var remainingItemsInOriginalArray = array.Length % numberOfItemsInSlice;
+
+            if (remainingItemsInOriginalArray > 0)
+            {
+                var slice = new T[remainingItemsInOriginalArray];
+
+                Array.Copy(array, numberOfWholeSlices * numberOfItemsInSlice, slice, 0, remainingItemsInOriginalArray);
+
+                slices.Add(slice);
+            }
+
+            return slices.ToArray();
+        }
+
+        public static int GetBlockSize(this LBBTEntry entry)
+        {
+            return Utilities.GetTotalExternalDataBlockSize(entry.ByteCountOfRawDataInReferencedBlockExcludingTrailerAndAlignmentPadding);
+        }
+
         public static byte[] ToBytes(this int[] bits)
         {
             var bytes = new byte[bits.Length / 8];
@@ -50,42 +96,6 @@ namespace pst.utilities
             }
 
             return bits.ToArray();
-        }
-
-        public static void UpdateRegion<TType>(
-            this Stream stream,
-            IB regionOffset,
-            int regionSize,
-            IEncoder<TType> typeEncoder,
-            IDecoder<TType> typeDecoder,
-            Func<TType, TType> processRegion)
-        {
-            var originalPosition = stream.Position;
-
-            try
-            {
-                stream.Position = regionOffset;
-
-                var rawRegion = new byte[regionSize];
-
-                stream.Read(rawRegion, 0, regionSize);
-
-                var type = typeDecoder.Decode(BinaryData.OfValue(rawRegion));
-
-
-                var updatedType = processRegion(type);
-
-
-                stream.Position = regionOffset;
-
-                var encodedType = typeEncoder.Encode(updatedType);
-
-                stream.Write(encodedType.Value, 0, encodedType.Value.Length);
-            }
-            finally
-            {
-                stream.Position = originalPosition;
-            }
         }
 
         public static Root SetFileEOF(this Root root, long value)
@@ -168,6 +178,38 @@ namespace pst.utilities
                     header.RGBReserved3);
         }
 
+        public static Header IncrementBIDIndexForDataBlocks(this Header header)
+        {
+            return
+                new Header(
+                    header.Magic,
+                    header.CRCPartial,
+                    header.MagicClient,
+                    header.Version,
+                    header.ClientVersion,
+                    header.PlatformCreate,
+                    header.PlatformAccess,
+                    header.Reserved1,
+                    header.Reserved2,
+                    header.UnusedPadding,
+                    header.NextPageBID,
+                    header.Unique,
+                    header.NIDs,
+                    header.Unused,
+                    header.Root,
+                    header.AlignmentBytes,
+                    header.FMap,
+                    header.FPMap,
+                    header.Sentinel,
+                    header.CryptMethod,
+                    header.Reserved,
+                    header.NextBID + 1,
+                    header.CRCFull,
+                    header.RGBReserved2,
+                    header.BReserved,
+                    header.RGBReserved3);
+        }
+
         public static T[] DecodeMultipleItems<T>(this IDecoder<T> decoder, int numberOfItems, int itemSize, BinaryData data)
         {
             var entries = new List<T>();
@@ -180,21 +222,6 @@ namespace pst.utilities
             }
 
             return entries.ToArray();
-        }
-
-        public static int GetRemainingToNextMultipleOf(this int number, int multipleOf)
-        {
-            if (number % multipleOf == 0)
-                return 0;
-
-            if (number < multipleOf)
-                return multipleOf - number;
-
-            var nextMultipleOf =
-                (int)
-                Math.Ceiling((double)number / multipleOf) * multipleOf;
-
-            return nextMultipleOf - number;
         }
     }
 }

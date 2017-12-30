@@ -13,8 +13,17 @@ namespace pst.encodables.ndb
             Value = value;
         }
 
-        public static BID OfValue(long value)
-            => new BID(value);
+        public static BID ForInternalBlock(long bidIndex)
+        {
+            return new BID((1 << 1) & bidIndex << 2);
+        }
+
+        public static BID ForExternalBlock(long bidIndex)
+        {
+            return new BID(bidIndex << 2);
+        }
+
+        public static BID OfValue(long value) => new BID(value);
 
         public bool Equals(BID other)
         {

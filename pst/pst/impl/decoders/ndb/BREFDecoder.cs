@@ -7,7 +7,6 @@ namespace pst.impl.decoders.ndb
     class BREFDecoder : IDecoder<BREF>
     {
         private readonly IDecoder<BID> bidDecoder;
-
         private readonly IDecoder<IB> biDecoder;
 
         public BREFDecoder(IDecoder<BID> bidDecoder, IDecoder<IB> biDecoder)

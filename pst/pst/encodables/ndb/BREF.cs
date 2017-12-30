@@ -12,7 +12,6 @@
             ByteIndex = byteIndex;
         }
 
-        public static BREF OfValue(BID blockId, IB byteIndex)
-            => new BREF(blockId, byteIndex);
+        public static BREF OfValue(BID blockId, IB byteIndex) => new BREF(blockId, byteIndex);
     }
 }

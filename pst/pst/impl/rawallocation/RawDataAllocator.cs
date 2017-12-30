@@ -4,13 +4,13 @@ using pst.interfaces.rawallocation;
 
 namespace pst.impl.rawallocation
 {
-    class DataAllocator : IDataAllocator
+    class RawDataAllocator : IRawDataAllocator
     {
         private readonly IAllocationFinder allocationFinder;
         private readonly IStreamExtender streamExtender;
         private readonly IAllocationReserver allocationReserver;
 
-        public DataAllocator(
+        public RawDataAllocator(
             IAllocationFinder allocationFinder,
             IStreamExtender streamExtender,
             IAllocationReserver allocationReserver)

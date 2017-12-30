@@ -10,10 +10,10 @@ namespace pst.impl.rawallocation
 {
     class AMapBasedAllocationReserver : IAllocationReserver
     {
-        private readonly IStreamRegionUpdater<AMap> amapRegionUpdater;
+        private readonly IRegionUpdater<AMap> amapRegionUpdater;
         private readonly IHeaderUsageProvider headerUsageProvider;
 
-        public AMapBasedAllocationReserver(IStreamRegionUpdater<AMap> amapRegionUpdater, IHeaderUsageProvider headerUsageProvider)
+        public AMapBasedAllocationReserver(IRegionUpdater<AMap> amapRegionUpdater, IHeaderUsageProvider headerUsageProvider)
         {
             this.amapRegionUpdater = amapRegionUpdater;
             this.headerUsageProvider = headerUsageProvider;
@@ -21,7 +21,7 @@ namespace pst.impl.rawallocation
 
         public IB Reserve(AllocationInfo allocationInfo)
         {
-            amapRegionUpdater.UpdateRegion(
+            amapRegionUpdater.Update(
                 allocationInfo.MapOffset,
                 map =>
                 {
@@ -41,7 +41,7 @@ namespace pst.impl.rawallocation
                                 Constants.ptypeAMap,
                                 Constants.ptypeAMap,
                                 0x0000,
-                                (int)Crc32.ComputeCrc32(bytes),
+                                Crc32.ComputeCrc32(bytes),
                                 BID.OfValue(allocationInfo.MapOffset)));
                 });
 

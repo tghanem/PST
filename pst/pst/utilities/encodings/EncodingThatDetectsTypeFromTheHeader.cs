@@ -4,7 +4,7 @@ using pst.interfaces;
 
 namespace pst.utilities.encodings
 {
-    class EncodingThatDetectsTypeFromTheHeader : IBlockDataObfuscator, IBlockDataDeObfuscator
+    class EncodingThatDetectsTypeFromTheHeader : IEncoding
     {
         private readonly IHeaderReader headerReader;
 

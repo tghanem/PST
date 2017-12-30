@@ -2,8 +2,8 @@
 
 namespace pst.interfaces.rawallocation
 {
-    interface IBlockIdGenerator
+    interface IRawDataAllocator
     {
-        BID New();
+        IB Allocate(int sizeOfDataInBytes);
     }
 }

@@ -35,7 +35,7 @@ namespace pst.encodables.ndb
         public BinaryData UnusedPadding { get; }
 
         ///8
-        public BID NextPageBID { get; }
+        public long NextPageBID { get; }
 
         ///4
         public int Unique { get; }
@@ -68,7 +68,7 @@ namespace pst.encodables.ndb
         public BinaryData Reserved { get; }
 
         ///8
-        public BID NextBID { get; }
+        public long NextBID { get; }
 
         ///4
         public int CRCFull { get; }
@@ -93,7 +93,7 @@ namespace pst.encodables.ndb
             BinaryData reserved1,
             BinaryData reserved2,
             BinaryData unusedPadding,
-            BID nextPageBID,
+            long nextPageBID,
             int unique,
             NID[] nids,
             BinaryData unused,
@@ -104,7 +104,7 @@ namespace pst.encodables.ndb
             int sentinel,
             int cryptMethod,
             BinaryData reserved,
-            BID nextBID,
+            long nextBID,
             int crcFull,
             BinaryData rgbReserved2,
             BinaryData bReserved,

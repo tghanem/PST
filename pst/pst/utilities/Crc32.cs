@@ -268,7 +268,12 @@ namespace pst.utilities
             0xA8C40105, 0x646E019B, 0xEAE10678, 0x264B06E6
         };
 
-        public static uint ComputeCrc32(byte[] data)
+        public static int ComputeCrc32(BinaryData data)
+        {
+            return (int)ComputeCrc32(data.Value);
+        }
+
+        public static int ComputeCrc32(byte[] data)
         {
             var result = 0u;
 
@@ -296,7 +301,7 @@ namespace pst.utilities
                 result = CrcTableOffset32[(result ^ data[endUnalignedBytesOffset + i]) & 0x000000FF] ^ (result >> 8);
             }
 
-            return result;
+            return (int)result;
         }
     }
 }

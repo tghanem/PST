@@ -25,8 +25,7 @@ namespace pst.impl.decoders.ndb.blocks.data
             var entries = parser.TakeAndSkip(numberOfEntries * 8);
             var padding = BinaryData.Empty();
 
-            var remainingTo64Boundary =
-                (numberOfEntries * 8 + 8).GetRemainingToNextMultipleOf(64);
+            var remainingTo64Boundary = Utilities.GetRemainingToNextMultipleOf(numberOfEntries * 8 + 8, 64);
 
             if (remainingTo64Boundary > 0)
             {

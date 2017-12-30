@@ -89,6 +89,12 @@
     <Compile Include="encodables\ndb\btree\PageTrailer.cs" />
     <Compile Include="encodables\EntryId.cs" />
     <Compile Include="Folder.cs" />
+    <Compile Include="impl\blockallocation\datatree\BlockIdsWithTotalNumberOfBytesInReferencedBlocks.cs" />
+    <Compile Include="impl\blockallocation\datatree\DataTreeAllocator.cs" />
+    <Compile Include="impl\blockallocation\datatree\BlockBTreeEntryAllocator.cs" />
+    <Compile Include="impl\blockallocation\datatree\DataBlockAllocator.cs" />
+    <Compile Include="impl\blockallocation\datatree\ExternalDataBlockFactory.cs" />
+    <Compile Include="impl\blockallocation\datatree\XBlockFactory.cs" />
     <Compile Include="impl\btree\BTreeEntryFinder.cs" />
     <Compile Include="impl\converters\DataRecordToTCROWIDConverter.cs" />
     <Compile Include="impl\decoders\EntryIdDecoder.cs" />
@@ -130,6 +136,7 @@
     <Compile Include="impl\decoders\TagDecoder.cs" />
     <Compile Include="impl\DictionaryBasedCache.cs" />
     <Compile Include="impl\encoders\ndb\blocks\BlockTrailerEncoder.cs" />
+    <Compile Include="impl\encoders\ndb\blocks\ExternalDataBlockEncoder.cs" />
     <Compile Include="impl\encoders\ndb\maps\MapEncoder.cs" />
     <Compile Include="impl\encoders\ndb\RootEncoder.cs" />
     <Compile Include="impl\encoders\primitives\Int64Encoder.cs" />
@@ -159,7 +166,8 @@
     <Compile Include="impl\HeaderUsageProvider.cs" />
     <Compile Include="impl\io\BlockIdBasedDataBlockReader.cs" />
     <Compile Include="impl\io\DataReader.cs" />
-    <Compile Include="impl\io\StreamBasedRegionUpdater.cs" />
+    <Compile Include="impl\io\RegionUpdater.cs" />
+    <Compile Include="impl\io\RegionInitializer.cs" />
     <Compile Include="impl\ltp\bth\BTreeOnHeapReader.cs" />
     <Compile Include="impl\ltp\hn\HeapOnNodeItemsLoader.cs" />
     <Compile Include="impl\ltp\hn\HeapOnNodeReader.cs" />
@@ -188,7 +196,7 @@
     <Compile Include="impl\ndb\cache\DataBlockEntryFinderThatCachesTheDataBlockEntry.cs" />
     <Compile Include="impl\ndb\cache\NodeEntryFinderThatCachesTheNodeEntry.cs" />
     <Compile Include="impl\rawallocation\AMapBasedAllocationFinder.cs" />
-    <Compile Include="impl\rawallocation\DataAllocator.cs" />
+    <Compile Include="impl\rawallocation\RawDataAllocator.cs" />
     <Compile Include="impl\ndb\DataBlockEntryFinder.cs" />
     <Compile Include="impl\ndb\datatree\BIDsFromInternalDataBlockExtractor.cs" />
     <Compile Include="impl\ndb\datatree\InternalDataBlockLoader.cs" />
@@ -201,20 +209,24 @@
     <Compile Include="impl\ndb\subnodebtree\SLEntriesFromSubnodeBlockExtractor.cs" />
     <Compile Include="impl\ndb\subnodebtree\SubnodeBlockLoader.cs" />
     <Compile Include="impl\ndb\subnodebtree\SubNodesEnumerator.cs" />
+    <Compile Include="interfaces\blockallocation\datatree\IDataBlockAllocator.cs" />
+    <Compile Include="interfaces\blockallocation\datatree\IDataBlockFactory.cs" />
+    <Compile Include="interfaces\blockallocation\datatree\IDataTreeAllocator.cs" />
+    <Compile Include="interfaces\blockallocation\datatree\IBlockBTreeEntryAllocator.cs" />
     <Compile Include="interfaces\btree\IBTreeEntryFinder.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
     <Compile Include="interfaces\IBlockDataObfuscator.cs" />
     <Compile Include="interfaces\ICache.cs" />
     <Compile Include="interfaces\IHeaderUsageProvider.cs" />
     <Compile Include="interfaces\io\IDataReader.cs" />
-    <Compile Include="interfaces\io\IStreamRegionUpdater.cs" />
+    <Compile Include="interfaces\io\IRegionInitializer.cs" />
+    <Compile Include="interfaces\io\IRegionUpdater.cs" />
     <Compile Include="interfaces\ltp\IPropertyContextBasedPropertyReader.cs" />
     <Compile Include="interfaces\ltp\ITableContextBasedPropertyReader.cs" />
-    <Compile Include="interfaces\rawallocation\IBlockIdGenerator.cs" />
     <Compile Include="interfaces\ndb\DataBlockEntry.cs" />
     <Compile Include="interfaces\rawallocation\IAllocationFinder.cs" />
     <Compile Include="interfaces\rawallocation\IAllocationReserver.cs" />
-    <Compile Include="interfaces\rawallocation\IDataAllocator.cs" />
+    <Compile Include="interfaces\rawallocation\IRawDataAllocator.cs" />
     <Compile Include="interfaces\ndb\IDataBlockEntryFinder.cs" />
     <Compile Include="interfaces\ndb\IDataBlockReader.cs" />
     <Compile Include="interfaces\ndb\IExternalDataBlockReader.cs" />
@@ -271,6 +283,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="utilities\BinaryDataGenerator.cs" />
     <Compile Include="utilities\BinaryDataParser.cs" />
+    <Compile Include="utilities\BlockSignature.cs" />
     <Compile Include="utilities\Crc32.cs" />
     <Compile Include="utilities\encodings\CyclicEncoding.cs" />
     <Compile Include="utilities\encodings\EncodingThatDetectsTypeFromTheHeader.cs" />
@@ -280,11 +293,9 @@
     <Compile Include="utilities\encodings\PermutativeEncoding.cs" />
     <Compile Include="impl\messaging\PropertyTypeMetadataProvider.cs" />
     <Compile Include="encodables\Tag.cs" />
+    <Compile Include="utilities\Utilities.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="impl\ndb\rawallocation\" />
-    <Folder Include="interfaces\ndb\rawallocation\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

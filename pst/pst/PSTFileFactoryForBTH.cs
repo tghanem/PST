@@ -77,7 +77,7 @@ namespace pst
                         CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
                         CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
                         CreateDataBlockReader(dataStream, dataBlockEntryCache),
-                        CreateBlockDataDeObfuscator(dataStream)));
+                        CreateBlockEncoding(dataStream)));
         }
     }
 }

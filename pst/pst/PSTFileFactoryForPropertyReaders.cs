@@ -102,7 +102,7 @@ namespace pst
                     new ExternalDataBlockDecoder(
                         new BlockTrailerDecoder(
                             new BIDDecoder()),
-                        CreateBlockDataDeObfuscator(dataStream)),
+                        CreateBlockEncoding(dataStream)),
                     CreateDataBlockReader(dataStream, dataBlockEntryCache),
                     CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
                     CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),

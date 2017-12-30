@@ -33,7 +33,7 @@ namespace pst.impl.decoders.ndb.blocks.data
                 blockDataDeObfuscator.DeObfuscate(encodedBlockData, trailer.BlockId);
 
             var padding =
-                parser.TakeAndSkip(trailer.AmountOfData.GetRemainingToNextMultipleOf(64));
+                parser.TakeAndSkip(Utilities.GetRemainingToNextMultipleOf(trailer.AmountOfData, 64));
 
             return
                 new ExternalDataBlock(decodedBlockData, padding, trailer);

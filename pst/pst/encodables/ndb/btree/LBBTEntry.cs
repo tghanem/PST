@@ -19,16 +19,5 @@ namespace pst.encodables.ndb.btree
             NumberOfReferencesToThisBlock = numberOfReferencesToThisBlock;
             Padding = padding;
         }
-
-        public int GetBlockSize()
-        {
-            var rawDataSize =
-                ByteCountOfRawDataInReferencedBlockExcludingTrailerAndAlignmentPadding;
-
-            var paddingSize =
-                (rawDataSize + 16).GetRemainingToNextMultipleOf(64);
-
-            return rawDataSize + paddingSize + 16;
-        }
     }
 }

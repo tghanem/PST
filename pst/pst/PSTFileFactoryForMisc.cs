@@ -10,7 +10,7 @@ namespace pst
 {
     public partial class PSTFile
     {
-        private static IBlockDataDeObfuscator CreateBlockDataDeObfuscator(
+        private static IEncoding CreateBlockEncoding(
             Stream dataStream)
         {
             return
@@ -29,7 +29,8 @@ namespace pst
                     CreateHeaderUsageProvider(dataStream));
         }
 
-        private static IHeaderUsageProvider CreateHeaderUsageProvider(Stream dataStream)
+        private static IHeaderUsageProvider CreateHeaderUsageProvider(
+            Stream dataStream)
         {
             return
                 new HeaderUsageProvider(
@@ -41,12 +42,11 @@ namespace pst
         {
             return
                 new HeaderDecoder(
+                    new NIDDecoder(),
                     new RootDecoder(
                         new BREFDecoder(
                             new BIDDecoder(),
-                            new IBDecoder())),
-                    new BIDDecoder(),
-                    new NIDDecoder());
+                            new IBDecoder())));
         }
     }
 }

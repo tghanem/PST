@@ -31,8 +31,7 @@ namespace pst.impl.decoders.ndb.blocks.subnode
             var entries = parser.TakeAndSkip(numberOfEntries * entrySize);
             var entriesPadding = BinaryData.Empty();
 
-            var remainingTo64Boundary =
-                (numberOfEntries * entrySize + 8).GetRemainingToNextMultipleOf(64);
+            var remainingTo64Boundary = Utilities.GetRemainingToNextMultipleOf(numberOfEntries * entrySize + 8, 64);
 
             if (remainingTo64Boundary > 0)
             {

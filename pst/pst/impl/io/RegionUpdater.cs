@@ -7,14 +7,14 @@ using System.IO;
 
 namespace pst.impl.io
 {
-    class StreamBasedRegionUpdater<TType> : IStreamRegionUpdater<TType>
+    class RegionUpdater<TType> : IRegionUpdater<TType>
     {
         private readonly Stream stream;
         private readonly IEncoder<TType> typeEncoder;
         private readonly IDecoder<TType> typeDecoder;
         private readonly int typeSize;
 
-        public StreamBasedRegionUpdater(
+        public RegionUpdater(
             Stream stream,
             IEncoder<TType> typeEncoder,
             IDecoder<TType> typeDecoder,
@@ -26,7 +26,7 @@ namespace pst.impl.io
             this.typeSize = typeSize;
         }
 
-        public void UpdateRegion(IB regionOffset, Func<TType, TType> processRegion)
+        public void Update(IB regionOffset, Func<TType, TType> processRegion)
         {
             var originalPosition = stream.Position;
 
