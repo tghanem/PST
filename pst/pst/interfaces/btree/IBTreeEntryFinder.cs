@@ -1,11 +1,9 @@
-﻿using System;
-using pst.core;
+﻿using pst.core;
+using System;
 
 namespace pst.interfaces.btree
 {
-    public interface IBTreeEntryFinder<TEntryKey, TEntry, TNodeReference>
-        where TEntry : class
-        where TEntryKey : IComparable<TEntryKey>
+    interface IBTreeEntryFinder<TEntryKey, TEntry, TNodeReference> where TEntryKey : IComparable<TEntryKey>
     {
         Maybe<TEntry> Find(TEntryKey key, TNodeReference rootNodeReference);
     }

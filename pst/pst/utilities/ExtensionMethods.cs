@@ -1,5 +1,6 @@
 ﻿using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
+using pst.impl;
 using pst.interfaces;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,36 @@ namespace pst.utilities
             }
 
             return generator.GetData();
+        }
+
+        public static T[][] Slice<T>(this T[] array, int itemSize, int maximumSliceSize)
+        {
+            return array.Slice(new FuncBasedExtractor<T, int>(i => itemSize), maximumSliceSize);
+        }
+
+        public static T[][] Slice<T>(this T[] array, IExtractor<T, int> itemSizeExtractor, int maximumSliceSize)
+        {
+            var slices = new List<T[]>();
+
+            var currentSlice = new List<T>();
+            var sizeOfCurrentSlice = 0;
+
+            foreach (var item in array)
+            {
+                var itemSize = itemSizeExtractor.Extract(item);
+
+                if (sizeOfCurrentSlice + itemSize > maximumSliceSize)
+                {
+                    slices.Add(currentSlice.ToArray());
+
+                    currentSlice = new List<T>();
+                    sizeOfCurrentSlice = 0;
+                }
+
+                currentSlice.Add(item);
+            }
+
+            return slices.ToArray();
         }
 
         public static T[][] Slice<T>(this T[] array, int numberOfItemsInSlice)

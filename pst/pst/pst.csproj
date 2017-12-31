@@ -172,6 +172,7 @@
     <Compile Include="impl\io\DataReader.cs" />
     <Compile Include="impl\io\RegionUpdater.cs" />
     <Compile Include="impl\io\RegionInitializer.cs" />
+    <Compile Include="impl\ltp\bth\BTreeOnHeapGenerator.cs" />
     <Compile Include="impl\ltp\bth\BTreeOnHeapReader.cs" />
     <Compile Include="impl\ltp\hn\ExternalDataBlockForHeapOnNode.cs" />
     <Compile Include="impl\ltp\hn\HeapOnNodeGenerator.cs" />
@@ -220,6 +221,7 @@
     <Compile Include="interfaces\blockallocation\datatree\IDataTreeAllocator.cs" />
     <Compile Include="interfaces\blockallocation\datatree\IBlockBTreeEntryAllocator.cs" />
     <Compile Include="interfaces\btree\IBTreeEntryFinder.cs" />
+    <Compile Include="interfaces\btree\IBTreeGenerator.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
     <Compile Include="interfaces\IBlockDataObfuscator.cs" />
     <Compile Include="interfaces\ICache.cs" />
@@ -228,6 +230,7 @@
     <Compile Include="interfaces\io\IDataReader.cs" />
     <Compile Include="interfaces\io\IRegionInitializer.cs" />
     <Compile Include="interfaces\io\IRegionUpdater.cs" />
+    <Compile Include="interfaces\ltp\bth\IBTreeOnHeapGenerator.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeEncoder.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeGenerator.cs" />
     <Compile Include="interfaces\ltp\IPropertyContextBasedPropertyReader.cs" />

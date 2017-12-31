@@ -5,11 +5,7 @@ using System;
 
 namespace pst.impl.btree
 {
-    class BTreeEntryFinder<TEntryKey, TLeafEntry, TIntermediateEntry, TNodeReference, TNode>
-        : IBTreeEntryFinder<TEntryKey, TLeafEntry, TNodeReference>
-
-        where TEntryKey : IComparable<TEntryKey>
-        where TLeafEntry : class
+    class BTreeEntryFinder<TEntryKey, TLeafEntry, TIntermediateEntry, TNodeReference, TNode> : IBTreeEntryFinder<TEntryKey, TLeafEntry, TNodeReference> where TEntryKey : IComparable<TEntryKey>
     {
         private readonly IExtractor<TLeafEntry, TEntryKey> entryKeyFromLeafEntryExtractor;
         private readonly IExtractor<TIntermediateEntry, TEntryKey> entryKeyFromIntermediateEntryExtractor;
