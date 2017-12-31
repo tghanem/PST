@@ -1,33 +1,20 @@
-﻿using pst.interfaces;
+﻿using pst.encodables.ndb.btree;
+using pst.interfaces;
 using pst.utilities;
-using pst.encodables.ndb;
-using pst.encodables.ndb.btree;
 
 namespace pst.impl.encoders.ndb.btree
 {
     class PageTrailerEncoder : IEncoder<PageTrailer>
     {
-        private readonly IEncoder<int> int32Encoder;
-
-        private readonly IEncoder<BID> bidEncoder;
-
-        public PageTrailerEncoder(IEncoder<int> int32Encoder, IEncoder<BID> bidEncoder)
-        {
-            this.int32Encoder = int32Encoder;
-            this.bidEncoder = bidEncoder;
-        }
-
         public BinaryData Encode(PageTrailer value)
         {
-            var generator = BinaryDataGenerator.New();
-
             return
-                generator
-                .Append(value.PageType, int32Encoder, 1)
-                .Append(value.PageTypeRepeat, int32Encoder, 1)
-                .Append(value.PageSignature, int32Encoder, 2)
-                .Append(value.Crc32ForPageData, int32Encoder)
-                .Append(value.PageBlockId, bidEncoder)
+                BinaryDataGenerator.New()
+                .Append((byte)value.PageType)
+                .Append((byte)value.PageTypeRepeat)
+                .Append((short)value.PageSignature)
+                .Append(value.Crc32ForPageData)
+                .Append(value.PageBlockId.Value)
                 .GetData();
         }
     }

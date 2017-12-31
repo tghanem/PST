@@ -9,7 +9,6 @@ using pst.impl.encoders.ndb;
 using pst.impl.encoders.ndb.blocks;
 using pst.impl.encoders.ndb.btree;
 using pst.impl.encoders.ndb.maps;
-using pst.impl.encoders.primitives;
 using pst.impl.io;
 using pst.impl.ltp.hn;
 using pst.impl.rawallocation;
@@ -149,9 +148,7 @@ namespace pst
         {
             return
                 new MapEncoder(
-                    new PageTrailerEncoder(
-                        new Int32Encoder(),
-                        new BIDEncoder()));
+                    new PageTrailerEncoder());
         }
     }
 }

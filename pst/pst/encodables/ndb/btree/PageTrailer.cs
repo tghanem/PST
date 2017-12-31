@@ -2,14 +2,19 @@
 {
     class PageTrailer
     {
+        //1
         public int PageType { get; }
 
+        //1
         public int PageTypeRepeat { get; }
 
+        //2
         public int PageSignature { get; }
 
+        //4
         public int Crc32ForPageData { get; }
 
+        //8
         public BID PageBlockId { get; }
 
         public PageTrailer(int pageType, int pageTypeRepeat, int pageSignature, int crc32ForPageData, BID pageBlockId)

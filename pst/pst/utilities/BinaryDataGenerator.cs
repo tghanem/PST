@@ -33,6 +33,9 @@ namespace pst.utilities
         public BinaryDataGenerator Append(short data)
             => Append(BitConverter.GetBytes(data));
 
+        public BinaryDataGenerator Append(long data)
+            => Append(BitConverter.GetBytes(data));
+
         public BinaryDataGenerator Append(BinaryData data)
             => Append(data.Value);
 

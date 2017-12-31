@@ -144,7 +144,6 @@
     <Compile Include="impl\encoders\ndb\blocks\ExternalDataBlockEncoder.cs" />
     <Compile Include="impl\encoders\ndb\maps\MapEncoder.cs" />
     <Compile Include="impl\encoders\ndb\RootEncoder.cs" />
-    <Compile Include="impl\encoders\primitives\Int64Encoder.cs" />
     <Compile Include="impl\decoders\ndb\BIDDecoder.cs" />
     <Compile Include="impl\decoders\ndb\IBDecoder.cs" />
     <Compile Include="impl\decoders\ndb\BREFDecoder.cs" />
@@ -162,7 +161,6 @@
     <Compile Include="impl\encoders\ndb\btree\IBBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\ndb\btree\INBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\ndb\btree\PageTrailerEncoder.cs" />
-    <Compile Include="impl\encoders\primitives\Int32Encoder.cs" />
     <Compile Include="impl\encoders\ndb\btree\LBBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\ndb\btree\LNBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\ndb\NIDEncoder.cs" />
