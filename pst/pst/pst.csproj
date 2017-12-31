@@ -135,6 +135,11 @@
     <Compile Include="impl\decoders\ndb\RootDecoder.cs" />
     <Compile Include="impl\decoders\TagDecoder.cs" />
     <Compile Include="impl\DictionaryBasedCache.cs" />
+    <Compile Include="impl\encoders\ltp\hn\HeapOnNodeEncoder.cs" />
+    <Compile Include="impl\encoders\ltp\hn\HNBITMAPHDREncoder.cs" />
+    <Compile Include="impl\encoders\ltp\hn\HNHDREncoder.cs" />
+    <Compile Include="impl\encoders\ltp\hn\HNPAGEHDREncoder.cs" />
+    <Compile Include="impl\encoders\ltp\hn\HNPAGEMAPEncoder.cs" />
     <Compile Include="impl\encoders\ndb\blocks\BlockTrailerEncoder.cs" />
     <Compile Include="impl\encoders\ndb\blocks\ExternalDataBlockEncoder.cs" />
     <Compile Include="impl\encoders\ndb\maps\MapEncoder.cs" />
@@ -162,6 +167,7 @@
     <Compile Include="impl\encoders\ndb\btree\LNBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\ndb\NIDEncoder.cs" />
     <Compile Include="impl\FuncBasedExtractor.cs" />
+    <Compile Include="impl\FuncBasedFactory.cs" />
     <Compile Include="impl\HeaderBasedStringEncoder.cs" />
     <Compile Include="impl\HeaderUsageProvider.cs" />
     <Compile Include="impl\io\BlockIdBasedDataBlockReader.cs" />
@@ -169,6 +175,8 @@
     <Compile Include="impl\io\RegionUpdater.cs" />
     <Compile Include="impl\io\RegionInitializer.cs" />
     <Compile Include="impl\ltp\bth\BTreeOnHeapReader.cs" />
+    <Compile Include="impl\ltp\hn\ExternalDataBlockForHeapOnNode.cs" />
+    <Compile Include="impl\ltp\hn\HeapOnNodeGenerator.cs" />
     <Compile Include="impl\ltp\hn\HeapOnNodeItemsLoader.cs" />
     <Compile Include="impl\ltp\hn\HeapOnNodeReader.cs" />
     <Compile Include="impl\ltp\pc\PropertyContextBasedPropertyReader.cs" />
@@ -217,10 +225,13 @@
     <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
     <Compile Include="interfaces\IBlockDataObfuscator.cs" />
     <Compile Include="interfaces\ICache.cs" />
+    <Compile Include="interfaces\IFactory.cs" />
     <Compile Include="interfaces\IHeaderUsageProvider.cs" />
     <Compile Include="interfaces\io\IDataReader.cs" />
     <Compile Include="interfaces\io\IRegionInitializer.cs" />
     <Compile Include="interfaces\io\IRegionUpdater.cs" />
+    <Compile Include="interfaces\ltp\hn\IHeapOnNodeEncoder.cs" />
+    <Compile Include="interfaces\ltp\hn\IHeapOnNodeGenerator.cs" />
     <Compile Include="interfaces\ltp\IPropertyContextBasedPropertyReader.cs" />
     <Compile Include="interfaces\ltp\ITableContextBasedPropertyReader.cs" />
     <Compile Include="interfaces\ndb\DataBlockEntry.cs" />

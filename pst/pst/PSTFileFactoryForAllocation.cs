@@ -4,14 +4,18 @@ using pst.encodables.ndb.maps;
 using pst.impl;
 using pst.impl.blockallocation.datatree;
 using pst.impl.decoders.ndb;
+using pst.impl.encoders.ltp.hn;
 using pst.impl.encoders.ndb;
 using pst.impl.encoders.ndb.blocks;
 using pst.impl.encoders.ndb.btree;
 using pst.impl.encoders.ndb.maps;
 using pst.impl.encoders.primitives;
 using pst.impl.io;
+using pst.impl.ltp.hn;
 using pst.impl.rawallocation;
+using pst.interfaces;
 using pst.interfaces.blockallocation.datatree;
+using pst.interfaces.ltp.hn;
 using pst.interfaces.rawallocation;
 using pst.utilities;
 using System.Collections.Generic;
@@ -21,6 +25,22 @@ namespace pst
 {
     public partial class PSTFile
     {
+        private static IFactory<IHeapOnNodeGenerator> CreateHeapOnNodeGeneratorFactory(
+            Stream dataStream,
+            List<LBBTEntry> allocatedBlockBTreeEntries)
+        {
+            return
+                new FuncBasedFactory<IHeapOnNodeGenerator>(
+                    () =>
+                    new HeapOnNodeGenerator(
+                        new HeapOnNodeEncoder(
+                            new HNHDREncoder(),
+                            new HNBITMAPHDREncoder(),
+                            new HNPAGEHDREncoder(),
+                            new HNPAGEMAPEncoder()),
+                        CreateDataTreeAllocator(dataStream, allocatedBlockBTreeEntries)));
+        }
+
         private static IDataTreeAllocator CreateDataTreeAllocator(
             Stream dataStream,
             List<LBBTEntry> allocatedBlockBTreeEntries)

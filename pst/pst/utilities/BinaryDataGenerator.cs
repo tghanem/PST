@@ -27,24 +27,26 @@ namespace pst.utilities
         public BinaryDataGenerator Append<TType>(TType typeValue, IEncoder<TType> typeEncoder, int countOfEncodedDataToAppend)
             => Append(typeEncoder.Encode(typeValue).Take(countOfEncodedDataToAppend));
 
+        public BinaryDataGenerator Append(int data)
+            => Append(BitConverter.GetBytes(data));
+
+        public BinaryDataGenerator Append(short data)
+            => Append(BitConverter.GetBytes(data));
+
         public BinaryDataGenerator Append(BinaryData data)
             => Append(data.Value);
 
-        public BinaryDataGenerator FillTo(int size)
+        public BinaryDataGenerator Append(BinaryData[] data)
         {
-            var data = new byte[size];
-            valueStream.Write(data, 0, data.Length);
+            Array.ForEach(data, d => Append(d.Value));
             return this;
         }
 
-        public BinaryDataGenerator Append(int data)
+        public BinaryDataGenerator FillTo(int size)
         {
-            return Append(BitConverter.GetBytes(data));
-        }
-
-        public BinaryDataGenerator Append(short data)
-        {
-            return Append(BitConverter.GetBytes(data));
+            var data = new byte[Math.Abs(size - valueStream.Length)];
+            valueStream.Write(data, 0, data.Length);
+            return this;
         }
 
         public BinaryDataGenerator Append(byte data)

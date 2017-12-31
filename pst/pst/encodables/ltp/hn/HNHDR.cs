@@ -1,4 +1,6 @@
-﻿namespace pst.encodables.ltp.hn
+﻿using pst.utilities;
+
+namespace pst.encodables.ltp.hn
 {
     class HNHDR
     {
@@ -15,9 +17,9 @@
         public HID UserRoot { get; }
 
         ///4
-        public int FillLevel { get; }
+        public BinaryData FillLevel { get; }
 
-        public HNHDR(int pageMapOffset, int blockSignature, int clientSignature, HID userRoot, int fillLevel)
+        public HNHDR(int pageMapOffset, int blockSignature, int clientSignature, HID userRoot, BinaryData fillLevel)
         {
             PageMapOffset = pageMapOffset;
             BlockSignature = blockSignature;

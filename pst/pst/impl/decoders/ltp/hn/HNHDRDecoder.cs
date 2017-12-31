@@ -23,7 +23,7 @@ namespace pst.impl.decoders.ltp.hn
                     parser.TakeAndSkip(1).ToInt32(),
                     parser.TakeAndSkip(1).ToInt32(),
                     parser.TakeAndSkip(4, hidDecoder),
-                    parser.TakeAndSkip(4).ToInt32());
+                    parser.TakeAndSkip(4));
         }
     }
 }

@@ -32,7 +32,7 @@ namespace pst.impl.blockallocation.datatree
                 new LBBTEntry(
                     BREF.OfValue(blockId, blockOffset),
                     rawDataSize,
-                    numberOfReferencesToThisBlock: 1,
+                    numberOfReferencesToThisBlock: 2,
                     padding: BinaryData.OfSize(4)));
 
             return blockId;

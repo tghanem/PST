@@ -24,6 +24,54 @@ namespace pst.utilities
         public const int ptypeFPMap = 0x85;
         public const int ptypeDL = 0x86;
 
+        //At least 3584 bytes free / data block does not exist
+        public const int FILL_LEVEL_EMPTY = 0x0;
+
+        //2560-3584 bytes free
+        public const int FILL_LEVEL_1 = 0x1;
+
+        //2048-2560 bytes free
+        public const int FILL_LEVEL_2 = 0x2;
+
+        //1792-2048 bytes free
+        public const int FILL_LEVEL_3 = 0x3;
+
+        //1536-1792 bytes free
+        public const int FILL_LEVEL_4 = 0x4;
+
+        //1280-1536 bytes free
+        public const int FILL_LEVEL_5 = 0x5;
+
+        //1024-1280 bytes free
+        public const int FILL_LEVEL_6 = 0x6;
+
+        //768-1024 bytes free
+        public const int FILL_LEVEL_7 = 0x7;
+
+        //512-768 bytes free
+        public const int FILL_LEVEL_8 = 0x8;
+
+        //256-512 bytes free
+        public const int FILL_LEVEL_9 = 0x9;
+
+        //128-256 bytes free
+        public const int FILL_LEVEL_10 = 0xA;
+
+        //64-128 bytes free
+        public const int FILL_LEVEL_11 = 0xB;
+
+        //32-64 bytes free
+        public const int FILL_LEVEL_12 = 0xC;
+
+        //16-32 bytes free
+        public const int FILL_LEVEL_13 = 0xD;
+
+        //8-16 bytes free
+        public const int FILL_LEVEL_14 = 0xE;
+
+        //Data block has less than 8 bytes free
+        public const int FILL_LEVEL_FULL = 0xF;
+
         public const int PtypInteger16 = 0x0002;
         public const int PtypInteger32 = 0x0003;
         public const int PtypFloating32 = 0x0004;
