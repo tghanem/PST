@@ -1,6 +1,8 @@
-﻿namespace pst.encodables.ndb.blocks.subnode
+﻿using System;
+
+namespace pst.encodables.ndb.blocks.subnode
 {
-    class SLEntry
+    class SLEntry : IComparable<SLEntry>
     {
         ///8
         public NID LocalSubnodeId { get; }
@@ -16,6 +18,11 @@
             LocalSubnodeId = localSubnodeId;
             DataBlockId = dataBlockid;
             SubnodeBlockId = subnodeDataBlockId;
+        }
+
+        public int CompareTo(SLEntry other)
+        {
+            return LocalSubnodeId.CompareTo(other.LocalSubnodeId);
         }
     }
 }

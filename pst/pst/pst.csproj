@@ -95,6 +95,7 @@
     <Compile Include="impl\blockallocation\datatree\DataBlockAllocator.cs" />
     <Compile Include="impl\blockallocation\datatree\ExternalDataBlockFactory.cs" />
     <Compile Include="impl\blockallocation\datatree\XBlockFactory.cs" />
+    <Compile Include="impl\blockallocation\subnodebtree\SubnodeBTreeAllocator.cs" />
     <Compile Include="impl\btree\BTreeEntryFinder.cs" />
     <Compile Include="impl\converters\DataRecordToTCROWIDConverter.cs" />
     <Compile Include="impl\decoders\EntryIdDecoder.cs" />
