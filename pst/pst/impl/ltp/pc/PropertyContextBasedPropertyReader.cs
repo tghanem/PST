@@ -1,7 +1,7 @@
 ﻿using pst.core;
+using pst.interfaces.ltp;
 using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.pc;
-using pst.interfaces.messaging;
 using pst.interfaces.ndb;
 
 namespace pst.impl.ltp.pc
@@ -9,17 +9,17 @@ namespace pst.impl.ltp.pc
     class PropertyContextBasedPropertyReader : IPropertyContextBasedPropertyReader
     {
         private readonly IBTreeOnHeapReader<PropertyId> bthReader;
-        private readonly IPropertyValueProcessor propertyValueProcessor;
+        private readonly IPropertyValueReader propertyValueReader;
 
         public PropertyContextBasedPropertyReader(
             IBTreeOnHeapReader<PropertyId> bthReader,
-            IPropertyValueProcessor propertyValueProcessor)
+            IPropertyValueReader propertyValueReader)
         {
             this.bthReader = bthReader;
-            this.propertyValueProcessor = propertyValueProcessor;
+            this.propertyValueReader = propertyValueReader;
         }
 
-        public Maybe<PropertyValue> ReadProperty(NodePath nodePath, PropertyTag propertyTag)
+        public Maybe<PropertyValue> Read(NodePath nodePath, PropertyTag propertyTag)
         {
             var dataRecord =
                 bthReader.ReadDataRecord(nodePath, propertyTag.Id);
@@ -30,7 +30,7 @@ namespace pst.impl.ltp.pc
             }
 
             return
-                propertyValueProcessor.Process(
+                propertyValueReader.Read(
                     nodePath,
                     propertyTag.Type,
                     dataRecord.Value.Data.Take(2, 4));

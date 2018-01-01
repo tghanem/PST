@@ -91,13 +91,13 @@ namespace pst
                     CreatePropertyValueProcessor(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 
-        private static IPropertyValueProcessor CreatePropertyValueProcessor(
+        private static IPropertyValueReader CreatePropertyValueProcessor(
             Stream dataStream,
             ICache<NodePath, NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
-                new PropertyValueProcessor(
+                new PropertyValueReader(
                     new HNIDDecoder(
                         new HIDDecoder(),
                         new NIDDecoder()),
@@ -108,8 +108,7 @@ namespace pst
                     CreateDataBlockReader(dataStream, dataBlockEntryCache),
                     CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
                     CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    new PropertyTypeMetadataProvider());
+                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
     }
 }

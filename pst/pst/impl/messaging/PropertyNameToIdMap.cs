@@ -26,7 +26,7 @@ namespace pst.impl.messaging
         public Maybe<PropertyId> GetPropertyId(Guid propertySet, int numericalId)
         {
             var entryStream =
-                propertyContextBasedPropertyReader.ReadProperty(
+                propertyContextBasedPropertyReader.Read(
                     NodePath.OfValue(Constants.NID_NAME_TO_ID_MAP),
                     MAPIProperties.PidTagNameidStreamEntry);
 
@@ -56,12 +56,12 @@ namespace pst.impl.messaging
         public Maybe<PropertyId> GetPropertyId(Guid propertySet, string propertyName)
         {
             var entryStream =
-                propertyContextBasedPropertyReader.ReadProperty(
+                propertyContextBasedPropertyReader.Read(
                     NodePath.OfValue(Constants.NID_NAME_TO_ID_MAP),
                     MAPIProperties.PidTagNameidStreamEntry);
 
             var stringStream =
-                propertyContextBasedPropertyReader.ReadProperty(
+                propertyContextBasedPropertyReader.Read(
                     NodePath.OfValue(Constants.NID_NAME_TO_ID_MAP),
                     MAPIProperties.PidTagNameidStreamString);
 

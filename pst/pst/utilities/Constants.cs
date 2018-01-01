@@ -15,6 +15,7 @@ namespace pst.utilities
         public const int NID_TYPE_ATTACHMENT = 0x05;
 
         public const int NID_TYPE_HID = 0x00;
+        public const int NID_TYPE_INTERNAL = 0x01;
 
         public const int ptypeBBT = 0x80;
         public const int ptypeNBT = 0x81;
@@ -23,6 +24,16 @@ namespace pst.utilities
         public const int ptypeAMap = 0x84;
         public const int ptypeFPMap = 0x85;
         public const int ptypeDL = 0x86;
+
+        public const int bTypeReserved1 = 0x6C;
+        public const int bTypeTC = 0x7C;
+        public const int bTypeReserved2 = 0x8C;
+        public const int bTypeReserved3 = 0x9C;
+        public const int bTypeReserved4 = 0xA5;
+        public const int bTypeReserved5 = 0xAC;
+        public const int bTypeBTH = 0xB5;
+        public const int bTypePC = 0xBC;
+        public const int bTypeReserved6 = 0xCC;
 
         //At least 3584 bytes free / data block does not exist
         public const int FILL_LEVEL_EMPTY = 0x0;

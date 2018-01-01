@@ -7,10 +7,14 @@ namespace pst.encodables.ltp.hn
     {
         private Maybe<HID> hid;
         private Maybe<NID> nid;
-        
-        public HNID(HID hid, NID nid)
+
+        public HNID(HID hid)
         {
             this.hid = hid;
+        }
+
+        public HNID(NID nid)
+        {
             this.nid = nid;
         }
 

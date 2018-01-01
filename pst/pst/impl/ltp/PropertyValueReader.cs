@@ -5,16 +5,15 @@ using pst.encodables.ndb.blocks.data;
 using pst.interfaces;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.hn;
-using pst.interfaces.messaging;
 using pst.interfaces.ndb;
 using pst.utilities;
 using System;
 using System.IO;
 using System.Linq;
 
-namespace pst.impl.messaging
+namespace pst.impl.ltp
 {
-    class PropertyValueProcessor : IPropertyValueProcessor
+    class PropertyValueReader : IPropertyValueReader
     {
         private readonly IDecoder<HNID> hnidDecoder;
         private readonly IDecoder<ExternalDataBlock> externalDataBlockDecoder;
@@ -22,32 +21,28 @@ namespace pst.impl.messaging
         private readonly IDataBlockEntryFinder dataBlockEntryFinder;
         private readonly IHeapOnNodeReader heapOnNodeReader;
         private readonly INodeEntryFinder nodeEntryFinder;
-        private readonly IPropertyTypeMetadataProvider propertyTypeMetadataProvider;
 
-        public PropertyValueProcessor(
+        public PropertyValueReader(
             IDecoder<HNID> hnidDecoder,
             IDecoder<ExternalDataBlock> externalDataBlockDecoder,
             IDataBlockReader dataBlockReader,
             IDataBlockEntryFinder dataBlockEntryFinder,
             INodeEntryFinder nodeEntryFinder,
-            IHeapOnNodeReader heapOnNodeReader,
-            IPropertyTypeMetadataProvider propertyTypeMetadataProvider)
+            IHeapOnNodeReader heapOnNodeReader)
         {
             this.hnidDecoder = hnidDecoder;
             this.externalDataBlockDecoder = externalDataBlockDecoder;
             this.heapOnNodeReader = heapOnNodeReader;
             this.nodeEntryFinder = nodeEntryFinder;
             this.dataBlockEntryFinder = dataBlockEntryFinder;
-            this.propertyTypeMetadataProvider = propertyTypeMetadataProvider;
             this.dataBlockReader = dataBlockReader;
         }
 
-        public PropertyValue Process(NodePath nodePath, PropertyType propertyType, BinaryData propertyValue)
+        public PropertyValue Read(NodePath nodePath, PropertyType propertyType, BinaryData propertyValue)
         {
-            if (propertyTypeMetadataProvider.IsFixedLength(propertyType))
+            if (propertyType.IsFixedLength())
             {
-                var size =
-                    propertyTypeMetadataProvider.GetFixedLengthTypeSize(propertyType);
+                var size = propertyType.GetFixedLengthTypeSize();
 
                 if (size <= 4)
                 {
@@ -61,13 +56,7 @@ namespace pst.impl.messaging
                 return new PropertyValue(heapItem);
             }
 
-            if (propertyTypeMetadataProvider.IsMultiValueFixedLength(propertyType))
-            {
-                return new PropertyValue(propertyValue);
-            }
-
-            if (propertyTypeMetadataProvider.IsVariableLength(propertyType) ||
-                propertyTypeMetadataProvider.IsMultiValueVariableLength(propertyType))
+            if (propertyType.IsMultiValueFixedLength() || propertyType.IsVariableLength() || propertyType.IsMultiValueVariableLength())
             {
                 var hnid = hnidDecoder.Decode(propertyValue);
 

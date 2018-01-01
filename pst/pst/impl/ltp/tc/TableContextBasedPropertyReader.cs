@@ -1,7 +1,6 @@
 ﻿using pst.core;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.tc;
-using pst.interfaces.messaging;
 using pst.interfaces.ndb;
 
 namespace pst.impl.ltp.tc
@@ -9,17 +8,17 @@ namespace pst.impl.ltp.tc
     class TableContextBasedPropertyReader<TRowId> : ITableContextBasedPropertyReader<TRowId>
     {
         private readonly IRowMatrixReader<TRowId> rowMatrixReader;
-        private readonly IPropertyValueProcessor propertyValueProcessor;
+        private readonly IPropertyValueReader propertyValueReader;
 
         public TableContextBasedPropertyReader(
             IRowMatrixReader<TRowId> rowMatrixReader,
-            IPropertyValueProcessor propertyValueProcessor)
+            IPropertyValueReader propertyValueReader)
         {
             this.rowMatrixReader = rowMatrixReader;
-            this.propertyValueProcessor = propertyValueProcessor;
+            this.propertyValueReader = propertyValueReader;
         }
 
-        public Maybe<PropertyValue> ReadProperty(NodePath nodePath, TRowId rowId, PropertyTag propertyTag)
+        public Maybe<PropertyValue> Read(NodePath nodePath, TRowId rowId, PropertyTag propertyTag)
         {
             var row = rowMatrixReader.GetRow(nodePath, rowId);
 
@@ -35,7 +34,7 @@ namespace pst.impl.ltp.tc
 
             var propertyValue = row.Value.Values[propertyTag.Value];
 
-            return propertyValueProcessor.Process(nodePath, propertyTag.Type, propertyValue);
+            return propertyValueReader.Read(nodePath, propertyTag.Type, propertyValue);
         }
     }
 }

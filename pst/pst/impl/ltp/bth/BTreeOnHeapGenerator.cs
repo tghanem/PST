@@ -13,28 +13,21 @@ namespace pst.impl.ltp.bth
     {
         private const int MaximumIndexOrLeafBlockSize = 3580;
 
-        private readonly int keySize;
-        private readonly int valueSize;
-
         private readonly IEncoder<HID> hidEncoder;
         private readonly IEncoder<TKey> keyEncoder;
         private readonly IEncoder<TValue> valueEncoder;
 
         public BTreeOnHeapGenerator(
-            int keySize,
-            int valueSize,
             IEncoder<HID> hidEncoder,
             IEncoder<TKey> keyEncoder,
             IEncoder<TValue> valueEncoder)
         {
-            this.keySize = keySize;
-            this.valueSize = valueSize;
             this.hidEncoder = hidEncoder;
             this.keyEncoder = keyEncoder;
             this.valueEncoder = valueEncoder;
         }
 
-        public HID Generate(Tuple<TKey, TValue>[] dataRecords, IHeapOnNodeGenerator hnGenerator)
+        public void Generate(int keySize, int valueSize, Tuple<TKey, TValue>[] dataRecords, IHeapOnNodeGenerator hnGenerator)
         {
             var orderedDataRecords = dataRecords.OrderBy(t => t.Item1).ToArray();
 
@@ -44,7 +37,9 @@ namespace pst.impl.ltp.bth
             {
                 var encodedBlock = EncodeLeafBlock(leafBlocks[0]);
 
-                return hnGenerator.AllocateItem(encodedBlock, isUserRoot: true);
+                hnGenerator.AllocateItem(encodedBlock, isUserRoot: true);
+
+                return;
             }
 
             var hidForLeafBlocks = new List<Tuple<TKey, HID>>();
@@ -58,10 +53,10 @@ namespace pst.impl.ltp.bth
                 hidForLeafBlocks.Add(Tuple.Create(slice[0].Item1, leafBlockId));
             }
 
-            return Generate(hidForLeafBlocks.ToArray(), hnGenerator);
+            Generate(keySize, hidForLeafBlocks.ToArray(), hnGenerator);
         }
 
-        private HID Generate(Tuple<TKey, HID>[] blockItems, IHeapOnNodeGenerator hnGenerator)
+        private HID Generate(int keySize, Tuple<TKey, HID>[] blockItems, IHeapOnNodeGenerator hnGenerator)
         {
             var indexBlocks = blockItems.Slice(keySize + 4, MaximumIndexOrLeafBlockSize);
 
@@ -83,7 +78,7 @@ namespace pst.impl.ltp.bth
                 hidForIndexBlocks.Add(Tuple.Create<TKey, HID>(slice[0].Item1, indexBlockId));
             }
 
-            return Generate(hidForIndexBlocks.ToArray(), hnGenerator);
+            return Generate(keySize, hidForIndexBlocks.ToArray(), hnGenerator);
         }
 
         private BinaryData EncodeIndexBlock(Tuple<TKey, HID>[] blockItems)

@@ -5,6 +5,6 @@ namespace pst.interfaces.ltp.tc
 {
     interface ITableContextBasedPropertyReader<TRowId>
     {
-        Maybe<PropertyValue> ReadProperty(NodePath nodePath, TRowId rowId, PropertyTag propertyTag);
+        Maybe<PropertyValue> Read(NodePath nodePath, TRowId rowId, PropertyTag propertyTag);
     }
 }

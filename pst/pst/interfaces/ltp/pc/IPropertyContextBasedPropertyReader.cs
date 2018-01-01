@@ -5,6 +5,6 @@ namespace pst.interfaces.ltp.pc
 {
     interface IPropertyContextBasedPropertyReader
     {
-        Maybe<PropertyValue> ReadProperty(NodePath nodePath, PropertyTag propertyTag);
+        Maybe<PropertyValue> Read(NodePath nodePath, PropertyTag propertyTag);
     }
 }

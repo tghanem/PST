@@ -24,10 +24,10 @@ namespace pst.impl.decoders.ltp.hn
 
             if (hid.Type == Constants.NID_TYPE_HID)
             {
-                return new HNID(hid, null);
+                return new HNID(hid);
             }
 
-            return new HNID(null, nidDecoder.Decode(encodedData));
+            return new HNID(nidDecoder.Decode(encodedData));
         }
     }
 }

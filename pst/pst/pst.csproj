@@ -180,6 +180,8 @@
     <Compile Include="impl\ltp\hn\HeapOnNodeItemsLoader.cs" />
     <Compile Include="impl\ltp\hn\HeapOnNodeReader.cs" />
     <Compile Include="impl\ltp\pc\PropertyContextBasedPropertyReader.cs" />
+    <Compile Include="impl\ltp\pc\PropertyContextGenerator.cs" />
+    <Compile Include="impl\ltp\PropertyValueReader.cs" />
     <Compile Include="impl\ltp\tc\RowIndexReader.cs" />
     <Compile Include="impl\ltp\tc\RowMatrixReader.cs" />
     <Compile Include="impl\ltp\tc\RowValuesExtractor.cs" />
@@ -191,7 +193,6 @@
     <Compile Include="impl\messaging\cache\TableContextBasedReadOnlyComponentThatCachesThePropertyValue.cs" />
     <Compile Include="impl\messaging\cache\TableContextBasedCachedPropertyState.cs" />
     <Compile Include="impl\messaging\PropertyNameToIdMap.cs" />
-    <Compile Include="impl\messaging\PropertyValueProcessor.cs" />
     <Compile Include="impl\messaging\PropertyContextBasedComponent.cs" />
     <Compile Include="impl\messaging\ReadOnlyAttachment.cs" />
     <Compile Include="impl\messaging\Folder.cs" />
@@ -235,7 +236,9 @@
     <Compile Include="interfaces\ltp\bth\IBTreeOnHeapGenerator.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeEncoder.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeGenerator.cs" />
+    <Compile Include="interfaces\ltp\IPropertyValueReader.cs" />
     <Compile Include="interfaces\ltp\pc\IPropertyContextBasedPropertyReader.cs" />
+    <Compile Include="interfaces\ltp\pc\IPropertyContextGenerator.cs" />
     <Compile Include="interfaces\ltp\tc\ITableContextBasedPropertyReader.cs" />
     <Compile Include="interfaces\ndb\DataBlockEntry.cs" />
     <Compile Include="interfaces\rawallocation\IAllocationFinder.cs" />
@@ -250,7 +253,6 @@
     <Compile Include="interfaces\messaging\IFolder.cs" />
     <Compile Include="interfaces\messaging\IReadOnlyMessage.cs" />
     <Compile Include="interfaces\messaging\IPropertyNameToIdMap.cs" />
-    <Compile Include="interfaces\messaging\IPropertyValueProcessor.cs" />
     <Compile Include="interfaces\messaging\ITableContextBasedReadOnlyComponent.cs" />
     <Compile Include="interfaces\rawallocation\IStreamExtender.cs" />
     <Compile Include="interfaces\ndb\NodeEntry.cs" />
@@ -268,7 +270,6 @@
     <Compile Include="interfaces\ltp\tc\IRowMatrixReader.cs" />
     <Compile Include="interfaces\ltp\tc\IRowValuesExtractor.cs" />
     <Compile Include="interfaces\ltp\tc\ITableContextReader.cs" />
-    <Compile Include="interfaces\messaging\IPropertyTypeMetadataProvider.cs" />
     <Compile Include="interfaces\ndb\ISubnodeBTreeBlockLevelDecider.cs" />
     <Compile Include="interfaces\ndb\ISubNodesEnumerator.cs" />
     <Compile Include="MAPIProperties.cs" />
@@ -305,7 +306,6 @@
     <Compile Include="utilities\Constants.cs" />
     <Compile Include="utilities\encodings\NoEncoding.cs" />
     <Compile Include="utilities\encodings\PermutativeEncoding.cs" />
-    <Compile Include="impl\messaging\PropertyTypeMetadataProvider.cs" />
     <Compile Include="encodables\Tag.cs" />
     <Compile Include="utilities\Utilities.cs" />
   </ItemGroup>

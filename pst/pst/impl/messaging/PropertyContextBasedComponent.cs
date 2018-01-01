@@ -31,7 +31,7 @@ namespace pst.impl.messaging
             }
 
             return
-                propertyContextBasedPropertyReader.ReadProperty(
+                propertyContextBasedPropertyReader.Read(
                     propertyPath.NodePath,
                     new PropertyTag(propertyId.Value, propertyPath.PropertyTag.Type));
         }
@@ -49,7 +49,7 @@ namespace pst.impl.messaging
             }
 
             return
-                propertyContextBasedPropertyReader.ReadProperty(
+                propertyContextBasedPropertyReader.Read(
                     propertyPath.NodePath,
                     new PropertyTag(propertyId.Value, propertyPath.PropertyTag.Type));
         }
@@ -57,7 +57,7 @@ namespace pst.impl.messaging
         public Maybe<PropertyValue> GetProperty(TaggedPropertyPath propertyPath)
         {
             return
-                propertyContextBasedPropertyReader.ReadProperty(
+                propertyContextBasedPropertyReader.Read(
                     propertyPath.NodePath,
                     propertyPath.PropertyTag);
         }

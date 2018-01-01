@@ -29,7 +29,7 @@ namespace pst.impl.messaging
             }
 
             return
-                propertyReader.ReadProperty(
+                propertyReader.Read(
                     propertyPath.NodePath,
                     componentId,
                     new PropertyTag(propertyId.Value, propertyPath.PropertyTag.Type));
@@ -46,7 +46,7 @@ namespace pst.impl.messaging
             }
 
             return
-                propertyReader.ReadProperty(
+                propertyReader.Read(
                     propertyPath.NodePath,
                     componentId,
                     new PropertyTag(propertyId.Value, propertyPath.PropertyTag.Type));
@@ -55,7 +55,7 @@ namespace pst.impl.messaging
         public Maybe<PropertyValue> GetProperty(TComponentId componentId, TaggedPropertyPath propertyPath)
         {
             return
-                propertyReader.ReadProperty(
+                propertyReader.Read(
                     propertyPath.NodePath,
                     componentId,
                     propertyPath.PropertyTag);
