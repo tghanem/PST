@@ -5,6 +5,6 @@ namespace pst.interfaces.blockallocation.datatree
 {
     interface IDataTreeAllocator
     {
-        BREF Allocate(BinaryData[] dataPerExternalBlock);
+        BID Allocate(BinaryData[] dataPerExternalBlock);
     }
 }

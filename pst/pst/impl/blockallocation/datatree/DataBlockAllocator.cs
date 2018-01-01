@@ -32,7 +32,7 @@ namespace pst.impl.blockallocation.datatree
             this.isInternal = isInternal;
         }
 
-        public BREF Allocate(TValue rawValue)
+        public BID Allocate(TValue rawValue)
         {
             var valueSize = valueSizeExtractor.Extract(rawValue);
 
@@ -49,7 +49,7 @@ namespace pst.impl.blockallocation.datatree
 
             blockRegionInitializer.Initialize(blockOffset, type);
 
-            return BREF.OfValue(blockId, blockOffset);
+            return blockId;
         }
     }
 }

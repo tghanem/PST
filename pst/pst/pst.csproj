@@ -220,6 +220,7 @@
     <Compile Include="interfaces\blockallocation\datatree\IDataBlockFactory.cs" />
     <Compile Include="interfaces\blockallocation\datatree\IDataTreeAllocator.cs" />
     <Compile Include="interfaces\blockallocation\datatree\IBlockBTreeEntryAllocator.cs" />
+    <Compile Include="interfaces\blockallocation\subnodebtree\ISubnodeBTreeAllocator.cs" />
     <Compile Include="interfaces\btree\IBTreeEntryFinder.cs" />
     <Compile Include="interfaces\btree\IBTreeGenerator.cs" />
     <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
@@ -233,8 +234,8 @@
     <Compile Include="interfaces\ltp\bth\IBTreeOnHeapGenerator.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeEncoder.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeGenerator.cs" />
-    <Compile Include="interfaces\ltp\IPropertyContextBasedPropertyReader.cs" />
-    <Compile Include="interfaces\ltp\ITableContextBasedPropertyReader.cs" />
+    <Compile Include="interfaces\ltp\pc\IPropertyContextBasedPropertyReader.cs" />
+    <Compile Include="interfaces\ltp\tc\ITableContextBasedPropertyReader.cs" />
     <Compile Include="interfaces\ndb\DataBlockEntry.cs" />
     <Compile Include="interfaces\rawallocation\IAllocationFinder.cs" />
     <Compile Include="interfaces\rawallocation\IAllocationReserver.cs" />

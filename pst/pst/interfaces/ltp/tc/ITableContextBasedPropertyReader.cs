@@ -1,7 +1,7 @@
 ﻿using pst.core;
 using pst.interfaces.ndb;
 
-namespace pst.interfaces.ltp
+namespace pst.interfaces.ltp.tc
 {
     interface ITableContextBasedPropertyReader<TRowId>
     {

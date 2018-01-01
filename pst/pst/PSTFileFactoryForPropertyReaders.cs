@@ -12,6 +12,8 @@ using pst.impl.messaging;
 using pst.impl.messaging.cache;
 using pst.interfaces;
 using pst.interfaces.ltp;
+using pst.interfaces.ltp.pc;
+using pst.interfaces.ltp.tc;
 using pst.interfaces.messaging;
 using pst.interfaces.ndb;
 using System.IO;

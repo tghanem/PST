@@ -30,7 +30,7 @@ namespace pst.impl.ltp.hn
             return AllocateItemToCurrentExternalDataBlock(value, isUserRoot);
         }
 
-        public BREF Commit(int clientSignature)
+        public BID Commit(int clientSignature)
         {
             var encodedExternalDataBlocks = encoder.Encode(externalDataBlocks.ToArray(), clientSignature);
 

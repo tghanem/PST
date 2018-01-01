@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using pst.encodables.ndb;
+﻿using pst.encodables.ndb;
 using pst.interfaces.blockallocation.datatree;
 using pst.utilities;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace pst.impl.blockallocation.datatree
@@ -25,7 +25,7 @@ namespace pst.impl.blockallocation.datatree
             this.internalXXBlockAllocator = internalXXBlockAllocator;
         }
 
-        public BREF Allocate(BinaryData[] dataPerExternalBlock)
+        public BID Allocate(BinaryData[] dataPerExternalBlock)
         {
             if (dataPerExternalBlock.Length == 1)
             {
@@ -40,7 +40,7 @@ namespace pst.impl.blockallocation.datatree
             return AllocateXXBlock(dataPerExternalBlock);
         }
 
-        private BREF AllocateXXBlock(BinaryData[] dataPerExternalBlock)
+        private BID AllocateXXBlock(BinaryData[] dataPerExternalBlock)
         {
             var slicesOfDataPerExternalBlock = dataPerExternalBlock.Slice(MaximumNumberOfBIDEntriesInInternalBlock);
 
@@ -50,7 +50,7 @@ namespace pst.impl.blockallocation.datatree
             {
                 var allocateXBlockReference = AllocateXBlock(slice);
 
-                blockReferences.Add(allocateXBlockReference.BlockId);
+                blockReferences.Add(allocateXBlockReference);
             }
 
             var totalBytesInReferencedExternalBlocks = dataPerExternalBlock.Aggregate(0, (sum, data) => sum + data.Length);
@@ -61,12 +61,11 @@ namespace pst.impl.blockallocation.datatree
                         totalBytesInReferencedExternalBlocks));
         }
 
-        private BREF AllocateXBlock(BinaryData[] dataPerExternalBlock)
+        private BID AllocateXBlock(BinaryData[] dataPerExternalBlock)
         {
             var externalBlockIds =
                 dataPerExternalBlock
                 .Select(d => externalDataBlockAllocator.Allocate(d))
-                .Select(r => r.BlockId)
                 .ToArray();
 
             var totalBytesInReferencedExternalBlocks = dataPerExternalBlock.Aggregate(0, (sum, data) => sum + data.Length);

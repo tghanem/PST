@@ -4,6 +4,6 @@ namespace pst.interfaces.blockallocation.datatree
 {
     interface IDataBlockAllocator<TValue>
     {
-        BREF Allocate(TValue rawValue);
+        BID Allocate(TValue rawValue);
     }
 }

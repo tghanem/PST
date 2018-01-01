@@ -14,9 +14,7 @@ namespace pst.impl.messaging
         private readonly IRowIndexReader<NID> rowIndexReader;
         private readonly IDecoder<NID> nidDecoder;
 
-        public Folder(
-            IRowIndexReader<NID> rowIndexReader,
-            IDecoder<NID> nidDecoder)
+        public Folder(IRowIndexReader<NID> rowIndexReader, IDecoder<NID> nidDecoder)
         {
             this.rowIndexReader = rowIndexReader;
             this.nidDecoder = nidDecoder;

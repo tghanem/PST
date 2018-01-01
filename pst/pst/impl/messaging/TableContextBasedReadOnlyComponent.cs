@@ -1,5 +1,6 @@
 ﻿using pst.core;
 using pst.interfaces.ltp;
+using pst.interfaces.ltp.tc;
 using pst.interfaces.messaging;
 
 namespace pst.impl.messaging

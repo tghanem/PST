@@ -7,6 +7,6 @@ namespace pst.interfaces.ltp.hn
     interface IHeapOnNodeGenerator
     {
         HID AllocateItem(BinaryData value, bool isUserRoot = false);
-        BREF Commit(int clientSignature);
+        BID Commit(int clientSignature);
     }
 }
