@@ -1,33 +1,32 @@
 ﻿using pst.core;
-using pst.encodables;
 using pst.interfaces.ltp;
-using pst.interfaces.ltp.tc;
+using pst.interfaces.ltp.pc;
 using pst.interfaces.messaging.model;
 using pst.interfaces.messaging.model.changetracking;
 using pst.utilities;
 
 namespace pst
 {
-    public class Recipient
+    public abstract class ObjectBase
     {
         private readonly NodePath nodePath;
-        private readonly Tag recipientRowId;
+        private readonly ObjectTypes objectType;
         private readonly IChangesTracker changesTracker;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
-        private readonly ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader;
+        private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
 
-        internal Recipient(
+        internal ObjectBase(
             NodePath nodePath,
-            Tag recipientRowId,
+            ObjectTypes objectType,
             IChangesTracker changesTracker,
             IPropertyNameToIdMap propertyNameToIdMap,
-            ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader)
+            IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader)
         {
             this.nodePath = nodePath;
-            this.recipientRowId = recipientRowId;
+            this.objectType = objectType;
             this.changesTracker = changesTracker;
             this.propertyNameToIdMap = propertyNameToIdMap;
-            this.tableContextBasedPropertyReader = tableContextBasedPropertyReader;
+            this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
         }
 
         public Maybe<PropertyValue> GetProperty(NumericalPropertyTag propertyTag)
@@ -59,9 +58,9 @@ namespace pst
             return
                 changesTracker.ReadPropertyTracked(
                     nodePath,
-                    ObjectTypes.RecipientTable, 
+                    objectType, 
                     propertyTag,
-                    () => tableContextBasedPropertyReader.Read(nodePath.AllocatedIds, recipientRowId, propertyTag));
+                    () => propertyContextBasedPropertyReader.Read(nodePath.AllocatedIds, propertyTag));
         }
     }
 }

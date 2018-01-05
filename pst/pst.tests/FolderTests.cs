@@ -61,6 +61,7 @@ namespace pst.tests
         }
 
         [Test]
+        [Ignore("Not Yet Implemented")]
         public void ShouldCorrectlyDetectNewlyAddedFolder()
         {
             //Arrange

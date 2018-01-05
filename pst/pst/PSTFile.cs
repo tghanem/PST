@@ -1,6 +1,12 @@
 ﻿using pst.encodables;
+using pst.encodables.ndb;
 using pst.interfaces;
-using pst.interfaces.messaging;
+using pst.interfaces.ltp;
+using pst.interfaces.ltp.pc;
+using pst.interfaces.ltp.tc;
+using pst.interfaces.messaging.model;
+using pst.interfaces.messaging.model.changetracking;
+using pst.interfaces.ndb;
 using System;
 
 namespace pst
@@ -8,32 +14,41 @@ namespace pst
     public partial class PSTFile
     {
         private readonly IDecoder<EntryId> entryIdDecoder;
-        private readonly IFolder folder;
+        private readonly IDecoder<NID> nidDecoder;
+        private readonly IChangesTracker changesTracker;
         private readonly IEncoder<string> stringEncoder;
-        private readonly IReadOnlyMessage readOnlyMessage;
-        private readonly IReadOnlyAttachment readOnlyAttachment;
-        private readonly IPropertyContextBasedComponent propertyContextBasedComponent;
-        private readonly ITableContextBasedReadOnlyComponent<Tag> readOnlyComponentForRecipient;
+        private readonly INodeEntryFinder nodeEntryFinder;
+        private readonly IRowIndexReader<NID> rowIndexReader;
+        private readonly ITableContextReader tableContextReader;
+        private readonly IPropertyNameToIdMap propertyNameToIdMap;
+        private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
+        private readonly ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader;
 
         private PSTFile(
             IDecoder<EntryId> entryIdDecoder,
-            IFolder folder,
+            IDecoder<NID> nidDecoder,
+            IChangesTracker changesTracker,
             IEncoder<string> stringEncoder,
-            IReadOnlyMessage readOnlyMessage,
-            IReadOnlyAttachment readOnlyAttachment,
-            IPropertyContextBasedComponent propertyContextBasedComponent,
-            ITableContextBasedReadOnlyComponent<Tag> readOnlyComponentForRecipient)
+            INodeEntryFinder nodeEntryFinder,
+            IRowIndexReader<NID> rowIndexReader,
+            ITableContextReader tableContextReader,
+            IPropertyNameToIdMap propertyNameToIdMap,
+            IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
+            ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader)
         {
             this.entryIdDecoder = entryIdDecoder;
-            this.folder = folder;
+            this.nidDecoder = nidDecoder;
+            this.changesTracker = changesTracker;
             this.stringEncoder = stringEncoder;
-            this.readOnlyMessage = readOnlyMessage;
-            this.readOnlyAttachment = readOnlyAttachment;
-            this.propertyContextBasedComponent = propertyContextBasedComponent;
-            this.readOnlyComponentForRecipient = readOnlyComponentForRecipient;
+            this.nodeEntryFinder = nodeEntryFinder;
+            this.rowIndexReader = rowIndexReader;
+            this.tableContextReader = tableContextReader;
+            this.propertyNameToIdMap = propertyNameToIdMap;
+            this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
+            this.tableContextBasedPropertyReader = tableContextBasedPropertyReader;
         }
 
-        public MessageStore MessageStore => new MessageStore(propertyContextBasedComponent);
+        public MessageStore MessageStore => new MessageStore(changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader);
 
         public Folder GetRootMailboxFolder()
         {
@@ -45,13 +60,16 @@ namespace pst
 
             return
                 new Folder(
-                    entryId.NID,
-                    folder,
-                    stringEncoder, 
-                    readOnlyMessage,
-                    readOnlyAttachment,
-                    propertyContextBasedComponent,
-                    readOnlyComponentForRecipient);
+                    NodePath.OfValue(AllocatedNodeId.OfValue(entryId.NID)),
+                    changesTracker,
+                    stringEncoder,
+                    propertyNameToIdMap,
+                    propertyContextBasedPropertyReader,
+                    nidDecoder,
+                    nodeEntryFinder,
+                    rowIndexReader,
+                    tableContextReader,
+                    tableContextBasedPropertyReader);
         }
 
         public void Save()

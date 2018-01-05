@@ -3,7 +3,7 @@ using pst.encodables.messaging;
 using pst.interfaces;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.pc;
-using pst.interfaces.ndb;
+using pst.interfaces.messaging.model;
 using pst.utilities;
 using System;
 using System.Text;
@@ -12,6 +12,8 @@ namespace pst.impl.messaging
 {
     class PropertyNameToIdMap : IPropertyNameToIdMap
     {
+        private static readonly NodePath MapNodePath = NodePath.OfValue(AllocatedNodeId.OfValue(Constants.NID_NAME_TO_ID_MAP));
+
         private readonly IDecoder<NAMEID> nameIdDecoder;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
 
@@ -25,10 +27,7 @@ namespace pst.impl.messaging
 
         public Maybe<PropertyId> GetPropertyId(Guid propertySet, int numericalId)
         {
-            var entryStream =
-                propertyContextBasedPropertyReader.Read(
-                    NodePath.OfValue(Constants.NID_NAME_TO_ID_MAP),
-                    MAPIProperties.PidTagNameidStreamEntry);
+            var entryStream = propertyContextBasedPropertyReader.Read(MapNodePath.AllocatedIds, MAPIProperties.PidTagNameidStreamEntry);
 
             if (entryStream.HasNoValue)
             {
@@ -55,15 +54,9 @@ namespace pst.impl.messaging
 
         public Maybe<PropertyId> GetPropertyId(Guid propertySet, string propertyName)
         {
-            var entryStream =
-                propertyContextBasedPropertyReader.Read(
-                    NodePath.OfValue(Constants.NID_NAME_TO_ID_MAP),
-                    MAPIProperties.PidTagNameidStreamEntry);
+            var entryStream = propertyContextBasedPropertyReader.Read(MapNodePath.AllocatedIds, MAPIProperties.PidTagNameidStreamEntry);
 
-            var stringStream =
-                propertyContextBasedPropertyReader.Read(
-                    NodePath.OfValue(Constants.NID_NAME_TO_ID_MAP),
-                    MAPIProperties.PidTagNameidStreamString);
+            var stringStream = propertyContextBasedPropertyReader.Read(MapNodePath.AllocatedIds, MAPIProperties.PidTagNameidStreamString);
 
             if (entryStream.HasNoValue || stringStream.HasNoValue)
             {

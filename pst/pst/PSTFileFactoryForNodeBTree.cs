@@ -22,7 +22,7 @@ namespace pst
     {
         private static INodeEntryFinder CreateNodeEntryFinder(
             Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache,
+            ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return

@@ -9,12 +9,10 @@ using pst.impl.ltp;
 using pst.impl.ltp.pc;
 using pst.impl.ltp.tc;
 using pst.impl.messaging;
-using pst.impl.messaging.cache;
 using pst.interfaces;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.pc;
 using pst.interfaces.ltp.tc;
-using pst.interfaces.messaging;
 using pst.interfaces.ndb;
 using System.IO;
 
@@ -22,45 +20,9 @@ namespace pst
 {
     public partial class PSTFile
     {
-        private static IPropertyContextBasedComponent CreatePropertyContextBasedComponent(
-            Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache,
-            ICache<NumericalTaggedPropertyPath, PropertyContextBasedCachedPropertyState> numericalTaggedPropertyCache,
-            ICache<StringTaggedPropertyPath, PropertyContextBasedCachedPropertyState> stringTaggedPropertyCache,
-            ICache<TaggedPropertyPath, PropertyContextBasedCachedPropertyState> taggedPropertyCache)
-        {
-            return
-                new PropertyContextBasedComponentThatCachesThePropertyValue(
-                    numericalTaggedPropertyCache,
-                    stringTaggedPropertyCache,
-                    taggedPropertyCache,
-                    new PropertyContextBasedComponent(
-                        CreatePropertyIdToNameMap(dataStream, nodeEntryCache, dataBlockEntryCache),
-                        CreatePropertyContextBasedPropertyReader(dataStream, nodeEntryCache, dataBlockEntryCache)));
-        }
-
-        private static ITableContextBasedReadOnlyComponent<Tag> CreateTagBasedTableContextBasedReadOnlyComponent(
-            Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache,
-            ICache<NumericalTaggedPropertyPath, TableContextBasedCachedPropertyState<Tag>> numericalTaggedPropertyCache,
-            ICache<StringTaggedPropertyPath, TableContextBasedCachedPropertyState<Tag>> stringTaggedPropertyCache,
-            ICache<TaggedPropertyPath, TableContextBasedCachedPropertyState<Tag>> taggedPropertyCache)
-        {
-            return
-                new TableContextBasedReadOnlyComponentThatCachesThePropertyValue<Tag>(
-                    numericalTaggedPropertyCache,
-                    stringTaggedPropertyCache,
-                    taggedPropertyCache,
-                    new TableContextBasedReadOnlyComponent<Tag>(
-                        CreatePropertyIdToNameMap(dataStream, nodeEntryCache, dataBlockEntryCache),
-                        CreateTagBasedTableContextBasedPropertyReader(dataStream, nodeEntryCache, dataBlockEntryCache)));
-        }
-
         private static ITableContextBasedPropertyReader<Tag> CreateTagBasedTableContextBasedPropertyReader(
             Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache,
+            ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
@@ -71,7 +33,7 @@ namespace pst
 
         private static IPropertyNameToIdMap CreatePropertyIdToNameMap(
             Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache,
+            ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
@@ -82,7 +44,7 @@ namespace pst
 
         private static IPropertyContextBasedPropertyReader CreatePropertyContextBasedPropertyReader(
             Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache,
+            ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
@@ -93,7 +55,7 @@ namespace pst
 
         private static IPropertyValueReader CreatePropertyValueProcessor(
             Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache,
+            ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return

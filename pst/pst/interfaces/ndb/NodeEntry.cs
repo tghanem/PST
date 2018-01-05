@@ -1,5 +1,6 @@
 ﻿using pst.encodables.ndb;
 using pst.encodables.ndb.blocks.subnode;
+using System.Linq;
 
 namespace pst.interfaces.ndb
 {
@@ -17,5 +18,10 @@ namespace pst.interfaces.ndb
         public BID SubnodeDataBlockId { get; }
 
         public SLEntry[] ChildNodes { get; }
+
+        public SLEntry GetChildOfType(int type)
+        {
+            return ChildNodes.First(s => s.LocalSubnodeId.Type == type);
+        }
     }
 }

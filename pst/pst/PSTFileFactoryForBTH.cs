@@ -20,7 +20,7 @@ namespace pst
     {
         private static IBTreeOnHeapReader<PropertyId> CreatePropertyIdBasedBTreeOnHeapReader(
             Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache,
+            ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
@@ -34,7 +34,7 @@ namespace pst
 
         private static IBTreeOnHeapReader<NID> CreateNIDBasedBTreeOnHeapReader(
             Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache,
+            ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
@@ -48,7 +48,7 @@ namespace pst
 
         private static IBTreeOnHeapReader<Tag> CreateTagBasedBTreeOnHeapReader(
             Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache,
+            ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
@@ -62,7 +62,7 @@ namespace pst
 
         private static IHeapOnNodeReader CreateHeapOnNodeReader(
             Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache,
+            ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return

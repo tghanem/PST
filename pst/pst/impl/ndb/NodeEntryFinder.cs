@@ -25,7 +25,7 @@ namespace pst.impl.ndb
             this.subnodesEnumerator = subnodesEnumerator;
         }
 
-        public Maybe<NodeEntry> GetEntry(NodePath nodePath)
+        public Maybe<NodeEntry> GetEntry(NID[] nodePath)
         {
             if (nodePath.Length == 0)
             {
@@ -49,16 +49,11 @@ namespace pst.impl.ndb
             return new NodeEntry(lnbtEntry.Value.DataBlockId, lnbtEntry.Value.SubnodeBlockId, subnodes);
         }
 
-        private Maybe<NodeEntry> GetEntry(
-            NodePath nodePath,
-            int currentDepth,
-            BID parentNodeSubnodeDataBlockId)
+        private Maybe<NodeEntry> GetEntry(NID[] nodePath, int currentDepth, BID parentNodeSubnodeDataBlockId)
         {
-            var parentSubnodes =
-                subnodesEnumerator.Enumerate(parentNodeSubnodeDataBlockId);
+            var parentSubnodes = subnodesEnumerator.Enumerate(parentNodeSubnodeDataBlockId);
 
-            var subnodeEntry =
-                parentSubnodes.First(s => s.LocalSubnodeId.Equals(nodePath[currentDepth]));
+            var subnodeEntry = parentSubnodes.First(s => s.LocalSubnodeId.Equals(nodePath[currentDepth]));
 
             if (currentDepth < nodePath.Length - 1)
             {

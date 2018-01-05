@@ -1,38 +1,20 @@
-﻿using pst.core;
-using pst.interfaces.messaging;
-using pst.interfaces.ndb;
+﻿using pst.interfaces.ltp;
+using pst.interfaces.ltp.pc;
+using pst.interfaces.messaging.model;
+using pst.interfaces.messaging.model.changetracking;
 using pst.utilities;
 
 namespace pst
 {
-    public class MessageStore
+    public class MessageStore : ObjectBase
     {
-        private readonly IPropertyContextBasedComponent propertyContextBasedComponent;
+        private static readonly NodePath StorePath = NodePath.OfValue(AllocatedNodeId.OfValue(Constants.NID_MESSAGE_STORE));
 
-        internal MessageStore(IPropertyContextBasedComponent propertyContextBasedComponent)
+        internal MessageStore(
+            IChangesTracker changesTracker,
+            IPropertyNameToIdMap propertyNameToIdMap,
+            IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader) : base(StorePath, ObjectTypes.Store, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
         {
-            this.propertyContextBasedComponent = propertyContextBasedComponent;
-        }
-
-        public Maybe<PropertyValue> GetProperty(NumericalPropertyTag propertyTag)
-        {
-            return
-                propertyContextBasedComponent.GetProperty(
-                    new NumericalTaggedPropertyPath(NodePath.OfValue(Constants.NID_MESSAGE_STORE), propertyTag));
-        }
-
-        public Maybe<PropertyValue> GetProperty(StringPropertyTag propertyTag)
-        {
-            return
-                propertyContextBasedComponent.GetProperty(
-                    new StringTaggedPropertyPath(NodePath.OfValue(Constants.NID_MESSAGE_STORE), propertyTag));
-        }
-
-        public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
-        {
-            return
-                propertyContextBasedComponent.GetProperty(
-                    new TaggedPropertyPath(NodePath.OfValue(Constants.NID_MESSAGE_STORE), propertyTag));
         }
     }
 }

@@ -1,103 +1,120 @@
 ﻿using pst.core;
 using pst.encodables;
-using pst.interfaces.messaging;
-using System.Linq;
+using pst.encodables.ndb;
+using pst.interfaces;
+using pst.interfaces.ltp;
+using pst.interfaces.ltp.pc;
+using pst.interfaces.ltp.tc;
+using pst.interfaces.messaging.model;
+using pst.interfaces.messaging.model.changetracking;
 using pst.interfaces.ndb;
+using pst.utilities;
+using System.Linq;
 
 namespace pst
 {
-    public class Message
+    public class Message : ObjectBase
     {
-        private readonly NodePath messageNodePath;
-        private readonly IReadOnlyMessage readOnlyMessage;
-        private readonly IReadOnlyAttachment readOnlyAttachment;
-        private readonly IPropertyContextBasedComponent propertyContextBasedComponent;
-        private readonly ITableContextBasedReadOnlyComponent<Tag> readOnlyComponentForRecipient;
+        private readonly NodePath nodePath;
+        private readonly IDecoder<NID> nidDecoder;
+        private readonly IChangesTracker changesTracker;
+        private readonly INodeEntryFinder nodeEntryFinder;
+        private readonly IRowIndexReader<NID> rowIndexReader;
+        private readonly ITableContextReader tableContextReader;
+        private readonly IPropertyNameToIdMap propertyNameToIdMap;
+        private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
+        private readonly ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader;
 
         internal Message(
-            NodePath messageNodePath,
-            IReadOnlyMessage readOnlyMessage,
-            IReadOnlyAttachment readOnlyAttachment,
-            IPropertyContextBasedComponent propertyContextBasedComponent,
-            ITableContextBasedReadOnlyComponent<Tag> readOnlyComponentForRecipient)
+            NodePath nodePath,
+            IDecoder<NID> nidDecoder,
+            IChangesTracker changesTracker,
+            INodeEntryFinder nodeEntryFinder,
+            IRowIndexReader<NID> rowIndexReader,
+            ITableContextReader tableContextReader,
+            IPropertyNameToIdMap propertyNameToIdMap,
+            IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
+            ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader) : base(nodePath, ObjectTypes.Message, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
         {
-            this.messageNodePath = messageNodePath;
-            this.readOnlyMessage = readOnlyMessage;
-            this.propertyContextBasedComponent = propertyContextBasedComponent;
-            this.readOnlyAttachment = readOnlyAttachment;
-            this.readOnlyComponentForRecipient = readOnlyComponentForRecipient;
+            this.nodePath = nodePath;
+            this.nidDecoder = nidDecoder;
+            this.changesTracker = changesTracker;
+            this.nodeEntryFinder = nodeEntryFinder;
+            this.rowIndexReader = rowIndexReader;
+            this.tableContextReader = tableContextReader;
+            this.propertyNameToIdMap = propertyNameToIdMap;
+            this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
+            this.tableContextBasedPropertyReader = tableContextBasedPropertyReader;
         }
 
         public Recipient[] GetRecipients()
         {
-            var tagsForRecipients =
-                readOnlyMessage.GetTagsForRecipients(messageNodePath);
+            var entry = nodeEntryFinder.GetEntry(nodePath.AllocatedIds);
 
-            if (tagsForRecipients.HasNoValue)
+            if (entry.HasNoValue)
             {
                 return new Recipient[0];
             }
 
-            var recipientTableNodeId =
-                readOnlyMessage.GetRecipientTableNodeId(messageNodePath);
-
-            if (recipientTableNodeId.HasNoValue)
-            {
-                return new Recipient[0];
-            }
-
-            var recipientTablePath =
-                messageNodePath.Add(recipientTableNodeId.Value);
+            var recipientNodeId = entry.Value.GetChildOfType(Constants.NID_TYPE_RECIPIENT_TABLE).LocalSubnodeId;
 
             return
-                tagsForRecipients
-                .Value
-                .Select(tag => new Recipient(recipientTablePath, tag, readOnlyComponentForRecipient))
+                tableContextReader
+                .GetAllRows(nodePath.Add(AllocatedNodeId.OfValue(recipientNodeId)))
+                .Select(
+                    rowId =>
+                    new Recipient(
+                        nodePath.Add(AllocatedNodeId.OfValue(recipientNodeId)),
+                        Tag.OfValue(rowId.RowId),
+                        changesTracker,
+                        propertyNameToIdMap,
+                        tableContextBasedPropertyReader))
                 .ToArray();
         }
 
         public Attachment[] GetAttachments()
         {
-            var nidsForAttachments =
-                readOnlyMessage.GetNodeIdsForAttachments(messageNodePath);
+            var nodeIdsForAttachments = GetNodeIdsForAttachments();
 
-            if (nidsForAttachments.HasNoValue)
+            if (nodeIdsForAttachments.HasNoValue)
             {
                 return new Attachment[0];
             }
 
             return
-                nidsForAttachments
+                nodeIdsForAttachments
                 .Value
                 .Select(
-                    nid =>
+                    nodeId =>
                     new Attachment(
-                        messageNodePath.Add(nid),
-                        readOnlyMessage,
-                        readOnlyAttachment,
-                        propertyContextBasedComponent, readOnlyComponentForRecipient))
+                        nodePath.Add(nodeId),
+                        changesTracker,
+                        propertyNameToIdMap,
+                        propertyContextBasedPropertyReader,
+                        nidDecoder,
+                        nodeEntryFinder,
+                        rowIndexReader,
+                        tableContextReader,
+                        tableContextBasedPropertyReader))
                 .ToArray();
         }
 
-        public Maybe<PropertyValue> GetProperty(NumericalPropertyTag propertyTag)
+        private Maybe<NodeId[]> GetNodeIdsForAttachments()
         {
-            return
-                propertyContextBasedComponent.GetProperty(
-                    new NumericalTaggedPropertyPath(messageNodePath, propertyTag));
-        }
+            var entry = nodeEntryFinder.GetEntry(nodePath.AllocatedIds);
 
-        public Maybe<PropertyValue> GetProperty(StringPropertyTag propertyTag)
-        {
-            return
-                propertyContextBasedComponent.GetProperty(
-                    new StringTaggedPropertyPath(messageNodePath, propertyTag));
-        }
+            if (entry.HasNoValue)
+            {
+                return Maybe<NodeId[]>.NoValue();
+            }
 
-        public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
-        {
+            var attachmentNodeId = entry.Value.GetChildOfType(Constants.NID_TYPE_ATTACHMENT_TABLE).LocalSubnodeId;
+
             return
-                propertyContextBasedComponent.GetProperty(
-                    new TaggedPropertyPath(messageNodePath, propertyTag));
+                rowIndexReader
+                .GetAllRowIds(nodePath.Add(AllocatedNodeId.OfValue(attachmentNodeId)).AllocatedIds)
+                .Select(rowId => AllocatedNodeId.OfValue(nidDecoder.Decode(rowId.RowId)))
+                .ToArray();
         }
     }
 }

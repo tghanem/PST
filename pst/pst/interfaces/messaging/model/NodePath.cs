@@ -3,31 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using pst.encodables.ndb;
 
-namespace pst.interfaces.ndb
+namespace pst.interfaces.messaging.model
 {
     class NodePath
     {
-        private readonly List<NID> pathNodeIds;
+        private readonly List<NodeId> pathNodeIds;
 
-        public NodePath(NID[] pathNodeIds)
+        private NodePath(NodeId[] pathNodeIds)
         {
-            this.pathNodeIds = new List<NID>(pathNodeIds);
+            this.pathNodeIds = new List<NodeId>(pathNodeIds);
         }
 
-        public NodePath Add(NID nodeId)
+        public NodePath Add(NodeId nodeId)
         {
-            var copyNodeIds = new List<NID>(pathNodeIds) { nodeId };
+            var copyNodeIds = new List<NodeId>(pathNodeIds) { nodeId };
 
             return new NodePath(copyNodeIds.ToArray());
         }
 
-        public static NodePath OfValue(params NID[] value) => new NodePath(value);
+        public static NodePath OfValue(params NodeId[] value) => new NodePath(value);
 
-        public NID[] NodeIds => pathNodeIds.ToArray();
+        public NodeId[] NodeIds => pathNodeIds.ToArray();
+
+        public NID[] AllocatedIds => pathNodeIds.Cast<AllocatedNodeId>().Select(id => id.NID).ToArray();
 
         public int Length => pathNodeIds.Count;
 
-        public NID this[int index] => pathNodeIds[index];
+        public NodeId this[int index] => pathNodeIds[index];
+
+        public NodeId Id => pathNodeIds[pathNodeIds.Count - 1];
 
         public override bool Equals(object obj)
         {
@@ -56,8 +60,8 @@ namespace pst.interfaces.ndb
                 .ToString(
                     pathNodeIds
                     .SelectMany(
-                        nid =>
-                        BitConverter.GetBytes((int) nid.Value))
+                        nodeId =>
+                        BitConverter.GetBytes(nodeId.Value))
                     .ToArray())
                 .ToLower()
                 .Replace("-", "")

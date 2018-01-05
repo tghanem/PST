@@ -1,7 +1,7 @@
 ﻿using pst.core;
+using pst.encodables.ndb;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.tc;
-using pst.interfaces.ndb;
 
 namespace pst.impl.ltp.tc
 {
@@ -18,7 +18,7 @@ namespace pst.impl.ltp.tc
             this.propertyValueReader = propertyValueReader;
         }
 
-        public Maybe<PropertyValue> Read(NodePath nodePath, TRowId rowId, PropertyTag propertyTag)
+        public Maybe<PropertyValue> Read(NID[] nodePath, TRowId rowId, PropertyTag propertyTag)
         {
             var row = rowMatrixReader.GetRow(nodePath, rowId);
 

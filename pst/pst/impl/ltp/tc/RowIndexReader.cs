@@ -1,11 +1,11 @@
 ﻿using pst.core;
 using pst.encodables.ltp.bth;
 using pst.encodables.ltp.tc;
+using pst.encodables.ndb;
 using pst.interfaces;
 using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.ltp.tc;
-using pst.interfaces.ndb;
 using System;
 using System.Linq;
 
@@ -30,7 +30,7 @@ namespace pst.impl.ltp.tc
             this.dataRecordToTCROWIDConverter = dataRecordToTCROWIDConverter;
         }
 
-        public Maybe<TCROWID> GetRowId(NodePath nodePath, TRowId rowId)
+        public Maybe<TCROWID> GetRowId(NID[] nodePath, TRowId rowId)
         {
             var hnHeader =
                 heapOnNodeReader.GetHeapOnNodeHeader(nodePath);
@@ -50,7 +50,7 @@ namespace pst.impl.ltp.tc
             return dataRecordToTCROWIDConverter.Convert(tcRowId.Value);
         }
 
-        public TCROWID[] GetAllRowIds(NodePath nodePath)
+        public TCROWID[] GetAllRowIds(NID[] nodePath)
         {
             var hnHeader =
                 heapOnNodeReader.GetHeapOnNodeHeader(nodePath);

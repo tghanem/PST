@@ -1,4 +1,5 @@
-﻿using pst.interfaces.ndb;
+﻿using pst.interfaces.messaging.model;
+using pst.interfaces.ndb;
 
 namespace pst.interfaces.ltp.tc
 {

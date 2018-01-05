@@ -38,7 +38,7 @@ namespace pst.impl.ltp
             this.dataBlockReader = dataBlockReader;
         }
 
-        public PropertyValue Read(NodePath nodePath, PropertyType propertyType, BinaryData propertyValue)
+        public PropertyValue Read(NID[] nodePath, PropertyType propertyType, BinaryData propertyValue)
         {
             if (propertyType.IsFixedLength())
             {
@@ -82,7 +82,7 @@ namespace pst.impl.ltp
             return PropertyValue.Empty;
         }
 
-        private Maybe<BinaryData> GetHNIDBinaryData(NodePath nodePath, HNID hnid)
+        private Maybe<BinaryData> GetHNIDBinaryData(NID[] nodePath, HNID hnid)
         {
             if (hnid.IsHID)
             {

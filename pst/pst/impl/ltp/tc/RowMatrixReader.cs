@@ -1,6 +1,7 @@
 ﻿using pst.core;
 using pst.encodables.ltp.hn;
 using pst.encodables.ltp.tc;
+using pst.encodables.ndb;
 using pst.interfaces;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.ltp.tc;
@@ -41,7 +42,7 @@ namespace pst.impl.ltp.tc
             this.dataBlockReader = dataBlockReader;
         }
 
-        public Maybe<TableRow> GetRow(NodePath nodePath, TRowId rowId)
+        public Maybe<TableRow> GetRow(NID[] nodePath, TRowId rowId)
         {
             var nodeEntry =
                 nodeEntryFinder.GetEntry(nodePath);

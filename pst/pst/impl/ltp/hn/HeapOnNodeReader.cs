@@ -1,4 +1,5 @@
 ﻿using pst.encodables.ltp.hn;
+using pst.encodables.ndb;
 using pst.interfaces;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.ndb;
@@ -31,14 +32,14 @@ namespace pst.impl.ltp.hn
             this.externalDataBlockReader = externalDataBlockReader;
         }
 
-        public HNHDR GetHeapOnNodeHeader(NodePath nodePath)
+        public HNHDR GetHeapOnNodeHeader(NID[] nodePath)
         {
             var externalBlock = externalDataBlockReader.Read(nodePath, 0);
 
             return hnHDRDecoder.Decode(externalBlock.Take(12));
         }
 
-        public BinaryData GetHeapItem(NodePath nodePath, HID hid)
+        public BinaryData GetHeapItem(NID[] nodePath, HID hid)
         {
             var externalBlock = externalDataBlockReader.Read(nodePath, hid.BlockIndex);
 

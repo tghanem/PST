@@ -24,7 +24,7 @@ namespace pst.impl.ndb
             this.blockDataDeObfuscator = blockDataDeObfuscator;
         }
 
-        public BinaryData Read(NodePath nodePath, int blockIndex)
+        public BinaryData Read(NID[] nodePath, int blockIndex)
         {
             var nodeEntry = nodeEntryFinder.GetEntry(nodePath);
 

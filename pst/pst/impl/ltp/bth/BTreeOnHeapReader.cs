@@ -1,10 +1,10 @@
 ﻿using pst.core;
 using pst.encodables.ltp.bth;
 using pst.encodables.ltp.hn;
+using pst.encodables.ndb;
 using pst.interfaces;
 using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.hn;
-using pst.interfaces.ndb;
 using System;
 using System.Collections.Generic;
 
@@ -29,14 +29,14 @@ namespace pst.impl.ltp.bth
             this.bthHeaderDecoder = bthHeaderDecoder;
         }
 
-        public Maybe<DataRecord> ReadDataRecord(NodePath nodePath, TKey key)
+        public Maybe<DataRecord> ReadDataRecord(NID[] nodePath, TKey key)
         {
             var hnHeader = heapOnNodeReader.GetHeapOnNodeHeader(nodePath);
 
             return ReadDataRecord(nodePath, hnHeader.UserRoot, key);
         }
 
-        public Maybe<DataRecord> ReadDataRecord(NodePath nodePath, HID userRoot, TKey key)
+        public Maybe<DataRecord> ReadDataRecord(NID[] nodePath, HID userRoot, TKey key)
         {
             var userRootHeapItem = heapOnNodeReader.GetHeapItem(nodePath, userRoot);
 
@@ -56,7 +56,7 @@ namespace pst.impl.ltp.bth
                     bthHeader.IndexDepth);
         }
 
-        public DataRecord[] ReadAllDataRecords(NodePath nodePath, Maybe<HID> userRoot)
+        public DataRecord[] ReadAllDataRecords(NID[] nodePath, Maybe<HID> userRoot)
         {
             BTHHEADER bthHeader;
 
@@ -93,7 +93,7 @@ namespace pst.impl.ltp.bth
         }
 
         private void Enumerate(
-            NodePath nodePath,
+            NID[] nodePath,
             HID nodeId,
             int keySize,
             int dataSize,
@@ -139,7 +139,7 @@ namespace pst.impl.ltp.bth
         }
 
         private Maybe<DataRecord> FindDataRecord(
-            NodePath nodePath,
+            NID[] nodePath,
             HID nodeId,
             TKey keyToFind,
             int bthKeySize,

@@ -1,7 +1,11 @@
-﻿using pst.encodables.ndb;
+﻿using pst.core;
+using pst.encodables.ndb;
 using pst.encodables.ndb.btree;
 using pst.impl;
 using pst.interfaces;
+using pst.interfaces.ltp;
+using pst.interfaces.messaging.model;
+using pst.interfaces.messaging.model.changetracking;
 using System;
 using System.Collections.Generic;
 
@@ -9,6 +13,85 @@ namespace pst.utilities
 {
     static class ExtensionMethods
     {
+        public static Maybe<PropertyTag> Resolve(this IPropertyNameToIdMap map, StringPropertyTag tag)
+        {
+            var propertyId = map.GetPropertyId(tag.Set, tag.Name);
+
+            if (propertyId.HasNoValue)
+            {
+                return Maybe<PropertyTag>.NoValue();
+            }
+
+            return new PropertyTag(propertyId.Value, tag.Type);
+        }
+
+        public static Maybe<PropertyTag> Resolve(this IPropertyNameToIdMap map, NumericalPropertyTag tag)
+        {
+            var propertyId = map.GetPropertyId(tag.Set, tag.Id);
+
+            if (propertyId.HasNoValue)
+            {
+                return Maybe<PropertyTag>.NoValue();
+            }
+
+            return new PropertyTag(propertyId.Value, tag.Type);
+        }
+
+        public static Maybe<PropertyValue> ReadPropertyTracked(
+            this IChangesTracker tracker,
+            NodePath nodePath,
+            ObjectTypes objectType,
+            PropertyTag tag,
+            Func<Maybe<PropertyValue>> untrackedPropertyValueReader)
+        {
+            if (!tracker.IsObjectTracked(nodePath))
+            {
+                tracker.TrackObject(nodePath, objectType, ObjectStates.PreExisting, Maybe<NodePath>.NoValue());
+            }
+
+            var propertyValue =
+                tracker.InspectObject(
+                    nodePath,
+                    o =>
+                    {
+                        var property = o.ReadProperty(tag);
+
+                        if (property.HasValue)
+                        {
+                            if (property.Value.State == PropertyStates.Deleted)
+                            {
+                                return Maybe<PropertyValue>.NoValue();
+                            }
+
+                            return property.Value.Value;
+                        }
+
+                        return Maybe<PropertyValue>.NoValue();
+                    });
+
+            if (propertyValue.HasValue)
+            {
+                return propertyValue;
+            }
+
+            var untrackedPropertyValue = untrackedPropertyValueReader();
+
+            if (untrackedPropertyValue.HasNoValue)
+            {
+                return Maybe<PropertyValue>.NoValue();
+            }
+
+            tracker.UpdateObject(
+                nodePath,
+                o =>
+                {
+                    o.UpdateProperty(tag, p => new PropertyTrackingObject(PropertyStates.PreExisting, untrackedPropertyValue.Value));
+                    return o;
+                });
+
+            return untrackedPropertyValue;
+        }
+
         public static bool IsMultiValueFixedLength(this PropertyType propertyType)
         {
             return

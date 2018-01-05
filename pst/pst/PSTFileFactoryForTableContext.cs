@@ -16,7 +16,7 @@ namespace pst
     {
         private static ITableContextReader CreateNIDBasedTableContextReader(
             Stream stream,
-            ICache<NodePath, NodeEntry> nodeEntryCache,
+            ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
@@ -28,7 +28,7 @@ namespace pst
 
         private static IRowIndexReader<Tag> CreateTagBasedRowIndexReader(
             Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache,
+            ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
@@ -43,7 +43,7 @@ namespace pst
 
         private static IRowIndexReader<NID> CreateNIDBasedRowIndexReader(
             Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache,
+            ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
@@ -58,7 +58,7 @@ namespace pst
 
         private static IRowMatrixReader<NID> CreateNIDBasedRowMatrixReader(
             Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache,
+            ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
@@ -79,7 +79,7 @@ namespace pst
 
         private static IRowMatrixReader<Tag> CreateTagBasedRowMatrixReader(
             Stream dataStream,
-            ICache<NodePath, NodeEntry> nodeEntryCache,
+            ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return

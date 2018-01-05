@@ -1,13 +1,13 @@
 ﻿using pst.encodables.ltp.hn;
-using pst.interfaces.ndb;
+using pst.encodables.ndb;
 using pst.utilities;
 
 namespace pst.interfaces.ltp.hn
 {
     interface IHeapOnNodeReader
     {
-        HNHDR GetHeapOnNodeHeader(NodePath nodePath);
+        HNHDR GetHeapOnNodeHeader(NID[] nodePath);
 
-        BinaryData GetHeapItem(NodePath nodePath, HID hid);
+        BinaryData GetHeapItem(NID[] nodePath, HID hid);
     }
 }
