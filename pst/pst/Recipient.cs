@@ -57,7 +57,7 @@ namespace pst
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
             return
-                changesTracker.ReadPropertyTracked(
+                changesTracker.ReadProperty(
                     nodePath,
                     ObjectTypes.RecipientTable, 
                     propertyTag,

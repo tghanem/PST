@@ -15,28 +15,51 @@ namespace pst.impl.messaging.changetracking
             trackedObjects = new Dictionary<NodePath, TrackingObject>();
         }
 
-        public void TrackObject(
-            NodePath path,
-            ObjectTypes type,
-            ObjectStates state,
-            Maybe<NodePath> parentPath)
+        public Maybe<PropertyValue> ReadProperty(
+            NodePath nodePath,
+            ObjectTypes objectType,
+            PropertyTag tag,
+            Func<Maybe<PropertyValue>> untrackedPropertyValueReader)
         {
-            trackedObjects.Add(path, new TrackingObject(path, type, state, parentPath));
+            if (!trackedObjects.ContainsKey(nodePath))
+            {
+                trackedObjects.Add(nodePath, new TrackingObject(nodePath, objectType, ObjectStates.PreExisting, Maybe<NodePath>.NoValue()));
+            }
+
+            var propertyValue = ReadPropertyValue(trackedObjects[nodePath], tag);
+
+            if (propertyValue.HasValue)
+            {
+                return propertyValue;
+            }
+
+            var untrackedPropertyValue = untrackedPropertyValueReader();
+
+            if (untrackedPropertyValue.HasNoValue)
+            {
+                return Maybe<PropertyValue>.NoValue();
+            }
+
+            trackedObjects[nodePath].UpdateProperty(tag, p => new PropertyTrackingObject(PropertyStates.PreExisting, untrackedPropertyValue.Value));
+
+            return untrackedPropertyValue;
         }
 
-        public void UpdateObject(NodePath path, Func<TrackingObject, TrackingObject> update)
+        private Maybe<PropertyValue> ReadPropertyValue(TrackingObject trackingObject, PropertyTag propertyTag)
         {
-            trackedObjects[path] = update(trackedObjects[path]);
-        }
+            var property = trackingObject.ReadProperty(propertyTag);
 
-        public bool IsObjectTracked(NodePath path)
-        {
-            return trackedObjects.ContainsKey(path);
-        }
+            if (property.HasValue)
+            {
+                if (property.Value.State == PropertyStates.Deleted)
+                {
+                    return Maybe<PropertyValue>.NoValue();
+                }
 
-        public T InspectObject<T>(NodePath path, Func<TrackingObject, T> inspect)
-        {
-            return inspect(trackedObjects[path]);
+                return property.Value.Value;
+            }
+
+            return Maybe<PropertyValue>.NoValue();
         }
     }
 }
