@@ -1,7 +1,7 @@
-﻿using System;
+﻿using pst.encodables.ndb;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using pst.encodables.ndb;
 
 namespace pst.interfaces.messaging.model
 {
@@ -31,7 +31,11 @@ namespace pst.interfaces.messaging.model
 
         public NodeId this[int index] => pathNodeIds[index];
 
-        public NodeId Id => pathNodeIds[pathNodeIds.Count - 1];
+        public NodeId Id => pathNodeIds[Length - 1];
+
+        public NID AllocatedId => AllocatedIds[Length - 1];
+
+        public bool IsFullyAllocated => pathNodeIds.TrueForAll(id => id is AllocatedNodeId);
 
         public override bool Equals(object obj)
         {

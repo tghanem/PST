@@ -189,6 +189,7 @@
     <Compile Include="impl\ltp\tc\TableContextReader.cs" />
     <Compile Include="impl\messaging\changetracking\ChangesTracker.cs" />
     <Compile Include="impl\messaging\PropertyNameToIdMap.cs" />
+    <Compile Include="impl\messaging\UnallocatedNodeIdGenerator.cs" />
     <Compile Include="impl\rawallocation\AMapBasedAllocationReserver.cs" />
     <Compile Include="impl\rawallocation\AMapBasedStreamExtender.cs" />
     <Compile Include="impl\ndb\bbt\IBBTEntriesFromBTPageExtractor.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="interfaces\ltp\pc\IPropertyContextBasedPropertyReader.cs" />
     <Compile Include="interfaces\ltp\pc\IPropertyContextGenerator.cs" />
     <Compile Include="interfaces\ltp\tc\ITableContextBasedPropertyReader.cs" />
+    <Compile Include="interfaces\messaging\IUnallocatedNodeIdGenerator.cs" />
     <Compile Include="interfaces\messaging\model\AllocatedNodeId.cs" />
     <Compile Include="interfaces\messaging\model\changetracking\IChangesTracker.cs" />
     <Compile Include="interfaces\messaging\model\changetracking\PropertyTrackingObject.cs" />

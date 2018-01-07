@@ -2,6 +2,7 @@
 using pst.impl;
 using pst.impl.decoders;
 using pst.impl.decoders.ndb;
+using pst.impl.messaging;
 using pst.impl.messaging.changetracking;
 using pst.interfaces.ndb;
 using System.IO;
@@ -16,6 +17,8 @@ namespace pst
 
             var dataBlockEntryCache = new DictionaryBasedCache<BID, DataBlockEntry>();
 
+            var unallocatedNodeIdGenerator = new UnallocatedNodeIdGenerator();
+
             return
                 new PSTFile(
                     new EntryIdDecoder(
@@ -28,7 +31,8 @@ namespace pst
                     CreateNIDBasedTableContextReader(stream, cachedNodeEntries, dataBlockEntryCache),
                     CreatePropertyIdToNameMap(stream, cachedNodeEntries, dataBlockEntryCache),
                     CreatePropertyContextBasedPropertyReader(stream, cachedNodeEntries, dataBlockEntryCache),
-                    CreateTagBasedTableContextBasedPropertyReader(stream, cachedNodeEntries, dataBlockEntryCache));
+                    CreateTagBasedTableContextBasedPropertyReader(stream, cachedNodeEntries, dataBlockEntryCache),
+                    unallocatedNodeIdGenerator);
         }
     }
 }

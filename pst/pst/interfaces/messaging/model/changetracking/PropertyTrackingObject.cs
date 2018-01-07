@@ -1,8 +1,10 @@
-﻿namespace pst.interfaces.messaging.model.changetracking
+﻿using pst.core;
+
+namespace pst.interfaces.messaging.model.changetracking
 {
     class PropertyTrackingObject
     {
-        public PropertyTrackingObject(PropertyStates state, PropertyValue value)
+        public PropertyTrackingObject(PropertyStates state, Maybe<PropertyValue> value)
         {
             State = state;
             Value = value;
@@ -10,7 +12,7 @@
 
         public PropertyStates State { get; }
 
-        public PropertyValue Value { get; }
+        public Maybe<PropertyValue> Value { get; }
 
         public PropertyTrackingObject SetState(PropertyStates value)
         {
@@ -19,7 +21,7 @@
 
         public PropertyTrackingObject SetValue(PropertyValue value)
         {
-            return new PropertyTrackingObject(State, Value);
+            return new PropertyTrackingObject(State, value);
         }
     }
 }

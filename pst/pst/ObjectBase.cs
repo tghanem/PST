@@ -56,9 +56,8 @@ namespace pst
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
             return
-                changesTracker.ReadProperty(
-                    nodePath,
-                    objectType, 
+                changesTracker.GetProperty(
+                    nodePath, 
                     propertyTag,
                     () => propertyContextBasedPropertyReader.Read(nodePath.AllocatedIds, propertyTag));
         }

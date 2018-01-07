@@ -2,28 +2,22 @@
 {
     class UnallocatedNodeId : NodeId
     {
-        public UnallocatedNodeId(int type, int index)
+        private UnallocatedNodeId(int index)
         {
-            Type = type;
             Index = index;
         }
 
-        public int Type { get; }
+        public static UnallocatedNodeId OfValue(int index) => new UnallocatedNodeId(index);
 
         public int Index { get; }
 
-        public override int Value => Type << 16 | Index;
+        public override int Value => Index;
 
         public override bool Equals(object obj)
         {
             var nodeId = obj as UnallocatedNodeId;
 
-            if (nodeId == null)
-            {
-                return false;
-            }
-
-            return nodeId.Type == Type && nodeId.Index == Index;
+            return nodeId?.Index == Index;
         }
 
         public override int GetHashCode()

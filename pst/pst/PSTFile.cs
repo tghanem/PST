@@ -1,9 +1,11 @@
-﻿using pst.encodables;
+﻿using pst.core;
+using pst.encodables;
 using pst.encodables.ndb;
 using pst.interfaces;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.pc;
 using pst.interfaces.ltp.tc;
+using pst.interfaces.messaging;
 using pst.interfaces.messaging.model;
 using pst.interfaces.messaging.model.changetracking;
 using pst.interfaces.ndb;
@@ -23,6 +25,7 @@ namespace pst
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
         private readonly ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader;
+        private readonly IUnallocatedNodeIdGenerator nodeIdGenerator;
 
         private PSTFile(
             IDecoder<EntryId> entryIdDecoder,
@@ -34,7 +37,8 @@ namespace pst
             ITableContextReader tableContextReader,
             IPropertyNameToIdMap propertyNameToIdMap,
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
-            ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader)
+            ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader,
+            IUnallocatedNodeIdGenerator nodeIdGenerator)
         {
             this.entryIdDecoder = entryIdDecoder;
             this.nidDecoder = nidDecoder;
@@ -46,21 +50,46 @@ namespace pst
             this.propertyNameToIdMap = propertyNameToIdMap;
             this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
             this.tableContextBasedPropertyReader = tableContextBasedPropertyReader;
+            this.nodeIdGenerator = nodeIdGenerator;
         }
 
-        public MessageStore MessageStore => new MessageStore(changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader);
+        public MessageStore MessageStore
+        {
+            get
+            {
+                if (!changesTracker.IsObjectTracked(MessageStore.StorePath))
+                {
+                    changesTracker.TrackObject(
+                        MessageStore.StorePath,
+                        ObjectTypes.Store,
+                        ObjectStates.Loaded,
+                        Maybe<NodePath>.NoValue());
+                }
+
+                return new MessageStore(changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader);
+            }
+        }
 
         public Folder GetRootMailboxFolder()
         {
-            var ipmSubtreeEntryId =
-                MessageStore.GetProperty(MAPIProperties.PidTagIpmSubTreeEntryId);
+            var ipmSubtreeEntryId = MessageStore.GetProperty(MAPIProperties.PidTagIpmSubTreeEntryId);
 
-            var entryId =
-                entryIdDecoder.Decode(ipmSubtreeEntryId.Value.Value);
+            var entryId = entryIdDecoder.Decode(ipmSubtreeEntryId.Value.Value);
+
+            var nodePath = NodePath.OfValue(AllocatedNodeId.OfValue(entryId.NID));
+
+            if (!changesTracker.IsObjectTracked(nodePath))
+            {
+                changesTracker.TrackObject(
+                    nodePath,
+                    ObjectTypes.Folder,
+                    ObjectStates.Loaded,
+                    Maybe<NodePath>.NoValue());
+            }
 
             return
                 new Folder(
-                    NodePath.OfValue(AllocatedNodeId.OfValue(entryId.NID)),
+                    nodePath,
                     changesTracker,
                     stringEncoder,
                     propertyNameToIdMap,
@@ -69,7 +98,8 @@ namespace pst
                     nodeEntryFinder,
                     rowIndexReader,
                     tableContextReader,
-                    tableContextBasedPropertyReader);
+                    tableContextBasedPropertyReader,
+                    nodeIdGenerator);
         }
 
         public void Save()

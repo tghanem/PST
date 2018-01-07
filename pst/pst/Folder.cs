@@ -1,15 +1,14 @@
-﻿using pst.core;
-using pst.encodables;
+﻿using pst.encodables;
 using pst.encodables.ndb;
 using pst.interfaces;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.pc;
 using pst.interfaces.ltp.tc;
+using pst.interfaces.messaging;
 using pst.interfaces.messaging.model;
 using pst.interfaces.messaging.model.changetracking;
 using pst.interfaces.ndb;
 using pst.utilities;
-using System;
 using System.Linq;
 
 namespace pst
@@ -26,6 +25,10 @@ namespace pst
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
         private readonly ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader;
+        private readonly IUnallocatedNodeIdGenerator nodeIdGenerator;
+
+        private bool subfoldersLoaded;
+        private bool messagesLoaded;
 
         internal Folder(
             NodePath nodePath,
@@ -37,7 +40,8 @@ namespace pst
             INodeEntryFinder nodeEntryFinder,
             IRowIndexReader<NID> rowIndexReader,
             ITableContextReader tableContextReader,
-            ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader) : base(nodePath, ObjectTypes.Folder, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
+            ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader,
+            IUnallocatedNodeIdGenerator nodeIdGenerator) : base(nodePath, ObjectTypes.Folder, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
         {
             this.nodePath = nodePath;
             this.nidDecoder = nidDecoder;
@@ -47,31 +51,71 @@ namespace pst
             this.rowIndexReader = rowIndexReader;
             this.tableContextReader = tableContextReader;
             this.tableContextBasedPropertyReader = tableContextBasedPropertyReader;
+            this.nodeIdGenerator = nodeIdGenerator;
             this.propertyNameToIdMap = propertyNameToIdMap;
             this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
         }
 
         public Folder NewFolder(string displayName)
         {
-            throw new NotImplementedException();
+            var childFolderNodePath = NodePath.OfValue(nodeIdGenerator.New());
+
+            changesTracker.TrackObject(
+                childFolderNodePath,
+                ObjectTypes.Folder,
+                ObjectStates.New,
+                nodePath);
+
+            changesTracker.SetProperty(
+                childFolderNodePath,
+                MAPIProperties.PidTagDisplayName,
+                new PropertyValue(stringEncoder.Encode(displayName)));
+
+            changesTracker.SetProperty(
+                childFolderNodePath,
+                MAPIProperties.PidTagContentCount,
+                new PropertyValue(BinaryData.From(0)));
+
+            changesTracker.SetProperty(
+                childFolderNodePath,
+                MAPIProperties.PidTagContentUnreadCount,
+                new PropertyValue(BinaryData.From(0)));
+
+            changesTracker.SetProperty(
+                childFolderNodePath,
+                MAPIProperties.PidTagSubfolders,
+                new PropertyValue(BinaryData.From(false)));
+
+            return
+                new Folder(
+                    childFolderNodePath,
+                    changesTracker,
+                    stringEncoder,
+                    propertyNameToIdMap,
+                    propertyContextBasedPropertyReader,
+                    nidDecoder,
+                    nodeEntryFinder,
+                    rowIndexReader,
+                    tableContextReader,
+                    tableContextBasedPropertyReader,
+                    nodeIdGenerator);
         }
 
         public Folder[] GetSubFolders()
         {
-            var nodeIds = GetNodeIdsForSubFolders();
-
-            if (nodeIds.HasNoValue)
+            if (!subfoldersLoaded)
             {
-                return new Folder[0];
+                TrackPreExistingChildren(Constants.NID_TYPE_HIERARCHY_TABLE, ObjectTypes.Folder);
+                subfoldersLoaded = true;
             }
 
             return
-                nodeIds
-                .Value
+                changesTracker
+                .GetChildren(nodePath, s => s == ObjectStates.New || s == ObjectStates.Loaded)
                 .Select(
-                    folderNodeId =>
+                    childNodePath =>
                     new Folder(
-                        NodePath.OfValue(folderNodeId), 
+                        childNodePath,
                         changesTracker,
                         stringEncoder,
                         propertyNameToIdMap,
@@ -80,67 +124,47 @@ namespace pst
                         nodeEntryFinder,
                         rowIndexReader,
                         tableContextReader,
-                        tableContextBasedPropertyReader))
+                        tableContextBasedPropertyReader,
+                        nodeIdGenerator))
                 .ToArray();
         }
 
         public Message[] GetMessages()
         {
-            var nodeIds = GetNodeIdsForContents();
-
-            if (nodeIds.HasNoValue)
+            if (!messagesLoaded)
             {
-                return new Message[0];
+                TrackPreExistingChildren(Constants.NID_TYPE_CONTENTS_TABLE, ObjectTypes.Message);
+                messagesLoaded = true;
             }
 
             return
-                nodeIds
-                .Value
+                changesTracker
+                .GetChildren(nodePath, s => s == ObjectStates.New || s == ObjectStates.Loaded)
                 .Select(
-                    messageNodeId =>
-                    new Message(
-                        NodePath.OfValue(messageNodeId),
-                        nidDecoder,
-                        changesTracker,
-                        nodeEntryFinder,
-                        rowIndexReader,
-                        tableContextReader,
-                        propertyNameToIdMap,
-                        propertyContextBasedPropertyReader,
-                        tableContextBasedPropertyReader))
+                    childNodePath =>
+                        new Message(
+                            childNodePath,
+                            nidDecoder,
+                            changesTracker,
+                            nodeEntryFinder,
+                            rowIndexReader,
+                            tableContextReader,
+                            propertyNameToIdMap,
+                            propertyContextBasedPropertyReader,
+                            tableContextBasedPropertyReader))
                 .ToArray();
         }
 
-        private Maybe<NodeId[]> GetNodeIdsForSubFolders()
+        private void TrackPreExistingChildren(int tableContextNodeType, ObjectTypes childObjectType)
         {
-            if (nodePath.Id is AllocatedNodeId allocatedNodeId)
+            var childrenTableContextNodePath = new[] { nodePath.AllocatedId.ChangeType(tableContextNodeType) };
+
+            foreach (var rowId in rowIndexReader.GetAllRowIds(childrenTableContextNodePath))
             {
-                var hierarchyTableNodeId = NodePath.OfValue(allocatedNodeId.ChangeType(Constants.NID_TYPE_HIERARCHY_TABLE));
+                var childNodePath = NodePath.OfValue(AllocatedNodeId.OfValue(nidDecoder.Decode(rowId.RowId)));
 
-                return
-                    rowIndexReader
-                    .GetAllRowIds(hierarchyTableNodeId.AllocatedIds)
-                    .Select(rowId => AllocatedNodeId.OfValue(nidDecoder.Decode(rowId.RowId)))
-                    .ToArray();
+                changesTracker.TrackObject(childNodePath, childObjectType, ObjectStates.Loaded, nodePath);
             }
-
-            throw new Exception("Unallocated node ids are not supported");
-        }
-
-        private Maybe<NodeId[]> GetNodeIdsForContents()
-        {
-            if (nodePath.Id is AllocatedNodeId allocatedNodeId)
-            {
-                var contentsTableNodeId = NodePath.OfValue(allocatedNodeId.ChangeType(Constants.NID_TYPE_CONTENTS_TABLE));
-
-                return
-                    rowIndexReader
-                    .GetAllRowIds(contentsTableNodeId.AllocatedIds)
-                    .Select(rowId => AllocatedNodeId.OfValue(nidDecoder.Decode(rowId.RowId)))
-                    .ToArray();
-            }
-
-            throw new Exception("Unallocated node ids are not supported");
         }
     }
 }

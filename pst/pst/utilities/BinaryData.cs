@@ -38,6 +38,9 @@ namespace pst.utilities
         public static BinaryData From(byte value)
             => new BinaryData(new[] { value });
 
+        public static BinaryData From(bool value)
+            => new BinaryData(BitConverter.GetBytes(value));
+
         public static BinaryData OfValue(byte[] value)
             => new BinaryData(value);
 
