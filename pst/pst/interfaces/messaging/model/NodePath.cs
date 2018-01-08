@@ -1,5 +1,4 @@
 ﻿using pst.encodables.ndb;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -49,17 +48,12 @@ namespace pst.interfaces.messaging.model
 
         public override int GetHashCode()
         {
-            return
-                BitConverter
-                .ToString(
-                    pathNodeIds
-                    .SelectMany(
-                        nodeId =>
-                        BitConverter.GetBytes(nodeId.Value))
-                    .ToArray())
-                .ToLower()
-                .Replace("-", "")
-                .GetHashCode();
+            var p = 17;
+            foreach (var id in pathNodeIds)
+            {
+                p = p + 23 * id.Value;
+            }
+            return p;
         }
     }
 }

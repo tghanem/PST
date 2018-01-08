@@ -25,7 +25,7 @@ namespace pst
 
         public override int GetHashCode()
         {
-            return Value.GetHashCode();
+            return Value;
         }
 
         public int CompareTo(PropertyTag other)

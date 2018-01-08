@@ -48,7 +48,7 @@ namespace pst.encodables.ndb
 
         public override int GetHashCode()
         {
-            return Value.GetHashCode();
+            return Value;
         }
 
         public override string ToString()

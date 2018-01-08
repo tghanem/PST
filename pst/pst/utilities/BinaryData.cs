@@ -127,7 +127,9 @@ namespace pst.utilities
 
         public override int GetHashCode()
         {
-            return Value.GetHashCode();
+            var p = 17;
+            Array.ForEach(Value, b => p = p + 23 * b);
+            return p;
         }
 
         public int Length => Value.Length;

@@ -28,7 +28,10 @@ namespace pst
 
         public override int GetHashCode()
         {
-            return $"{Set}{Name}".GetHashCode();
+            var p = 17;
+            p = p + 23 * Set.GetHashCode();
+            p = p + 23 * Name.GetHashCode();
+            return p;
         }
     }
 }
