@@ -13,7 +13,7 @@ namespace pst
         internal MessageStore(
             IChangesTracker changesTracker,
             IPropertyNameToIdMap propertyNameToIdMap,
-            IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader) : base(StorePath, ObjectTypes.Store, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
+            IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader) : base(StorePath, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
         {
         }
     }

@@ -49,7 +49,7 @@ namespace pst.interfaces.messaging.model.changetracking
 
         public Tuple<PropertyTag, PropertyTrackingObject>[] Properties => properties.Select(p => Tuple.Create(p.Key, p.Value)).ToArray();
 
-        public Maybe<PropertyTrackingObject> ReadProperty(PropertyTag tag)
+        public Maybe<PropertyTrackingObject> GetProperty(PropertyTag tag)
         {
             if (properties.ContainsKey(tag))
             {

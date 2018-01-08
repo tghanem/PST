@@ -10,23 +10,49 @@ namespace pst
     public abstract class ObjectBase
     {
         private readonly NodePath nodePath;
-        private readonly ObjectTypes objectType;
         private readonly IChangesTracker changesTracker;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
 
         internal ObjectBase(
             NodePath nodePath,
-            ObjectTypes objectType,
             IChangesTracker changesTracker,
             IPropertyNameToIdMap propertyNameToIdMap,
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader)
         {
             this.nodePath = nodePath;
-            this.objectType = objectType;
             this.changesTracker = changesTracker;
             this.propertyNameToIdMap = propertyNameToIdMap;
             this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
+        }
+
+        public void SetProperty(NumericalPropertyTag propertyTag, PropertyValue propertyValue)
+        {
+            var resolvedTag = propertyNameToIdMap.Resolve(propertyTag);
+
+            if (resolvedTag.HasNoValue)
+            {
+                return;
+            }
+
+            changesTracker.SetProperty(nodePath, resolvedTag.Value, propertyValue);
+        }
+
+        public void SetProperty(StringPropertyTag propertyTag, PropertyValue propertyValue)
+        {
+            var resolvedTag = propertyNameToIdMap.Resolve(propertyTag);
+
+            if (resolvedTag.HasNoValue)
+            {
+                return;
+            }
+
+            changesTracker.SetProperty(nodePath, resolvedTag.Value, propertyValue);
+        }
+
+        public void SetProperty(PropertyTag propertyTag, PropertyValue propertyValue)
+        {
+            changesTracker.SetProperty(nodePath, propertyTag, propertyValue);
         }
 
         public Maybe<PropertyValue> GetProperty(NumericalPropertyTag propertyTag)
@@ -57,9 +83,38 @@ namespace pst
         {
             return
                 changesTracker.GetProperty(
-                    nodePath, 
+                    nodePath,
                     propertyTag,
                     () => propertyContextBasedPropertyReader.Read(nodePath.AllocatedIds, propertyTag));
+        }
+
+        public void DeleteProperty(NumericalPropertyTag propertyTag)
+        {
+            var resolvedTag = propertyNameToIdMap.Resolve(propertyTag);
+
+            if (resolvedTag.HasNoValue)
+            {
+                return;
+            }
+
+            changesTracker.DeleteProperty(nodePath, resolvedTag.Value);
+        }
+
+        public void DeleteProperty(StringPropertyTag propertyTag)
+        {
+            var resolvedTag = propertyNameToIdMap.Resolve(propertyTag);
+
+            if (resolvedTag.HasNoValue)
+            {
+                return;
+            }
+
+            changesTracker.DeleteProperty(nodePath, resolvedTag.Value);
+        }
+
+        public void DeleteProperty(PropertyTag propertyTag)
+        {
+            changesTracker.DeleteProperty(nodePath, propertyTag);
         }
     }
 }

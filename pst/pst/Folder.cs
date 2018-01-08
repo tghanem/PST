@@ -41,7 +41,7 @@ namespace pst
             IRowIndexReader<NID> rowIndexReader,
             ITableContextReader tableContextReader,
             ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader,
-            IUnallocatedNodeIdGenerator nodeIdGenerator) : base(nodePath, ObjectTypes.Folder, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
+            IUnallocatedNodeIdGenerator nodeIdGenerator) : base(nodePath, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
         {
             this.nodePath = nodePath;
             this.nidDecoder = nidDecoder;

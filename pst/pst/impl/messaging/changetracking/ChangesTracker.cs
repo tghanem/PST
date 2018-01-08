@@ -156,7 +156,7 @@ namespace pst.impl.messaging.changetracking
             TrackingObject nodeTrackingObject,
             PropertyTag propertyTag)
         {
-            var property = nodeTrackingObject.ReadProperty(propertyTag);
+            var property = nodeTrackingObject.GetProperty(propertyTag);
 
             if (property.HasNoValue)
             {
