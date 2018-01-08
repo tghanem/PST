@@ -47,21 +47,29 @@ namespace pst
 
         public Maybe<Message> GetEmbeddedMessage()
         {
-            var embeddedMessageNID = GetEmbeddedMessageNodeId();
+            var embeddedMessageNodeId = GetEmbeddedMessageNodeId();
 
-            if (embeddedMessageNID.HasNoValue)
+            if (embeddedMessageNodeId.HasNoValue)
             {
                 return Maybe<Message>.NoValue();
             }
 
+            var embeddedMessageNodePath = nodePath.Add(embeddedMessageNodeId.Value);
+
+            changesTracker.TrackNode(
+                embeddedMessageNodePath,
+                ObjectTypes.Message,
+                ObjectStates.Loaded,
+                nodePath);
+
             return
                 new Message(
-                    nodePath.Add(embeddedMessageNID.Value),
+                    embeddedMessageNodePath,
                     nidDecoder,
                     changesTracker,
                     nodeEntryFinder,
                     rowIndexReader,
-                    tableContextReader, 
+                    tableContextReader,
                     propertyNameToIdMap,
                     propertyContextBasedPropertyReader,
                     tableContextBasedPropertyReader);

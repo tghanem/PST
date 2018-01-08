@@ -1,5 +1,4 @@
-﻿using pst.core;
-using pst.encodables;
+﻿using pst.encodables;
 using pst.encodables.ndb;
 using pst.interfaces;
 using pst.interfaces.ltp;
@@ -25,6 +24,9 @@ namespace pst
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
         private readonly ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader;
 
+        private bool preExistingRecipientsLoaded;
+        private bool preExistingAttachmentsLoaded;
+
         internal Message(
             NodePath nodePath,
             IDecoder<NID> nidDecoder,
@@ -49,45 +51,45 @@ namespace pst
 
         public Recipient[] GetRecipients()
         {
-            var entry = nodeEntryFinder.GetEntry(nodePath.AllocatedIds);
-
-            if (entry.HasNoValue)
+            if (!preExistingRecipientsLoaded)
             {
-                return new Recipient[0];
+                LoadPreExistingRecipients();
+                preExistingRecipientsLoaded = true;
             }
 
-            var recipientNodeId = entry.Value.GetChildOfType(Constants.NID_TYPE_RECIPIENT_TABLE).LocalSubnodeId;
+            var recipientTableNodePath =
+                changesTracker
+                .GetChildren(
+                    parentNodePath: nodePath,
+                    childType: ObjectTypes.RecipientTable,
+                    childStatePredicate: s => s == ObjectStates.New || s == ObjectStates.Loaded)
+                .First();
 
             return
-                tableContextReader
-                .GetAllRows(nodePath.Add(AllocatedNodeId.OfValue(recipientNodeId)))
-                .Select(
-                    rowId =>
-                    new Recipient(
-                        nodePath.Add(AllocatedNodeId.OfValue(recipientNodeId)),
-                        Tag.OfValue(rowId.RowId),
-                        changesTracker,
-                        propertyNameToIdMap,
-                        tableContextBasedPropertyReader))
+                changesTracker
+                .GetAssociatedObjects(recipientTableNodePath)
+                .Select(path => new Recipient(path, changesTracker, propertyNameToIdMap, tableContextBasedPropertyReader))
                 .ToArray();
         }
 
         public Attachment[] GetAttachments()
         {
-            var nodeIdsForAttachments = GetNodeIdsForAttachments();
-
-            if (nodeIdsForAttachments.HasNoValue)
+            if (!preExistingAttachmentsLoaded)
             {
-                return new Attachment[0];
+                LoadPreExistingAttachments();
+                preExistingAttachmentsLoaded = true;
             }
 
             return
-                nodeIdsForAttachments
-                .Value
+                changesTracker
+                .GetChildren(
+                    parentNodePath: nodePath,
+                    childType: ObjectTypes.Attachment,
+                    childStatePredicate: s => s == ObjectStates.New || s == ObjectStates.Loaded)
                 .Select(
-                    nodeId =>
+                    path =>
                     new Attachment(
-                        nodePath.Add(nodeId),
+                        path,
                         changesTracker,
                         propertyNameToIdMap,
                         propertyContextBasedPropertyReader,
@@ -99,22 +101,54 @@ namespace pst
                 .ToArray();
         }
 
-        private Maybe<NodeId[]> GetNodeIdsForAttachments()
+        private void LoadPreExistingAttachments()
         {
             var entry = nodeEntryFinder.GetEntry(nodePath.AllocatedIds);
 
             if (entry.HasNoValue)
             {
-                return Maybe<NodeId[]>.NoValue();
+                return;
             }
 
-            var attachmentNodeId = entry.Value.GetChildOfType(Constants.NID_TYPE_ATTACHMENT_TABLE).LocalSubnodeId;
+            var tableContextNodeId = entry.Value.GetChildOfType(Constants.NID_TYPE_ATTACHMENT_TABLE).LocalSubnodeId;
 
-            return
-                rowIndexReader
-                .GetAllRowIds(nodePath.Add(AllocatedNodeId.OfValue(attachmentNodeId)).AllocatedIds)
-                .Select(rowId => AllocatedNodeId.OfValue(nidDecoder.Decode(rowId.RowId)))
-                .ToArray();
+            var tableContextNodePath = nodePath.Add(AllocatedNodeId.OfValue(tableContextNodeId));
+
+            foreach (var rowId in tableContextReader.GetAllRows(tableContextNodePath))
+            {
+                var attachmentNodeId = AllocatedNodeId.OfValue(nidDecoder.Decode(rowId.RowId));
+
+                changesTracker.TrackNode(
+                    nodePath.Add(attachmentNodeId),
+                    ObjectTypes.Attachment,
+                    ObjectStates.Loaded,
+                    nodePath);
+            }
+        }
+
+        private void LoadPreExistingRecipients()
+        {
+            var entry = nodeEntryFinder.GetEntry(nodePath.AllocatedIds);
+
+            if (entry.HasNoValue)
+            {
+                return;
+            }
+
+            var tableContextNodeId = entry.Value.GetChildOfType(Constants.NID_TYPE_RECIPIENT_TABLE).LocalSubnodeId;
+
+            var tableContextNodePath = nodePath.Add(AllocatedNodeId.OfValue(tableContextNodeId));
+
+            changesTracker.TrackNode(tableContextNodePath, ObjectTypes.RecipientTable, ObjectStates.Loaded, nodePath);
+
+            foreach (var rowId in tableContextReader.GetAllRows(tableContextNodePath))
+            {
+                changesTracker.Associate(
+                    tableContextNodePath,
+                    Tag.OfValue(rowId.RowId),
+                    ObjectTypes.Recipient,
+                    ObjectStates.Loaded);
+            }
         }
     }
 }

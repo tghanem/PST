@@ -187,6 +187,7 @@
     <Compile Include="impl\ltp\tc\RowValuesExtractor.cs" />
     <Compile Include="impl\ltp\tc\TableContextBasedPropertyReader.cs" />
     <Compile Include="impl\ltp\tc\TableContextReader.cs" />
+    <Compile Include="impl\messaging\changetracking\AssociatedObjectPath.cs" />
     <Compile Include="impl\messaging\changetracking\ChangesTracker.cs" />
     <Compile Include="impl\messaging\PropertyNameToIdMap.cs" />
     <Compile Include="impl\messaging\UnallocatedNodeIdGenerator.cs" />
@@ -236,7 +237,7 @@
     <Compile Include="interfaces\messaging\model\AllocatedNodeId.cs" />
     <Compile Include="interfaces\messaging\model\changetracking\IChangesTracker.cs" />
     <Compile Include="interfaces\messaging\model\changetracking\PropertyTrackingObject.cs" />
-    <Compile Include="interfaces\messaging\model\changetracking\TrackingObject.cs" />
+    <Compile Include="interfaces\messaging\model\changetracking\NodeTrackingObject.cs" />
     <Compile Include="interfaces\messaging\model\NodeId.cs" />
     <Compile Include="interfaces\messaging\model\NodePath.cs" />
     <Compile Include="interfaces\messaging\model\UnallocatedNodeId.cs" />

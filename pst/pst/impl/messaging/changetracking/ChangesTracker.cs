@@ -1,4 +1,5 @@
 ﻿using pst.core;
+using pst.encodables;
 using pst.interfaces.messaging.model;
 using pst.interfaces.messaging.model.changetracking;
 using System;
@@ -9,14 +10,16 @@ namespace pst.impl.messaging.changetracking
 {
     class ChangesTracker : IChangesTracker
     {
-        private readonly Dictionary<NodePath, TrackingObject> trackedObjects;
+        private readonly Dictionary<NodePath, NodeTrackingObject> trackedObjects;
+        private readonly Dictionary<AssociatedObjectPath, TrackingObject> associatedObjects;
 
         public ChangesTracker()
         {
-            trackedObjects = new Dictionary<NodePath, TrackingObject>();
+            trackedObjects = new Dictionary<NodePath, NodeTrackingObject>();
+            associatedObjects = new Dictionary<AssociatedObjectPath, TrackingObject>();
         }
 
-        public void TrackObject(
+        public void TrackNode(
             NodePath nodePath,
             ObjectTypes objectType,
             ObjectStates objectState,
@@ -24,7 +27,43 @@ namespace pst.impl.messaging.changetracking
         {
             trackedObjects.Add(
                 nodePath,
-                new TrackingObject(nodePath, objectType, objectState, parentNodePath));
+                new NodeTrackingObject(nodePath, objectType, objectState, parentNodePath));
+        }
+
+        public void Associate(
+            NodePath nodePath,
+            Tag associatedObjectTag,
+            ObjectTypes associatedObjectType,
+            ObjectStates associatdObjectState)
+        {
+            associatedObjects.Add(
+                new AssociatedObjectPath(nodePath, associatedObjectTag),
+                new TrackingObject(associatedObjectType, associatdObjectState));
+        }
+
+        public bool IsObjectTracked(
+            NodePath nodePath)
+        {
+            return trackedObjects.ContainsKey(nodePath);
+        }
+
+        public AssociatedObjectPath[] GetAssociatedObjects(
+            NodePath nodePath)
+        {
+            return associatedObjects.Keys.Where(k => k.NodePath.Equals(nodePath)).ToArray();
+        }
+
+        public NodePath[] GetChildren(
+            NodePath parentNodePath,
+            ObjectTypes childType,
+            Predicate<ObjectStates> childStatePredicate)
+        {
+            return
+                trackedObjects
+                .Values
+                .Where(o => o.ParentPath.HasValueAnd(p => p.Equals(parentNodePath)) && o.Type == childType && childStatePredicate(o.State))
+                .Select(o => o.Path)
+                .ToArray();
         }
 
         public void SetProperty(
@@ -37,6 +76,16 @@ namespace pst.impl.messaging.changetracking
                 propertyTrackingObject => SetProperty(propertyValue, propertyTrackingObject));
         }
 
+        public void SetProperty(
+            AssociatedObjectPath path,
+            PropertyTag propertyTag,
+            PropertyValue propertyValue)
+        {
+            associatedObjects[path].UpdateProperty(
+                propertyTag,
+                propertyTrackingObject => SetProperty(propertyValue, propertyTrackingObject));
+        }
+
         public void DeleteProperty(
             NodePath nodePath,
             PropertyTag propertyTag)
@@ -44,19 +93,11 @@ namespace pst.impl.messaging.changetracking
             trackedObjects[nodePath].UpdateProperty(propertyTag, DeleteProperty);
         }
 
-        public bool IsObjectTracked(NodePath nodePath)
+        public void DeleteProperty(
+            AssociatedObjectPath path,
+            PropertyTag propertyTag)
         {
-            return trackedObjects.ContainsKey(nodePath);
-        }
-
-        public NodePath[] GetChildren(NodePath parentNodePath, Predicate<ObjectStates> childStatePredicate)
-        {
-            return
-                trackedObjects
-                .Values
-                .Where(o => o.ParentPath.HasValueAnd(p => p.Equals(parentNodePath)) && childStatePredicate(o.State))
-                .Select(o => o.Path)
-                .ToArray();
+            associatedObjects[path].UpdateProperty(propertyTag, DeleteProperty);
         }
 
         public Maybe<PropertyValue> GetProperty(
@@ -85,9 +126,37 @@ namespace pst.impl.messaging.changetracking
             return untrackedPropertyValue;
         }
 
-        private Maybe<PropertyValue> GetProperty(TrackingObject trackingObject, PropertyTag propertyTag)
+        public Maybe<PropertyValue> GetProperty(
+            AssociatedObjectPath path,
+            PropertyTag propertyTag,
+            Func<Maybe<PropertyValue>> untrackedPropertyValueReader)
         {
-            var property = trackingObject.ReadProperty(propertyTag);
+            var propertyValue = GetProperty(associatedObjects[path], propertyTag);
+
+            if (propertyValue.HasValue)
+            {
+                return propertyValue;
+            }
+
+            var untrackedPropertyValue = untrackedPropertyValueReader();
+
+            if (untrackedPropertyValue.HasNoValue)
+            {
+                return Maybe<PropertyValue>.NoValue();
+            }
+
+            associatedObjects[path].UpdateProperty(
+                propertyTag,
+                p => new PropertyTrackingObject(PropertyStates.Loaded, untrackedPropertyValue.Value));
+
+            return untrackedPropertyValue;
+        }
+
+        private Maybe<PropertyValue> GetProperty(
+            TrackingObject nodeTrackingObject,
+            PropertyTag propertyTag)
+        {
+            var property = nodeTrackingObject.ReadProperty(propertyTag);
 
             if (property.HasNoValue)
             {
@@ -103,7 +172,9 @@ namespace pst.impl.messaging.changetracking
             return property.Value.Value;
         }
 
-        private PropertyTrackingObject SetProperty(PropertyValue propertyValue, Maybe<PropertyTrackingObject> propertyTrackingObject)
+        private PropertyTrackingObject SetProperty(
+            PropertyValue propertyValue,
+            Maybe<PropertyTrackingObject> propertyTrackingObject)
         {
             if (propertyTrackingObject.HasNoValue)
             {
@@ -129,7 +200,8 @@ namespace pst.impl.messaging.changetracking
             return propertyTrackingObject.Value.SetValue(propertyValue);
         }
 
-        private PropertyTrackingObject DeleteProperty(Maybe<PropertyTrackingObject> propertyTrackingObject)
+        private PropertyTrackingObject DeleteProperty(
+            Maybe<PropertyTrackingObject> propertyTrackingObject)
         {
             if (propertyTrackingObject.HasValue)
             {

@@ -60,7 +60,7 @@ namespace pst
         {
             var childFolderNodePath = NodePath.OfValue(nodeIdGenerator.New());
 
-            changesTracker.TrackObject(
+            changesTracker.TrackNode(
                 childFolderNodePath,
                 ObjectTypes.Folder,
                 ObjectStates.New,
@@ -111,7 +111,10 @@ namespace pst
 
             return
                 changesTracker
-                .GetChildren(nodePath, s => s == ObjectStates.New || s == ObjectStates.Loaded)
+                .GetChildren(
+                    parentNodePath: nodePath,
+                    childType: ObjectTypes.Folder,
+                    childStatePredicate: s => s == ObjectStates.New || s == ObjectStates.Loaded)
                 .Select(
                     childNodePath =>
                     new Folder(
@@ -139,7 +142,10 @@ namespace pst
 
             return
                 changesTracker
-                .GetChildren(nodePath, s => s == ObjectStates.New || s == ObjectStates.Loaded)
+                .GetChildren(
+                    parentNodePath: nodePath,
+                    childType: ObjectTypes.Message,
+                    childStatePredicate: s => s == ObjectStates.New || s == ObjectStates.Loaded)
                 .Select(
                     childNodePath =>
                         new Message(
@@ -163,7 +169,7 @@ namespace pst
             {
                 var childNodePath = NodePath.OfValue(AllocatedNodeId.OfValue(nidDecoder.Decode(rowId.RowId)));
 
-                changesTracker.TrackObject(childNodePath, childObjectType, ObjectStates.Loaded, nodePath);
+                changesTracker.TrackNode(childNodePath, childObjectType, ObjectStates.Loaded, nodePath);
             }
         }
     }

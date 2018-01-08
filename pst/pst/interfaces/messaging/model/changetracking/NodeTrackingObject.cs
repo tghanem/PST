@@ -18,6 +18,7 @@ namespace pst.interfaces.messaging.model.changetracking
         Folder,
         Message,
         RecipientTable,
+        Recipient,
         Attachment
     }
 
@@ -34,23 +35,17 @@ namespace pst.interfaces.messaging.model.changetracking
     {
         private readonly Dictionary<PropertyTag, PropertyTrackingObject> properties;
 
-        public TrackingObject(NodePath path, ObjectTypes type, ObjectStates state, Maybe<NodePath> parentPath)
+        public TrackingObject(ObjectTypes type, ObjectStates state)
         {
-            Path = path;
             Type = type;
             State = state;
-            ParentPath = parentPath;
 
             properties = new Dictionary<PropertyTag, PropertyTrackingObject>();
         }
 
-        public NodePath Path { get; }
-
         public ObjectTypes Type { get; }
 
         public ObjectStates State { get; }
-
-        public Maybe<NodePath> ParentPath { get; }
 
         public Tuple<PropertyTag, PropertyTrackingObject>[] Properties => properties.Select(p => Tuple.Create(p.Key, p.Value)).ToArray();
 
@@ -75,5 +70,18 @@ namespace pst.interfaces.messaging.model.changetracking
                 properties.Add(tag, update(Maybe<PropertyTrackingObject>.NoValue()));
             }
         }
+    }
+
+    class NodeTrackingObject : TrackingObject
+    {
+        public NodeTrackingObject(NodePath path, ObjectTypes type, ObjectStates state, Maybe<NodePath> parentPath) : base(type, state)
+        {
+            Path = path;
+            ParentPath = parentPath;
+        }
+
+        public NodePath Path { get; }
+
+        public Maybe<NodePath> ParentPath { get; }
     }
 }

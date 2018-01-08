@@ -23,19 +23,9 @@ namespace pst.interfaces.messaging.model
 
         public static NodePath OfValue(params NodeId[] value) => new NodePath(value);
 
-        public NodeId[] NodeIds => pathNodeIds.ToArray();
-
         public NID[] AllocatedIds => pathNodeIds.Cast<AllocatedNodeId>().Select(id => id.NID).ToArray();
 
-        public int Length => pathNodeIds.Count;
-
-        public NodeId this[int index] => pathNodeIds[index];
-
-        public NodeId Id => pathNodeIds[Length - 1];
-
-        public NID AllocatedId => AllocatedIds[Length - 1];
-
-        public bool IsFullyAllocated => pathNodeIds.TrueForAll(id => id is AllocatedNodeId);
+        public NID AllocatedId => AllocatedIds[pathNodeIds.Count - 1];
 
         public override bool Equals(object obj)
         {

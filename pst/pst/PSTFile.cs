@@ -59,7 +59,7 @@ namespace pst
             {
                 if (!changesTracker.IsObjectTracked(MessageStore.StorePath))
                 {
-                    changesTracker.TrackObject(
+                    changesTracker.TrackNode(
                         MessageStore.StorePath,
                         ObjectTypes.Store,
                         ObjectStates.Loaded,
@@ -80,7 +80,7 @@ namespace pst
 
             if (!changesTracker.IsObjectTracked(nodePath))
             {
-                changesTracker.TrackObject(
+                changesTracker.TrackNode(
                     nodePath,
                     ObjectTypes.Folder,
                     ObjectStates.Loaded,

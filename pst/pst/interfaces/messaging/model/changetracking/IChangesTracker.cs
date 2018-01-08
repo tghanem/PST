@@ -1,18 +1,42 @@
 ﻿using pst.core;
+using pst.encodables;
+using pst.impl.messaging.changetracking;
 using System;
 
 namespace pst.interfaces.messaging.model.changetracking
 {
     interface IChangesTracker
     {
-        void TrackObject(
+        void TrackNode(
             NodePath nodePath,
             ObjectTypes objectType,
             ObjectStates objectState,
             Maybe<NodePath> parentNodePath);
 
+        void Associate(
+            NodePath nodePath,
+            Tag associatedObjectTag,
+            ObjectTypes associatedObjectType,
+            ObjectStates associatdObjectState);
+
+        bool IsObjectTracked(
+            NodePath nodePath);
+
+        AssociatedObjectPath[] GetAssociatedObjects(
+            NodePath nodePath);
+
+        NodePath[] GetChildren(
+            NodePath parentNodePath,
+            ObjectTypes childType,
+            Predicate<ObjectStates> childStatePredicate);
+
         void SetProperty(
             NodePath nodePath,
+            PropertyTag propertyTag,
+            PropertyValue propertyValue);
+
+        void SetProperty(
+            AssociatedObjectPath path,
             PropertyTag propertyTag,
             PropertyValue propertyValue);
 
@@ -20,12 +44,17 @@ namespace pst.interfaces.messaging.model.changetracking
             NodePath nodePath,
             PropertyTag propertyTag);
 
-        bool IsObjectTracked(NodePath nodePath);
-
-        NodePath[] GetChildren(NodePath parentNodePath, Predicate<ObjectStates> childStatePredicate);
+        void DeleteProperty(
+            AssociatedObjectPath path,
+            PropertyTag propertyTag);
 
         Maybe<PropertyValue> GetProperty(
             NodePath nodePath,
+            PropertyTag propertyTag,
+            Func<Maybe<PropertyValue>> untrackedPropertyValueReader);
+
+        Maybe<PropertyValue> GetProperty(
+            AssociatedObjectPath path,
             PropertyTag propertyTag,
             Func<Maybe<PropertyValue>> untrackedPropertyValueReader);
     }
