@@ -1,7 +1,7 @@
 ﻿using pst.core;
 using pst.encodables.ndb;
 
-namespace pst.interfaces.ltp.pc
+namespace pst.interfaces.messaging
 {
     interface IPropertyContextBasedPropertyReader
     {

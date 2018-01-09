@@ -1,7 +1,7 @@
 ﻿using pst.core;
 using pst.impl.messaging.changetracking;
 using pst.interfaces.ltp;
-using pst.interfaces.ltp.tc;
+using pst.interfaces.messaging;
 using pst.interfaces.messaging.model.changetracking;
 using pst.utilities;
 

@@ -1,10 +1,9 @@
 ﻿using pst.core;
 using pst.encodables.ndb;
-using pst.interfaces.ltp;
 using pst.interfaces.ltp.bth;
-using pst.interfaces.ltp.pc;
+using pst.interfaces.messaging;
 
-namespace pst.impl.ltp.pc
+namespace pst.impl.messaging
 {
     class PropertyContextBasedPropertyReader : IPropertyContextBasedPropertyReader
     {

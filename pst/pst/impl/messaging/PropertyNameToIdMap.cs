@@ -2,7 +2,7 @@
 using pst.encodables.messaging;
 using pst.interfaces;
 using pst.interfaces.ltp;
-using pst.interfaces.ltp.pc;
+using pst.interfaces.messaging;
 using pst.interfaces.messaging.model;
 using pst.utilities;
 using System;

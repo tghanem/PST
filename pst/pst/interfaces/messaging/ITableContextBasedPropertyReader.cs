@@ -2,7 +2,7 @@
 using pst.encodables.ltp.tc;
 using pst.encodables.ndb;
 
-namespace pst.interfaces.ltp.tc
+namespace pst.interfaces.messaging
 {
     interface ITableContextBasedPropertyReader
     {

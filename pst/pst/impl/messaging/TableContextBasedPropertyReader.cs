@@ -1,10 +1,10 @@
 ﻿using pst.core;
 using pst.encodables.ltp.tc;
 using pst.encodables.ndb;
-using pst.interfaces.ltp;
 using pst.interfaces.ltp.tc;
+using pst.interfaces.messaging;
 
-namespace pst.impl.ltp.tc
+namespace pst.impl.messaging
 {
     class TableContextBasedPropertyReader : ITableContextBasedPropertyReader
     {
