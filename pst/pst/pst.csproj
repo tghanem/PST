@@ -134,7 +134,6 @@
     <Compile Include="impl\decoders\ndb\blocks\subnode\SubnodeBlockDecoder.cs" />
     <Compile Include="impl\decoders\ndb\HeaderDecoder.cs" />
     <Compile Include="impl\decoders\ndb\RootDecoder.cs" />
-    <Compile Include="impl\decoders\TagDecoder.cs" />
     <Compile Include="impl\DictionaryBasedCache.cs" />
     <Compile Include="impl\encoders\ltp\hn\HeapOnNodeEncoder.cs" />
     <Compile Include="impl\encoders\ltp\hn\HNBITMAPHDREncoder.cs" />
@@ -298,7 +297,6 @@
     <Compile Include="utilities\Constants.cs" />
     <Compile Include="utilities\encodings\NoEncoding.cs" />
     <Compile Include="utilities\encodings\PermutativeEncoding.cs" />
-    <Compile Include="encodables\Tag.cs" />
     <Compile Include="utilities\Utilities.cs" />
   </ItemGroup>
   <ItemGroup />

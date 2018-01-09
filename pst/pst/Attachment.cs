@@ -1,5 +1,4 @@
 ﻿using pst.core;
-using pst.encodables;
 using pst.encodables.ndb;
 using pst.interfaces;
 using pst.interfaces.ltp;
@@ -21,7 +20,7 @@ namespace pst
         private readonly ITableContextReader tableContextReader;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
-        private readonly ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader;
+        private readonly ITableContextBasedPropertyReader tableContextBasedPropertyReader;
 
         internal Attachment(
             NodePath nodePath,
@@ -32,7 +31,7 @@ namespace pst
             INodeEntryFinder nodeEntryFinder,
             IRowIndexReader<NID> rowIndexReader,
             ITableContextReader tableContextReader,
-            ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader) : base(nodePath, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
+            ITableContextBasedPropertyReader tableContextBasedPropertyReader) : base(nodePath, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
         {
             this.nodePath = nodePath;
             this.nidDecoder = nidDecoder;

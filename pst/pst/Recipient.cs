@@ -1,5 +1,4 @@
 ﻿using pst.core;
-using pst.encodables;
 using pst.impl.messaging.changetracking;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.tc;
@@ -13,13 +12,13 @@ namespace pst
         private readonly AssociatedObjectPath associatedObjectPath;
         private readonly IChangesTracker changesTracker;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
-        private readonly ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader;
+        private readonly ITableContextBasedPropertyReader tableContextBasedPropertyReader;
 
         internal Recipient(
             AssociatedObjectPath associatedObjectPath,
             IChangesTracker changesTracker,
             IPropertyNameToIdMap propertyNameToIdMap,
-            ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader)
+            ITableContextBasedPropertyReader tableContextBasedPropertyReader)
         {
             this.associatedObjectPath = associatedObjectPath;
             this.changesTracker = changesTracker;
@@ -86,7 +85,7 @@ namespace pst
                 changesTracker.GetProperty(
                     associatedObjectPath,
                     propertyTag,
-                    () => tableContextBasedPropertyReader.Read(associatedObjectPath.NodePath.AllocatedIds, associatedObjectPath.Tag, propertyTag));
+                    () => tableContextBasedPropertyReader.Read(associatedObjectPath.NodePath.AllocatedIds, associatedObjectPath.RowId, propertyTag));
         }
 
         public void DeleteProperty(NumericalPropertyTag propertyTag)

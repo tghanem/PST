@@ -1,5 +1,4 @@
-﻿using pst.encodables;
-using pst.encodables.ndb;
+﻿using pst.encodables.ndb;
 using pst.impl.decoders.ltp.hn;
 using pst.impl.decoders.messaging;
 using pst.impl.decoders.ndb;
@@ -20,13 +19,13 @@ namespace pst
 {
     public partial class PSTFile
     {
-        private static ITableContextBasedPropertyReader<Tag> CreateTagBasedTableContextBasedPropertyReader(
+        private static ITableContextBasedPropertyReader CreateTagBasedTableContextBasedPropertyReader(
             Stream dataStream,
             ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
-                new TableContextBasedPropertyReader<Tag>(
+                new TableContextBasedPropertyReader(
                     CreateTagBasedRowMatrixReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     CreatePropertyValueProcessor(dataStream, nodeEntryCache, dataBlockEntryCache));
         }

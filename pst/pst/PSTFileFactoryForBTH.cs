@@ -1,6 +1,4 @@
-﻿using pst.encodables;
-using pst.encodables.ndb;
-using pst.impl.decoders;
+﻿using pst.encodables.ndb;
 using pst.impl.decoders.ltp.bth;
 using pst.impl.decoders.ltp.hn;
 using pst.impl.decoders.messaging;
@@ -41,20 +39,6 @@ namespace pst
                 new BTreeOnHeapReader<NID>(
                     new HIDDecoder(),
                     new NIDDecoder(),
-                    new BTHHEADERDecoder(
-                        new HIDDecoder()),
-                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache));
-        }
-
-        private static IBTreeOnHeapReader<Tag> CreateTagBasedBTreeOnHeapReader(
-            Stream dataStream,
-            ICache<NID[], NodeEntry> nodeEntryCache,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache)
-        {
-            return
-                new BTreeOnHeapReader<Tag>(
-                    new HIDDecoder(),
-                    new TagDecoder(),
                     new BTHHEADERDecoder(
                         new HIDDecoder()),
                     CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache));

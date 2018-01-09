@@ -1,24 +1,25 @@
 ﻿using pst.core;
+using pst.encodables.ltp.tc;
 using pst.encodables.ndb;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.tc;
 
 namespace pst.impl.ltp.tc
 {
-    class TableContextBasedPropertyReader<TRowId> : ITableContextBasedPropertyReader<TRowId>
+    class TableContextBasedPropertyReader : ITableContextBasedPropertyReader
     {
-        private readonly IRowMatrixReader<TRowId> rowMatrixReader;
+        private readonly IRowMatrixReader rowMatrixReader;
         private readonly IPropertyValueReader propertyValueReader;
 
         public TableContextBasedPropertyReader(
-            IRowMatrixReader<TRowId> rowMatrixReader,
+            IRowMatrixReader rowMatrixReader,
             IPropertyValueReader propertyValueReader)
         {
             this.rowMatrixReader = rowMatrixReader;
             this.propertyValueReader = propertyValueReader;
         }
 
-        public Maybe<PropertyValue> Read(NID[] nodePath, TRowId rowId, PropertyTag propertyTag)
+        public Maybe<PropertyValue> Read(NID[] nodePath, TCROWID rowId, PropertyTag propertyTag)
         {
             var row = rowMatrixReader.GetRow(nodePath, rowId);
 

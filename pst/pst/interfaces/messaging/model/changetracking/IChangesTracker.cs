@@ -1,5 +1,5 @@
 ﻿using pst.core;
-using pst.encodables;
+using pst.encodables.ltp.tc;
 using pst.impl.messaging.changetracking;
 using System;
 
@@ -15,7 +15,7 @@ namespace pst.interfaces.messaging.model.changetracking
 
         void Associate(
             NodePath nodePath,
-            Tag associatedObjectTag,
+            TCROWID associatedObjectTag,
             ObjectTypes associatedObjectType,
             ObjectStates associatdObjectState);
 

@@ -1,5 +1,4 @@
-﻿using pst.encodables;
-using pst.encodables.ndb;
+﻿using pst.encodables.ndb;
 using pst.impl.converters;
 using pst.impl.decoders.ltp.hn;
 using pst.impl.decoders.ltp.tc;
@@ -21,24 +20,8 @@ namespace pst
         {
             return
                 new TableContextReader<NID>(
-                    new NIDDecoder(),
                     CreateNIDBasedRowIndexReader(stream, nodeEntryCache, dataBlockEntryCache),
                     CreateNIDBasedRowMatrixReader(stream, nodeEntryCache, dataBlockEntryCache));
-        }
-
-        private static IRowIndexReader<Tag> CreateTagBasedRowIndexReader(
-            Stream dataStream,
-            ICache<NID[], NodeEntry> nodeEntryCache,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache)
-        {
-            return
-                new RowIndexReader<Tag>(
-                    new TCINFODecoder(
-                        new HIDDecoder(),
-                        new TCOLDESCDecoder()),
-                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    CreateTagBasedBTreeOnHeapReader(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    new DataRecordToTCROWIDConverter());
         }
 
         private static IRowIndexReader<NID> CreateNIDBasedRowIndexReader(
@@ -56,17 +39,16 @@ namespace pst
                     new DataRecordToTCROWIDConverter());
         }
 
-        private static IRowMatrixReader<NID> CreateNIDBasedRowMatrixReader(
+        private static IRowMatrixReader CreateNIDBasedRowMatrixReader(
             Stream dataStream,
             ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
-                new RowMatrixReader<NID>(
+                new RowMatrixReader(
                     CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     new RowValuesExtractor(),
                     CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    CreateNIDBasedRowIndexReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
                     new HNIDDecoder(
                         new HIDDecoder(),
@@ -77,17 +59,16 @@ namespace pst
                     CreateDataBlockReader(dataStream, dataBlockEntryCache));
         }
 
-        private static IRowMatrixReader<Tag> CreateTagBasedRowMatrixReader(
+        private static IRowMatrixReader CreateTagBasedRowMatrixReader(
             Stream dataStream,
             ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
-                new RowMatrixReader<Tag>(
+                new RowMatrixReader(
                     CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     new RowValuesExtractor(),
                     CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    CreateTagBasedRowIndexReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
                     new HNIDDecoder(
                         new HIDDecoder(),

@@ -1,4 +1,4 @@
-﻿using pst.encodables;
+﻿using pst.encodables.ltp.tc;
 using pst.interfaces.messaging.model;
 
 namespace pst.impl.messaging.changetracking
@@ -7,31 +7,31 @@ namespace pst.impl.messaging.changetracking
     {
         public NodePath NodePath { get; }
 
-        public Tag Tag { get; }
+        public TCROWID RowId { get; }
 
-        public AssociatedObjectPath(NodePath nodePath, Tag tag)
+        public AssociatedObjectPath(NodePath nodePath, TCROWID rowId)
         {
             NodePath = nodePath;
-            Tag = tag;
+            RowId = rowId;
         }
 
         public bool Equals(AssociatedObjectPath other)
         {
-            return (other?.NodePath.Equals(NodePath) ?? false) && other.Tag.Equals(Tag);
+            return (other?.NodePath.Equals(NodePath) ?? false) && other.RowId.Equals(RowId);
         }
 
         public override bool Equals(object obj)
         {
             var path = obj as AssociatedObjectPath;
 
-            return (path?.NodePath.Equals(NodePath) ?? false) && path.Tag.Equals(Tag);
+            return (path?.NodePath.Equals(NodePath) ?? false) && path.RowId.Equals(RowId);
         }
 
         public override int GetHashCode()
         {
             var p = 17;
             p = p + 23 * NodePath.GetHashCode();
-            p = p + 23 * Tag.GetHashCode();
+            p = p + 23 * RowId.GetHashCode();
             return p;
         }
     }

@@ -1,5 +1,4 @@
-﻿using pst.encodables;
-using pst.encodables.ndb;
+﻿using pst.encodables.ndb;
 using pst.interfaces;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.pc;
@@ -22,7 +21,7 @@ namespace pst
         private readonly ITableContextReader tableContextReader;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
-        private readonly ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader;
+        private readonly ITableContextBasedPropertyReader tableContextBasedPropertyReader;
 
         private bool preExistingRecipientsLoaded;
         private bool preExistingAttachmentsLoaded;
@@ -36,7 +35,7 @@ namespace pst
             ITableContextReader tableContextReader,
             IPropertyNameToIdMap propertyNameToIdMap,
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
-            ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader) : base(nodePath, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
+            ITableContextBasedPropertyReader tableContextBasedPropertyReader) : base(nodePath, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
         {
             this.nodePath = nodePath;
             this.nidDecoder = nidDecoder;
@@ -114,9 +113,9 @@ namespace pst
 
             var tableContextNodePath = nodePath.Add(AllocatedNodeId.OfValue(tableContextNodeId));
 
-            foreach (var rowId in tableContextReader.GetAllRows(tableContextNodePath))
+            foreach (var tableRow in tableContextReader.GetAllRows(tableContextNodePath))
             {
-                var attachmentNodeId = AllocatedNodeId.OfValue(nidDecoder.Decode(rowId.RowId));
+                var attachmentNodeId = AllocatedNodeId.OfValue(nidDecoder.Decode(tableRow.RowId.RowId));
 
                 changesTracker.TrackNode(
                     nodePath.Add(attachmentNodeId),
@@ -145,7 +144,7 @@ namespace pst
             {
                 changesTracker.Associate(
                     tableContextNodePath,
-                    Tag.OfValue(rowId.RowId),
+                    rowId.RowId,
                     ObjectTypes.Recipient,
                     ObjectStates.Loaded);
             }

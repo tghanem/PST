@@ -24,7 +24,7 @@ namespace pst
         private readonly ITableContextReader tableContextReader;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
-        private readonly ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader;
+        private readonly ITableContextBasedPropertyReader tableContextBasedPropertyReader;
         private readonly IUnallocatedNodeIdGenerator nodeIdGenerator;
 
         private PSTFile(
@@ -37,7 +37,7 @@ namespace pst
             ITableContextReader tableContextReader,
             IPropertyNameToIdMap propertyNameToIdMap,
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
-            ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader,
+            ITableContextBasedPropertyReader tableContextBasedPropertyReader,
             IUnallocatedNodeIdGenerator nodeIdGenerator)
         {
             this.entryIdDecoder = entryIdDecoder;

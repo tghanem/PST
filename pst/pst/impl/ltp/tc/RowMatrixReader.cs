@@ -11,12 +11,11 @@ using System.Linq;
 
 namespace pst.impl.ltp.tc
 {
-    class RowMatrixReader<TRowId> : IRowMatrixReader<TRowId>
+    class RowMatrixReader : IRowMatrixReader
     {
         private readonly IHeapOnNodeReader heapOnNodeReader;
         private readonly IRowValuesExtractor rowValuesExtractor;
         private readonly INodeEntryFinder nodeEntryFinder;
-        private readonly IRowIndexReader<TRowId> rowIndexReader;
         private readonly IDataBlockEntryFinder dataBlockEntryFinder;
         private readonly IDecoder<HNID> hnidDecoder;
         private readonly IDecoder<TCINFO> tcinfoDecoder;
@@ -26,7 +25,6 @@ namespace pst.impl.ltp.tc
             IHeapOnNodeReader heapOnNodeReader,
             IRowValuesExtractor rowValuesExtractor,
             INodeEntryFinder nodeEntryFinder,
-            IRowIndexReader<TRowId> rowIndexReader,
             IDataBlockEntryFinder dataBlockEntryFinder,
             IDecoder<HNID> hnidDecoder,
             IDecoder<TCINFO> tcinfoDecoder,
@@ -35,14 +33,13 @@ namespace pst.impl.ltp.tc
             this.dataBlockEntryFinder = dataBlockEntryFinder;
             this.rowValuesExtractor = rowValuesExtractor;
             this.heapOnNodeReader = heapOnNodeReader;
-            this.rowIndexReader = rowIndexReader;
             this.tcinfoDecoder = tcinfoDecoder;
             this.hnidDecoder = hnidDecoder;
             this.nodeEntryFinder = nodeEntryFinder;
             this.dataBlockReader = dataBlockReader;
         }
 
-        public Maybe<TableRow> GetRow(NID[] nodePath, TRowId rowId)
+        public Maybe<TableRow> GetRow(NID[] nodePath, TCROWID rowId)
         {
             var nodeEntry =
                 nodeEntryFinder.GetEntry(nodePath);
@@ -64,14 +61,6 @@ namespace pst.impl.ltp.tc
                 return Maybe<TableRow>.NoValue();
             }
 
-            var tcRowId =
-                rowIndexReader.GetRowId(nodePath, rowId);
-
-            if (tcRowId.HasNoValue)
-            {
-                return Maybe<TableRow>.NoValue();
-            }
-
             if (rowMatrixHnid.IsHID)
             {
                 var heapItem =
@@ -82,9 +71,9 @@ namespace pst.impl.ltp.tc
 
                 var tableRow =
                     new TableRow(
-                        tcRowId.Value.RowId,
+                        rowId,
                         rowValuesExtractor.Extract(
-                            encodedRows[tcRowId.Value.RowIndex],
+                            encodedRows[rowId.RowIndex],
                             tcInfo.ColumnDescriptors));
 
                 return Maybe<TableRow>.OfValue(tableRow);
@@ -98,7 +87,7 @@ namespace pst.impl.ltp.tc
                     Math.Floor((double)(8 * 1024 - 16) / tcInfo.GroupsOffsets[3]);
 
                 var blockIndex =
-                    (int)(tcRowId.Value.RowIndex / numberOfRowsPerBlock);
+                    (int)(rowId.RowIndex / numberOfRowsPerBlock);
 
                 var dataBlockTree =
                     dataBlockEntryFinder.Find(slEntry.DataBlockId);
@@ -115,7 +104,7 @@ namespace pst.impl.ltp.tc
 
                 var tableRow =
                     new TableRow(
-                        tcRowId.Value.RowId,
+                        rowId,
                         rowValuesExtractor.Extract(dataBlock, tcInfo.ColumnDescriptors));
 
                 return Maybe<TableRow>.OfValue(tableRow);

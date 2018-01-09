@@ -1,5 +1,4 @@
-﻿using pst.encodables;
-using pst.encodables.ndb;
+﻿using pst.encodables.ndb;
 using pst.interfaces;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.pc;
@@ -24,7 +23,7 @@ namespace pst
         private readonly ITableContextReader tableContextReader;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
-        private readonly ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader;
+        private readonly ITableContextBasedPropertyReader tableContextBasedPropertyReader;
         private readonly IUnallocatedNodeIdGenerator nodeIdGenerator;
 
         private bool subfoldersLoaded;
@@ -40,7 +39,7 @@ namespace pst
             INodeEntryFinder nodeEntryFinder,
             IRowIndexReader<NID> rowIndexReader,
             ITableContextReader tableContextReader,
-            ITableContextBasedPropertyReader<Tag> tableContextBasedPropertyReader,
+            ITableContextBasedPropertyReader tableContextBasedPropertyReader,
             IUnallocatedNodeIdGenerator nodeIdGenerator) : base(nodePath, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
         {
             this.nodePath = nodePath;
