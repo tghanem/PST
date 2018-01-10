@@ -1,8 +1,8 @@
 ﻿using pst.core;
 using pst.interfaces.ltp;
 using pst.interfaces.messaging;
-using pst.interfaces.messaging.model;
-using pst.interfaces.messaging.model.changetracking;
+using pst.interfaces.messaging.changetracking;
+using pst.interfaces.model;
 using pst.utilities;
 
 namespace pst

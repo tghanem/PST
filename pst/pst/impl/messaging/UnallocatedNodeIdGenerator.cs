@@ -1,5 +1,5 @@
 ﻿using pst.interfaces.messaging;
-using pst.interfaces.messaging.model;
+using pst.interfaces.model;
 
 namespace pst.impl.messaging
 {

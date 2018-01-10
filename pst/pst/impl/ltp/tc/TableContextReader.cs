@@ -1,5 +1,5 @@
 ﻿using pst.interfaces.ltp.tc;
-using pst.interfaces.messaging.model;
+using pst.interfaces.model;
 using System;
 using System.Collections.Generic;
 

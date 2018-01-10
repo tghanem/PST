@@ -1,9 +1,10 @@
-﻿using pst.core;
+﻿using System;
+using pst.core;
 using pst.encodables.ltp.tc;
 using pst.impl.messaging.changetracking;
-using System;
+using pst.interfaces.model;
 
-namespace pst.interfaces.messaging.model.changetracking
+namespace pst.interfaces.messaging.changetracking
 {
     interface IChangesTracker
     {

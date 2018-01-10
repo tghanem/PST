@@ -1,7 +1,7 @@
 ﻿using pst.core;
 using pst.encodables.ltp.tc;
-using pst.interfaces.messaging.model;
-using pst.interfaces.messaging.model.changetracking;
+using pst.interfaces.messaging.changetracking;
+using pst.interfaces.model;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,7 +1,6 @@
 ﻿using pst.encodables.ltp.tc;
-using pst.interfaces.messaging.model;
 
-namespace pst.impl.messaging.changetracking
+namespace pst.interfaces.model
 {
     class AssociatedObjectPath
     {

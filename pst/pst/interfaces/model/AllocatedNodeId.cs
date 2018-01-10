@@ -1,6 +1,6 @@
 ﻿using pst.encodables.ndb;
 
-namespace pst.interfaces.messaging.model
+namespace pst.interfaces.model
 {
     class AllocatedNodeId : NodeId
     {

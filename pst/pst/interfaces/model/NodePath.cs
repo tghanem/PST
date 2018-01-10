@@ -1,8 +1,8 @@
-﻿using pst.encodables.ndb;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using pst.encodables.ndb;
 
-namespace pst.interfaces.messaging.model
+namespace pst.interfaces.model
 {
     class NodePath
     {

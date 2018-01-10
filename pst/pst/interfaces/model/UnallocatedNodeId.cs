@@ -1,4 +1,4 @@
-﻿namespace pst.interfaces.messaging.model
+﻿namespace pst.interfaces.model
 {
     class UnallocatedNodeId : NodeId
     {

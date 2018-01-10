@@ -1,9 +1,10 @@
-﻿using pst.core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using pst.core;
+using pst.interfaces.model;
 
-namespace pst.interfaces.messaging.model.changetracking
+namespace pst.interfaces.messaging.changetracking
 {
     enum ObjectStates
     {
@@ -47,7 +48,7 @@ namespace pst.interfaces.messaging.model.changetracking
 
         public ObjectStates State { get; }
 
-        public Tuple<PropertyTag, PropertyTrackingObject>[] Properties => properties.Select(p => Tuple.Create(p.Key, p.Value)).ToArray();
+        public Tuple<PropertyTag, PropertyTrackingObject>[] Properties => properties.Select(p => Tuple.Create<PropertyTag, PropertyTrackingObject>(p.Key, p.Value)).ToArray();
 
         public Maybe<PropertyTrackingObject> GetProperty(PropertyTag tag)
         {

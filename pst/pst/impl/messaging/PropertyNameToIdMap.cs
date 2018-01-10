@@ -3,7 +3,7 @@ using pst.encodables.messaging;
 using pst.interfaces;
 using pst.interfaces.ltp;
 using pst.interfaces.messaging;
-using pst.interfaces.messaging.model;
+using pst.interfaces.model;
 using pst.utilities;
 using System;
 using System.Text;

@@ -1,4 +1,4 @@
-﻿using pst.interfaces.messaging.model;
+﻿using pst.interfaces.model;
 
 namespace pst.interfaces.ltp.tc
 {

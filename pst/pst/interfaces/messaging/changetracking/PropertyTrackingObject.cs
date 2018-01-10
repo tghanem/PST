@@ -1,6 +1,6 @@
 ﻿using pst.core;
 
-namespace pst.interfaces.messaging.model.changetracking
+namespace pst.interfaces.messaging.changetracking
 {
     class PropertyTrackingObject
     {
