@@ -8,7 +8,6 @@ using pst.interfaces.messaging;
 using pst.interfaces.messaging.changetracking;
 using pst.interfaces.model;
 using pst.interfaces.ndb;
-using System;
 
 namespace pst
 {
@@ -19,12 +18,13 @@ namespace pst
         private readonly IChangesTracker changesTracker;
         private readonly IEncoder<string> stringEncoder;
         private readonly INodeEntryFinder nodeEntryFinder;
-        private readonly IRowIndexReader<NID> rowIndexReader;
+        private readonly IRowIndexReader rowIndexReader;
         private readonly ITableContextReader tableContextReader;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
         private readonly ITableContextBasedPropertyReader tableContextBasedPropertyReader;
         private readonly IUnallocatedNodeIdGenerator nodeIdGenerator;
+        private readonly IChangesApplier changesApplier;
 
         private PSTFile(
             IDecoder<EntryId> entryIdDecoder,
@@ -32,12 +32,13 @@ namespace pst
             IChangesTracker changesTracker,
             IEncoder<string> stringEncoder,
             INodeEntryFinder nodeEntryFinder,
-            IRowIndexReader<NID> rowIndexReader,
+            IRowIndexReader rowIndexReader,
             ITableContextReader tableContextReader,
             IPropertyNameToIdMap propertyNameToIdMap,
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
             ITableContextBasedPropertyReader tableContextBasedPropertyReader,
-            IUnallocatedNodeIdGenerator nodeIdGenerator)
+            IUnallocatedNodeIdGenerator nodeIdGenerator,
+            IChangesApplier changesApplier)
         {
             this.entryIdDecoder = entryIdDecoder;
             this.nidDecoder = nidDecoder;
@@ -50,6 +51,7 @@ namespace pst
             this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
             this.tableContextBasedPropertyReader = tableContextBasedPropertyReader;
             this.nodeIdGenerator = nodeIdGenerator;
+            this.changesApplier = changesApplier;
         }
 
         public MessageStore MessageStore
@@ -103,7 +105,7 @@ namespace pst
 
         public void Save()
         {
-            throw new NotImplementedException();
+            changesApplier.Apply();
         }
     }
 }

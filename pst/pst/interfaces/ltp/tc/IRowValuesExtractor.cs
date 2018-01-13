@@ -6,8 +6,6 @@ namespace pst.interfaces.ltp.tc
 {
     interface IRowValuesExtractor
     {
-        IReadOnlyDictionary<int, BinaryData> Extract(
-            BinaryData rowData,
-            TCOLDESC[] columnDescriptors);
+        IReadOnlyDictionary<int, BinaryData> Extract(BinaryData rowData, TCOLDESC[] columnDescriptors, int cebOffset);
     }
 }

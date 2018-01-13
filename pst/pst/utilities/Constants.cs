@@ -8,6 +8,8 @@ namespace pst.utilities
         public static readonly NID NID_ROOT_FOLDER = new NID(0x122);
         public static readonly NID NID_NAME_TO_ID_MAP = new NID(0x61);
 
+        public static readonly NID NID_HIERARCHY_TABLE_TEMPLATE = new NID(0x60D);
+
         public const int NID_TYPE_HIERARCHY_TABLE = 0x0D;
         public const int NID_TYPE_CONTENTS_TABLE = 0x0E;
         public const int NID_TYPE_RECIPIENT_TABLE = 0x12;

@@ -10,13 +10,15 @@ namespace pst.impl.messaging.changetracking
 {
     class ChangesTracker : IChangesTracker
     {
-        private readonly Dictionary<NodePath, NodeTrackingObject> trackedObjects;
-        private readonly Dictionary<AssociatedObjectPath, TrackingObject> associatedObjects;
+        private readonly IDictionary<NodePath, NodeTrackingObject> trackedObjects;
+        private readonly IDictionary<AssociatedObjectPath, TrackingObject> associatedObjects;
 
-        public ChangesTracker()
+        public ChangesTracker(
+            IDictionary<NodePath, NodeTrackingObject> trackedObjects,
+            IDictionary<AssociatedObjectPath, TrackingObject> associatedObjects)
         {
-            trackedObjects = new Dictionary<NodePath, NodeTrackingObject>();
-            associatedObjects = new Dictionary<AssociatedObjectPath, TrackingObject>();
+            this.trackedObjects = trackedObjects;
+            this.associatedObjects = associatedObjects;
         }
 
         public void TrackNode(

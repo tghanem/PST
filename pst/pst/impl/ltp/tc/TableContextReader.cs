@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 namespace pst.impl.ltp.tc
 {
-    class TableContextReader<TRowId> : ITableContextReader
+    class TableContextReader : ITableContextReader
     {
-        private readonly IRowIndexReader<TRowId> rowIndexReader;
+        private readonly IRowIndexReader rowIndexReader;
         private readonly IRowMatrixReader rowMatrixReader;
 
         public TableContextReader(
-            IRowIndexReader<TRowId> rowIndexReader,
+            IRowIndexReader rowIndexReader,
             IRowMatrixReader rowMatrixReader)
         {
             this.rowIndexReader = rowIndexReader;

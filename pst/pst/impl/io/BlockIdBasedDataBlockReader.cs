@@ -8,7 +8,6 @@ namespace pst.impl.io
     class BlockIdBasedDataBlockReader : IDataBlockReader
     {
         private readonly IDataReader dataReader;
-
         private readonly IDataBlockEntryFinder dataBlockEntryFinder;
 
         public BlockIdBasedDataBlockReader(
@@ -26,7 +25,7 @@ namespace pst.impl.io
             return
                 dataReader.Read(
                     dataBlockEntry.BlockEntry.BlockReference.ByteIndex.Value,
-                    dataBlockEntry.BlockEntry.GetBlockSize());
+                    dataBlockEntry.BlockEntry.ByteCountOfRawDataInReferencedBlockExcludingTrailerAndAlignmentPadding);
         }
     }
 }

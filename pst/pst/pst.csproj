@@ -127,7 +127,6 @@
     <Compile Include="impl\decoders\messaging\search\SUDSRCHModDecoder.cs" />
     <Compile Include="impl\decoders\ndb\AMapDecoder.cs" />
     <Compile Include="impl\decoders\ndb\blocks\BlockTrailerDecoder.cs" />
-    <Compile Include="impl\decoders\ndb\blocks\data\ExternalDataBlockDecoder.cs" />
     <Compile Include="impl\decoders\ndb\blocks\data\InternalDataBlockDecoder.cs" />
     <Compile Include="impl\decoders\ndb\blocks\subnode\SIEntryDecoder.cs" />
     <Compile Include="impl\decoders\ndb\blocks\subnode\SLEntryDecoder.cs" />
@@ -183,6 +182,7 @@
     <Compile Include="impl\ltp\tc\RowMatrixReader.cs" />
     <Compile Include="impl\ltp\tc\RowValuesExtractor.cs" />
     <Compile Include="impl\ltp\tc\TableContextReader.cs" />
+    <Compile Include="impl\messaging\changetracking\ChangesApplier.cs" />
     <Compile Include="impl\messaging\changetracking\ChangesTracker.cs" />
     <Compile Include="impl\messaging\PropertyContextBasedPropertyReader.cs" />
     <Compile Include="impl\messaging\PropertyNameToIdMap.cs" />
@@ -227,6 +227,7 @@
     <Compile Include="interfaces\ltp\bth\IBTreeOnHeapGenerator.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeEncoder.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeGenerator.cs" />
+    <Compile Include="interfaces\messaging\changetracking\IChangesApplier.cs" />
     <Compile Include="interfaces\messaging\IPropertyContextBasedPropertyReader.cs" />
     <Compile Include="interfaces\messaging\IPropertyValueReader.cs" />
     <Compile Include="interfaces\ltp\pc\IPropertyContextGenerator.cs" />

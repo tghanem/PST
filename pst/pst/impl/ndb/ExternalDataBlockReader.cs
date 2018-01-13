@@ -1,7 +1,9 @@
-﻿using pst.encodables.ndb;
+﻿using pst.core;
+using pst.encodables.ndb;
 using pst.interfaces;
 using pst.interfaces.ndb;
 using pst.utilities;
+using System.Linq;
 
 namespace pst.impl.ndb
 {
@@ -24,27 +26,37 @@ namespace pst.impl.ndb
             this.blockDataDeObfuscator = blockDataDeObfuscator;
         }
 
-        public BinaryData Read(NID[] nodePath, int blockIndex)
+        public BinaryData[] Read(NID[] nodePath, Maybe<int> blockIndex)
         {
             var nodeEntry = nodeEntryFinder.GetEntry(nodePath);
 
             return ReadExternalDataBlock(nodeEntry.Value.NodeDataBlockId, blockIndex);
         }
 
-        private BinaryData ReadExternalDataBlock(BID blockId, int blockIndex)
+        private BinaryData[] ReadExternalDataBlock(BID dataTreeRootBlockId, Maybe<int> blockIndex)
         {
-            var dataBlockTree = dataBlockEntryFinder.Find(blockId);
+            var dataBlockTree = dataBlockEntryFinder.Find(dataTreeRootBlockId);
 
-            var actualBlockId = blockId;
+            if (blockIndex.HasNoValue)
+            {
+                return dataBlockTree.Value.ChildBlockIds.Value.Select(ReadExternalBlock).ToArray();
+            }
 
             if (dataBlockTree.Value.ChildBlockIds.HasValueAnd(childBlockIds => childBlockIds.Length > 0))
             {
-                actualBlockId = dataBlockTree.Value.ChildBlockIds.Value[blockIndex];
+                var leafBlockId = dataBlockTree.Value.ChildBlockIds.Value[blockIndex.Value];
+
+                return new[] { ReadExternalBlock(leafBlockId) };
             }
 
-            var externalDataBlock = dataBlockReader.Read(actualBlockId);
+            return new BinaryData[0];
+        }
 
-            return blockDataDeObfuscator.DeObfuscate(externalDataBlock, actualBlockId);
+        private BinaryData ReadExternalBlock(BID blockId)
+        {
+            var externalDataBlock = dataBlockReader.Read(blockId);
+
+            return blockDataDeObfuscator.DeObfuscate(externalDataBlock, blockId);
         }
     }
 }

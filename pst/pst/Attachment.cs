@@ -16,7 +16,7 @@ namespace pst
         private readonly IDecoder<NID> nidDecoder;
         private readonly IChangesTracker changesTracker;
         private readonly INodeEntryFinder nodeEntryFinder;
-        private readonly IRowIndexReader<NID> rowIndexReader;
+        private readonly IRowIndexReader rowIndexReader;
         private readonly ITableContextReader tableContextReader;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
@@ -29,7 +29,7 @@ namespace pst
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
             IDecoder<NID> nidDecoder,
             INodeEntryFinder nodeEntryFinder,
-            IRowIndexReader<NID> rowIndexReader,
+            IRowIndexReader rowIndexReader,
             ITableContextReader tableContextReader,
             ITableContextBasedPropertyReader tableContextBasedPropertyReader) : base(nodePath, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
         {

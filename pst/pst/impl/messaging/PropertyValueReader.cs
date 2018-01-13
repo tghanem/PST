@@ -1,41 +1,29 @@
 ﻿using pst.core;
 using pst.encodables.ltp.hn;
 using pst.encodables.ndb;
-using pst.encodables.ndb.blocks.data;
 using pst.interfaces;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.messaging;
 using pst.interfaces.ndb;
 using pst.utilities;
-using System;
-using System.IO;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace pst.impl.messaging
 {
     class PropertyValueReader : IPropertyValueReader
     {
         private readonly IDecoder<HNID> hnidDecoder;
-        private readonly IDecoder<ExternalDataBlock> externalDataBlockDecoder;
-        private readonly IDataBlockReader dataBlockReader;
-        private readonly IDataBlockEntryFinder dataBlockEntryFinder;
         private readonly IHeapOnNodeReader heapOnNodeReader;
-        private readonly INodeEntryFinder nodeEntryFinder;
+        private readonly IExternalDataBlockReader externalDataBlockReader;
 
         public PropertyValueReader(
             IDecoder<HNID> hnidDecoder,
-            IDecoder<ExternalDataBlock> externalDataBlockDecoder,
-            IDataBlockReader dataBlockReader,
-            IDataBlockEntryFinder dataBlockEntryFinder,
-            INodeEntryFinder nodeEntryFinder,
-            IHeapOnNodeReader heapOnNodeReader)
+            IHeapOnNodeReader heapOnNodeReader,
+            IExternalDataBlockReader externalDataBlockReader)
         {
             this.hnidDecoder = hnidDecoder;
-            this.externalDataBlockDecoder = externalDataBlockDecoder;
             this.heapOnNodeReader = heapOnNodeReader;
-            this.nodeEntryFinder = nodeEntryFinder;
-            this.dataBlockEntryFinder = dataBlockEntryFinder;
-            this.dataBlockReader = dataBlockReader;
+            this.externalDataBlockReader = externalDataBlockReader;
         }
 
         public PropertyValue Read(NID[] nodePath, PropertyType propertyType, BinaryData propertyValue)
@@ -98,43 +86,19 @@ namespace pst.impl.messaging
 
             if (hnid.IsNID)
             {
-                var nodeEntry = nodeEntryFinder.GetEntry(nodePath);
+                var subnodePath = new List<NID>(nodePath) { hnid.NID };
 
-                var subnodeEntry =
-                    nodeEntry.Value.ChildNodes.First(s => s.LocalSubnodeId.Value == hnid.NID.Value);
+                var generator = BinaryDataGenerator.New();
 
-                var dataBlockTree =
-                    dataBlockEntryFinder.Find(subnodeEntry.DataBlockId);
-
-                if (dataBlockTree.Value.ChildBlockIds.HasValueAnd(childBlockIds => childBlockIds.Length > 0))
+                foreach (var block in externalDataBlockReader.Read(subnodePath.ToArray(), Maybe<int>.NoValue()))
                 {
-                    return ReadSubnodeBinaryData(dataBlockTree.Value.ChildBlockIds.Value);
+                    generator.Append(block);
                 }
 
-                return ReadSubnodeBinaryData(subnodeEntry.DataBlockId);
+                return generator.GetData();
             }
 
             return Maybe<BinaryData>.NoValue();
-        }
-
-        private Maybe<BinaryData> ReadSubnodeBinaryData(params BID[] dataBlockIds)
-        {
-            var stream = new MemoryStream();
-
-            Array.ForEach(
-                dataBlockIds,
-                id =>
-                {
-                    var externalDataBlock =
-                        dataBlockReader.Read(id);
-
-                    var decodedExternalDataBlock =
-                        externalDataBlockDecoder.Decode(externalDataBlock);
-
-                    stream.Write(decodedExternalDataBlock.Data, 0, decodedExternalDataBlock.Data.Length);
-                });
-
-            return Maybe<BinaryData>.OfValue(BinaryData.OfValue(stream.ToArray()));
         }
     }
 }

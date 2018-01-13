@@ -6,8 +6,8 @@ using pst.interfaces;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.ltp.tc;
 using pst.interfaces.ndb;
-using System;
-using System.Linq;
+using pst.utilities;
+using System.Collections.Generic;
 
 namespace pst.impl.ltp.tc
 {
@@ -15,46 +15,37 @@ namespace pst.impl.ltp.tc
     {
         private readonly IHeapOnNodeReader heapOnNodeReader;
         private readonly IRowValuesExtractor rowValuesExtractor;
-        private readonly INodeEntryFinder nodeEntryFinder;
-        private readonly IDataBlockEntryFinder dataBlockEntryFinder;
         private readonly IDecoder<HNID> hnidDecoder;
         private readonly IDecoder<TCINFO> tcinfoDecoder;
-        private readonly IDataBlockReader dataBlockReader;
+        private readonly IExternalDataBlockReader dataBlockReader;
 
         public RowMatrixReader(
             IHeapOnNodeReader heapOnNodeReader,
             IRowValuesExtractor rowValuesExtractor,
-            INodeEntryFinder nodeEntryFinder,
-            IDataBlockEntryFinder dataBlockEntryFinder,
             IDecoder<HNID> hnidDecoder,
             IDecoder<TCINFO> tcinfoDecoder,
-            IDataBlockReader dataBlockReader)
+            IExternalDataBlockReader dataBlockReader)
         {
-            this.dataBlockEntryFinder = dataBlockEntryFinder;
             this.rowValuesExtractor = rowValuesExtractor;
             this.heapOnNodeReader = heapOnNodeReader;
             this.tcinfoDecoder = tcinfoDecoder;
             this.hnidDecoder = hnidDecoder;
-            this.nodeEntryFinder = nodeEntryFinder;
             this.dataBlockReader = dataBlockReader;
         }
 
         public Maybe<TableRow> GetRow(NID[] nodePath, TCROWID rowId)
         {
-            var nodeEntry =
-                nodeEntryFinder.GetEntry(nodePath);
+            var hnHeader = heapOnNodeReader.GetHeapOnNodeHeader(nodePath);
 
-            var hnHeader =
-                heapOnNodeReader.GetHeapOnNodeHeader(nodePath);
+            var userRootHeapItem = heapOnNodeReader.GetHeapItem(nodePath, hnHeader.UserRoot);
 
-            var userRootHeapItem =
-                heapOnNodeReader.GetHeapItem(nodePath, hnHeader.UserRoot);
+            var tcInfo = tcinfoDecoder.Decode(userRootHeapItem);
 
-            var tcInfo =
-                tcinfoDecoder.Decode(userRootHeapItem);
+            var cebStartingOffset = tcInfo.GroupsOffsets[2];
 
-            var rowMatrixHnid =
-                hnidDecoder.Decode(tcInfo.RowMatrix);
+            var rowLength = tcInfo.GroupsOffsets[3];
+
+            var rowMatrixHnid = hnidDecoder.Decode(tcInfo.RowMatrix);
 
             if (rowMatrixHnid.IsZero)
             {
@@ -63,51 +54,29 @@ namespace pst.impl.ltp.tc
 
             if (rowMatrixHnid.IsHID)
             {
-                var heapItem =
-                    heapOnNodeReader.GetHeapItem(nodePath, rowMatrixHnid.HID);
+                var heapItem = heapOnNodeReader.GetHeapItem(nodePath, rowMatrixHnid.HID);
 
-                var encodedRows =
-                    heapItem.Slice(tcInfo.GroupsOffsets[3]);
+                var encodedRows = heapItem.Slice(rowLength);
 
-                var tableRow =
-                    new TableRow(
-                        rowId,
-                        rowValuesExtractor.Extract(
-                            encodedRows[rowId.RowIndex],
-                            tcInfo.ColumnDescriptors));
+                var rowValues = rowValuesExtractor.Extract(encodedRows[rowId.RowIndex], tcInfo.ColumnDescriptors, cebStartingOffset);
 
-                return Maybe<TableRow>.OfValue(tableRow);
+                return Maybe<TableRow>.OfValue(new TableRow(rowId, rowValues));
             }
             else
             {
-                var slEntry =
-                    nodeEntry.Value.ChildNodes.First(e => e.LocalSubnodeId.Value == rowMatrixHnid.NID.Value);
+                var numberOfRowsPerBlock = (8 * 1024 - 16) / rowLength;
 
-                var numberOfRowsPerBlock =
-                    Math.Floor((double)(8 * 1024 - 16) / tcInfo.GroupsOffsets[3]);
+                var blockIndex = rowId.RowIndex / numberOfRowsPerBlock;
 
-                var blockIndex =
-                    (int)(rowId.RowIndex / numberOfRowsPerBlock);
+                var childNodePath = new List<NID>(nodePath) { rowMatrixHnid.NID };
 
-                var dataBlockTree =
-                    dataBlockEntryFinder.Find(slEntry.DataBlockId);
+                var dataBlock = dataBlockReader.Read(childNodePath.ToArray(), blockIndex)[0];
 
-                var actualBlockId = slEntry.DataBlockId;
+                var encodedRows = dataBlock.Slice(rowLength);
 
-                if (dataBlockTree.Value.ChildBlockIds.HasValueAnd(childBlockIds => childBlockIds.Length > 0))
-                {
-                    actualBlockId = dataBlockTree.Value.ChildBlockIds.Value[blockIndex];
-                }
+                var rowValues = rowValuesExtractor.Extract(encodedRows[rowId.RowIndex], tcInfo.ColumnDescriptors, cebStartingOffset);
 
-                var dataBlock =
-                    dataBlockReader.Read(actualBlockId);
-
-                var tableRow =
-                    new TableRow(
-                        rowId,
-                        rowValuesExtractor.Extract(dataBlock, tcInfo.ColumnDescriptors));
-
-                return Maybe<TableRow>.OfValue(tableRow);
+                return Maybe<TableRow>.OfValue(new TableRow(rowId, rowValues));
             }
         }
     }

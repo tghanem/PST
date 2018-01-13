@@ -51,7 +51,11 @@ namespace pst.utilities
             => new BinaryData(Value.Take(count).ToArray());
 
         public BinaryData Take(int offset, int count)
-            => new BinaryData(Value.Skip(offset).Take(count).ToArray());
+        {
+            var buffer = new byte[count];
+            Array.Copy(Value, offset, buffer, 0, count);
+            return OfValue(buffer);
+        }
 
         public BinaryData Pad(int count)
             => new BinaryData(Value.Concat(new byte[count]).ToArray());
@@ -104,9 +108,7 @@ namespace pst.utilities
 
         public BinaryData[] Slice(int itemLength)
         {
-            var numberOfItems =
-                (int)
-                Math.Floor((double)Length / itemLength);
+            var numberOfItems = (int)Math.Floor((double)Length / itemLength);
 
             var slices = new List<BinaryData>();
 

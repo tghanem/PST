@@ -4,6 +4,7 @@ using pst.impl.decoders.ltp.hn;
 using pst.impl.decoders.ltp.tc;
 using pst.impl.decoders.ndb;
 using pst.impl.ltp.tc;
+using pst.impl.ndb;
 using pst.interfaces;
 using pst.interfaces.ltp.tc;
 using pst.interfaces.ndb;
@@ -13,18 +14,18 @@ namespace pst
 {
     public partial class PSTFile
     {
-        private static ITableContextReader CreateNIDBasedTableContextReader(
+        private static ITableContextReader CreateTableContextReader(
             Stream stream,
             ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
-                new TableContextReader<NID>(
-                    CreateNIDBasedRowIndexReader(stream, nodeEntryCache, dataBlockEntryCache),
-                    CreateNIDBasedRowMatrixReader(stream, nodeEntryCache, dataBlockEntryCache));
+                new TableContextReader(
+                    CreateRowIndexReader(stream, nodeEntryCache, dataBlockEntryCache),
+                    CreateRowMatrixReader(stream, nodeEntryCache, dataBlockEntryCache));
         }
 
-        private static IRowIndexReader<NID> CreateNIDBasedRowIndexReader(
+        private static IRowIndexReader CreateRowIndexReader(
             Stream dataStream,
             ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
@@ -39,7 +40,7 @@ namespace pst
                     new DataRecordToTCROWIDConverter());
         }
 
-        private static IRowMatrixReader CreateNIDBasedRowMatrixReader(
+        private static IRowMatrixReader CreateRowMatrixReader(
             Stream dataStream,
             ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
@@ -48,35 +49,25 @@ namespace pst
                 new RowMatrixReader(
                     CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     new RowValuesExtractor(),
-                    CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
                     new HNIDDecoder(
                         new HIDDecoder(),
                         new NIDDecoder()),
                     new TCINFODecoder(
                         new HIDDecoder(),
                         new TCOLDESCDecoder()),
-                    CreateDataBlockReader(dataStream, dataBlockEntryCache));
+                    CreateExternalDataBlockReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 
-        private static IRowMatrixReader CreateTagBasedRowMatrixReader(
+        private static IExternalDataBlockReader CreateExternalDataBlockReader(
             Stream dataStream,
             ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
-            return
-                new RowMatrixReader(
-                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    new RowValuesExtractor(),
-                    CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
-                    new HNIDDecoder(
-                        new HIDDecoder(),
-                        new NIDDecoder()),
-                    new TCINFODecoder(
-                        new HIDDecoder(),
-                        new TCOLDESCDecoder()),
-                    CreateDataBlockReader(dataStream, dataBlockEntryCache));
+            return new ExternalDataBlockReader(
+                CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
+                CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
+                CreateDataBlockReader(dataStream, dataBlockEntryCache),
+                CreateBlockEncoding(dataStream));
         }
     }
 }

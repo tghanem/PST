@@ -36,12 +36,12 @@ namespace pst.impl.ltp.hn
         {
             var externalBlock = externalDataBlockReader.Read(nodePath, 0);
 
-            return hnHDRDecoder.Decode(externalBlock.Take(12));
+            return hnHDRDecoder.Decode(externalBlock[0].Take(12));
         }
 
         public BinaryData GetHeapItem(NID[] nodePath, HID hid)
         {
-            var externalBlock = externalDataBlockReader.Read(nodePath, hid.BlockIndex);
+            var externalBlock = externalDataBlockReader.Read(nodePath, hid.BlockIndex)[0];
 
             int pageMapOffset;
 

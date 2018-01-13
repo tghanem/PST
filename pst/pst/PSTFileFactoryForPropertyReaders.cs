@@ -2,8 +2,6 @@
 using pst.impl.decoders.ltp.hn;
 using pst.impl.decoders.messaging;
 using pst.impl.decoders.ndb;
-using pst.impl.decoders.ndb.blocks;
-using pst.impl.decoders.ndb.blocks.data;
 using pst.impl.messaging;
 using pst.interfaces;
 using pst.interfaces.ltp;
@@ -22,7 +20,7 @@ namespace pst
         {
             return
                 new TableContextBasedPropertyReader(
-                    CreateTagBasedRowMatrixReader(dataStream, nodeEntryCache, dataBlockEntryCache),
+                    CreateRowMatrixReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     CreatePropertyValueProcessor(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 
@@ -58,14 +56,8 @@ namespace pst
                     new HNIDDecoder(
                         new HIDDecoder(),
                         new NIDDecoder()),
-                    new ExternalDataBlockDecoder(
-                        new BlockTrailerDecoder(
-                            new BIDDecoder()),
-                        CreateBlockEncoding(dataStream)),
-                    CreateDataBlockReader(dataStream, dataBlockEntryCache),
-                    CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
-                    CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache));
+                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
+                    CreateExternalDataBlockReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
     }
 }
