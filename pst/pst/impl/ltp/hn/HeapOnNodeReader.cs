@@ -14,7 +14,7 @@ namespace pst.impl.ltp.hn
         private readonly IDecoder<HNPAGEMAP> hnPageMapDecoder;
         private readonly IDecoder<HNBITMAPHDR> hnBitmapHDRDecoder;
         private readonly IHeapOnNodeItemsLoader heapOnNodeItemsLoader;
-        private readonly IExternalDataBlockReader externalDataBlockReader;
+        private readonly IDataTreeReader dataTreeReader;
 
         public HeapOnNodeReader(
             IDecoder<HNHDR> hnHDRDecoder,
@@ -22,26 +22,26 @@ namespace pst.impl.ltp.hn
             IDecoder<HNPAGEMAP> hnPageMapDecoder,
             IDecoder<HNBITMAPHDR> hnBitmapHDRDecoder,
             IHeapOnNodeItemsLoader heapOnNodeItemsLoader,
-            IExternalDataBlockReader externalDataBlockReader)
+            IDataTreeReader dataTreeReader)
         {
             this.hnHDRDecoder = hnHDRDecoder;
             this.hnPageHDRDecoder = hnPageHDRDecoder;
             this.hnPageMapDecoder = hnPageMapDecoder;
             this.hnBitmapHDRDecoder = hnBitmapHDRDecoder;
             this.heapOnNodeItemsLoader = heapOnNodeItemsLoader;
-            this.externalDataBlockReader = externalDataBlockReader;
+            this.dataTreeReader = dataTreeReader;
         }
 
         public HNHDR GetHeapOnNodeHeader(NID[] nodePath)
         {
-            var externalBlock = externalDataBlockReader.Read(nodePath, 0);
+            var externalBlock = dataTreeReader.Read(nodePath, 0);
 
             return hnHDRDecoder.Decode(externalBlock[0].Take(12));
         }
 
         public BinaryData GetHeapItem(NID[] nodePath, HID hid)
         {
-            var externalBlock = externalDataBlockReader.Read(nodePath, hid.BlockIndex)[0];
+            var externalBlock = dataTreeReader.Read(nodePath, hid.BlockIndex)[0];
 
             int pageMapOffset;
 

@@ -1,18 +1,16 @@
-﻿using pst.interfaces;
+﻿using pst.encodables.ndb;
+using pst.interfaces;
 using pst.utilities;
-using pst.encodables.ndb;
 
 namespace pst.impl.decoders.ndb
 {
     class HeaderDecoder : IDecoder<Header>
     {
-        private readonly IDecoder<NID> nidDecoder;
         private readonly IDecoder<Root> rootDecoder;
 
-        public HeaderDecoder(IDecoder<NID> nidDecoder, IDecoder<Root> rootDecoder)
+        public HeaderDecoder(IDecoder<Root> rootDecoder)
         {
             this.rootDecoder = rootDecoder;
-            this.nidDecoder = nidDecoder;
         }
 
         public Header Decode(BinaryData encodedData)
@@ -33,7 +31,7 @@ namespace pst.impl.decoders.ndb
                     parser.TakeAndSkip(8),
                     parser.TakeAndSkip(8).ToInt64(),
                     parser.TakeAndSkip(4).ToInt32(),
-                    parser.TakeAndSkip(32, 4, nidDecoder),
+                    parser.TakeAndSkip(32, 4, new FuncBasedDecoder<NID>(NID.OfValue)),
                     parser.TakeAndSkip(8),
                     parser.TakeAndSkip(72, rootDecoder),
                     parser.TakeAndSkip(4),

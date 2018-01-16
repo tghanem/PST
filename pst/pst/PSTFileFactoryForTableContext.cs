@@ -2,7 +2,6 @@
 using pst.impl.converters;
 using pst.impl.decoders.ltp.hn;
 using pst.impl.decoders.ltp.tc;
-using pst.impl.decoders.ndb;
 using pst.impl.ltp.tc;
 using pst.impl.ndb;
 using pst.interfaces;
@@ -50,20 +49,19 @@ namespace pst
                     CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     new RowValuesExtractor(),
                     new HNIDDecoder(
-                        new HIDDecoder(),
-                        new NIDDecoder()),
+                        new HIDDecoder()),
                     new TCINFODecoder(
                         new HIDDecoder(),
                         new TCOLDESCDecoder()),
                     CreateExternalDataBlockReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 
-        private static IExternalDataBlockReader CreateExternalDataBlockReader(
+        private static IDataTreeReader CreateExternalDataBlockReader(
             Stream dataStream,
             ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
-            return new ExternalDataBlockReader(
+            return new DataTreeReader(
                 CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
                 CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
                 CreateDataBlockReader(dataStream, dataBlockEntryCache),

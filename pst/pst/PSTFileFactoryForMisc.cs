@@ -42,7 +42,6 @@ namespace pst
         {
             return
                 new HeaderDecoder(
-                    new NIDDecoder(),
                     new RootDecoder(
                         new BREFDecoder(
                             new BIDDecoder(),

@@ -66,8 +66,7 @@ namespace pst.utilities
 
             for (var i = 0; i < numberOfItems; i++)
             {
-                entries
-                    .Add(TakeAndSkip(itemSize, typeDecoder));
+                entries.Add(TakeAndSkip(itemSize, typeDecoder));
             }
 
             return entries.ToArray();

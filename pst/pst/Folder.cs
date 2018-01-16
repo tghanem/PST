@@ -14,7 +14,6 @@ namespace pst
     public class Folder : ObjectBase
     {
         private readonly NodePath nodePath;
-        private readonly IDecoder<NID> nidDecoder;
         private readonly IChangesTracker changesTracker;
         private readonly IEncoder<string> stringEncoder;
         private readonly INodeEntryFinder nodeEntryFinder;
@@ -34,7 +33,6 @@ namespace pst
             IEncoder<string> stringEncoder,
             IPropertyNameToIdMap propertyNameToIdMap,
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
-            IDecoder<NID> nidDecoder,
             INodeEntryFinder nodeEntryFinder,
             IRowIndexReader rowIndexReader,
             ITableContextReader tableContextReader,
@@ -42,7 +40,6 @@ namespace pst
             IUnallocatedNodeIdGenerator nodeIdGenerator) : base(nodePath, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
         {
             this.nodePath = nodePath;
-            this.nidDecoder = nidDecoder;
             this.changesTracker = changesTracker;
             this.stringEncoder = stringEncoder;
             this.nodeEntryFinder = nodeEntryFinder;
@@ -91,7 +88,6 @@ namespace pst
                     stringEncoder,
                     propertyNameToIdMap,
                     propertyContextBasedPropertyReader,
-                    nidDecoder,
                     nodeEntryFinder,
                     rowIndexReader,
                     tableContextReader,
@@ -121,7 +117,6 @@ namespace pst
                         stringEncoder,
                         propertyNameToIdMap,
                         propertyContextBasedPropertyReader,
-                        nidDecoder,
                         nodeEntryFinder,
                         rowIndexReader,
                         tableContextReader,
@@ -148,7 +143,6 @@ namespace pst
                     childNodePath =>
                         new Message(
                             childNodePath,
-                            nidDecoder,
                             changesTracker,
                             nodeEntryFinder,
                             rowIndexReader,
@@ -165,7 +159,7 @@ namespace pst
 
             foreach (var rowId in rowIndexReader.GetAllRowIds(childrenTableContextNodePath))
             {
-                var childNodePath = NodePath.OfValue(AllocatedNodeId.OfValue(nidDecoder.Decode(rowId.RowId)));
+                var childNodePath = NodePath.OfValue(AllocatedNodeId.OfValue(NID.OfValue(rowId.RowId)));
 
                 changesTracker.TrackNode(childNodePath, childObjectType, ObjectStates.Loaded, nodePath);
             }

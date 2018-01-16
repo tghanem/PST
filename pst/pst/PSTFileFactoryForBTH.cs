@@ -1,8 +1,8 @@
 ﻿using pst.encodables.ndb;
+using pst.impl;
 using pst.impl.decoders.ltp.bth;
 using pst.impl.decoders.ltp.hn;
 using pst.impl.decoders.messaging;
-using pst.impl.decoders.ndb;
 using pst.impl.ltp.bth;
 using pst.impl.ltp.hn;
 using pst.impl.ndb;
@@ -38,7 +38,7 @@ namespace pst
             return
                 new BTreeOnHeapReader<NID>(
                     new HIDDecoder(),
-                    new NIDDecoder(),
+                    new FuncBasedDecoder<NID>(NID.OfValue), 
                     new BTHHEADERDecoder(
                         new HIDDecoder()),
                     CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache));
@@ -57,7 +57,7 @@ namespace pst
                     new HNPAGEMAPDecoder(),
                     new HNBITMAPHDRDecoder(),
                     new HeapOnNodeItemsLoader(),
-                    new ExternalDataBlockReader(
+                    new DataTreeReader(
                         CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache),
                         CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache),
                         CreateDataBlockReader(dataStream, dataBlockEntryCache),

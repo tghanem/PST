@@ -1,18 +1,16 @@
-﻿using pst.interfaces;
-using pst.utilities;
+﻿using pst.encodables.ndb;
 using pst.encodables.ndb.blocks.subnode;
-using pst.encodables.ndb;
+using pst.interfaces;
+using pst.utilities;
 
 namespace pst.impl.decoders.ndb.blocks.subnode
 {
     class SLEntryDecoder : IDecoder<SLEntry>
     {
-        private readonly IDecoder<NID> nidDecoder;
         private readonly IDecoder<BID> bidDecoder;
 
-        public SLEntryDecoder(IDecoder<NID> nidDecoder, IDecoder<BID> bidDecoder)
+        public SLEntryDecoder(IDecoder<BID> bidDecoder)
         {
-            this.nidDecoder = nidDecoder;
             this.bidDecoder = bidDecoder;
         }
 
@@ -28,7 +26,7 @@ namespace pst.impl.decoders.ndb.blocks.subnode
 
             return
                 new SLEntry(
-                    nidDecoder.Decode(localNID.Take(4)),
+                    NID.OfValue(localNID.Take(4)),
                     bidDecoder.Decode(subnodeBID),
                     bidDecoder.Decode(subnodeNID));
         }

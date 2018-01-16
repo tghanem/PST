@@ -1,7 +1,6 @@
 ﻿using pst.encodables.ndb;
 using pst.impl.decoders.ltp.hn;
 using pst.impl.decoders.messaging;
-using pst.impl.decoders.ndb;
 using pst.impl.messaging;
 using pst.interfaces;
 using pst.interfaces.ltp;
@@ -54,8 +53,7 @@ namespace pst
             return
                 new PropertyValueReader(
                     new HNIDDecoder(
-                        new HIDDecoder(),
-                        new NIDDecoder()),
+                        new HIDDecoder()),
                     CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     CreateExternalDataBlockReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }

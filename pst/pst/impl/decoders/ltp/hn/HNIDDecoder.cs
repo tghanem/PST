@@ -8,14 +8,10 @@ namespace pst.impl.decoders.ltp.hn
     class HNIDDecoder : IDecoder<HNID>
     {
         private readonly IDecoder<HID> hidDecoder;
-        private readonly IDecoder<NID> nidDecoder;
 
-        public HNIDDecoder(
-            IDecoder<HID> hidDecoder,
-            IDecoder<NID> nidDecoder)
+        public HNIDDecoder(IDecoder<HID> hidDecoder)
         {
             this.hidDecoder = hidDecoder;
-            this.nidDecoder = nidDecoder;
         }
 
         public HNID Decode(BinaryData encodedData)
@@ -27,7 +23,7 @@ namespace pst.impl.decoders.ltp.hn
                 return new HNID(hid);
             }
 
-            return new HNID(nidDecoder.Decode(encodedData));
+            return new HNID(NID.OfValue(encodedData));
         }
     }
 }

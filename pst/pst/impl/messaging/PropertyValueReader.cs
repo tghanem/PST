@@ -14,16 +14,16 @@ namespace pst.impl.messaging
     {
         private readonly IDecoder<HNID> hnidDecoder;
         private readonly IHeapOnNodeReader heapOnNodeReader;
-        private readonly IExternalDataBlockReader externalDataBlockReader;
+        private readonly IDataTreeReader dataTreeReader;
 
         public PropertyValueReader(
             IDecoder<HNID> hnidDecoder,
             IHeapOnNodeReader heapOnNodeReader,
-            IExternalDataBlockReader externalDataBlockReader)
+            IDataTreeReader dataTreeReader)
         {
             this.hnidDecoder = hnidDecoder;
             this.heapOnNodeReader = heapOnNodeReader;
-            this.externalDataBlockReader = externalDataBlockReader;
+            this.dataTreeReader = dataTreeReader;
         }
 
         public PropertyValue Read(NID[] nodePath, PropertyType propertyType, BinaryData propertyValue)
@@ -90,7 +90,7 @@ namespace pst.impl.messaging
 
                 var generator = BinaryDataGenerator.New();
 
-                foreach (var block in externalDataBlockReader.Read(subnodePath.ToArray(), Maybe<int>.NoValue()))
+                foreach (var block in dataTreeReader.Read(subnodePath.ToArray(), Maybe<int>.NoValue()))
                 {
                     generator.Append(block);
                 }

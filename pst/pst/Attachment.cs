@@ -1,6 +1,5 @@
 ﻿using pst.core;
 using pst.encodables.ndb;
-using pst.interfaces;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.tc;
 using pst.interfaces.messaging;
@@ -13,7 +12,6 @@ namespace pst
     public class Attachment : ObjectBase
     {
         private readonly NodePath nodePath;
-        private readonly IDecoder<NID> nidDecoder;
         private readonly IChangesTracker changesTracker;
         private readonly INodeEntryFinder nodeEntryFinder;
         private readonly IRowIndexReader rowIndexReader;
@@ -27,14 +25,12 @@ namespace pst
             IChangesTracker changesTracker,
             IPropertyNameToIdMap propertyNameToIdMap,
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
-            IDecoder<NID> nidDecoder,
             INodeEntryFinder nodeEntryFinder,
             IRowIndexReader rowIndexReader,
             ITableContextReader tableContextReader,
             ITableContextBasedPropertyReader tableContextBasedPropertyReader) : base(nodePath, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
         {
             this.nodePath = nodePath;
-            this.nidDecoder = nidDecoder;
             this.changesTracker = changesTracker;
             this.nodeEntryFinder = nodeEntryFinder;
             this.rowIndexReader = rowIndexReader;
@@ -64,7 +60,6 @@ namespace pst
             return
                 new Message(
                     embeddedMessageNodePath,
-                    nidDecoder,
                     changesTracker,
                     nodeEntryFinder,
                     rowIndexReader,
@@ -92,7 +87,7 @@ namespace pst
 
             var attachDataObject = GetProperty(MAPIProperties.PidTagAttachDataObject);
 
-            return AllocatedNodeId.OfValue(nidDecoder.Decode(attachDataObject.Value.Value.Take(4)));
+            return AllocatedNodeId.OfValue(NID.OfValue(attachDataObject.Value.Value.Take(4)));
         }
     }
 }

@@ -6,7 +6,6 @@ using pst.interfaces;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.ltp.tc;
 using pst.interfaces.ndb;
-using pst.utilities;
 using System.Collections.Generic;
 
 namespace pst.impl.ltp.tc
@@ -17,20 +16,20 @@ namespace pst.impl.ltp.tc
         private readonly IRowValuesExtractor rowValuesExtractor;
         private readonly IDecoder<HNID> hnidDecoder;
         private readonly IDecoder<TCINFO> tcinfoDecoder;
-        private readonly IExternalDataBlockReader dataBlockReader;
+        private readonly IDataTreeReader dataTreeReader;
 
         public RowMatrixReader(
             IHeapOnNodeReader heapOnNodeReader,
             IRowValuesExtractor rowValuesExtractor,
             IDecoder<HNID> hnidDecoder,
             IDecoder<TCINFO> tcinfoDecoder,
-            IExternalDataBlockReader dataBlockReader)
+            IDataTreeReader dataTreeReader)
         {
             this.rowValuesExtractor = rowValuesExtractor;
             this.heapOnNodeReader = heapOnNodeReader;
             this.tcinfoDecoder = tcinfoDecoder;
             this.hnidDecoder = hnidDecoder;
-            this.dataBlockReader = dataBlockReader;
+            this.dataTreeReader = dataTreeReader;
         }
 
         public Maybe<TableRow> GetRow(NID[] nodePath, TCROWID rowId)
@@ -70,7 +69,7 @@ namespace pst.impl.ltp.tc
 
                 var childNodePath = new List<NID>(nodePath) { rowMatrixHnid.NID };
 
-                var dataBlock = dataBlockReader.Read(childNodePath.ToArray(), blockIndex)[0];
+                var dataBlock = dataTreeReader.Read(childNodePath.ToArray(), blockIndex)[0];
 
                 var encodedRows = dataBlock.Slice(rowLength);
 

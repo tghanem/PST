@@ -4,7 +4,7 @@ using pst.utilities;
 
 namespace pst.interfaces.ndb
 {
-    interface IExternalDataBlockReader
+    interface IDataTreeReader
     {
         BinaryData[] Read(NID[] nodePath, Maybe<int> blockIndex);
     }

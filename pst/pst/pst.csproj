@@ -152,7 +152,6 @@
     <Compile Include="impl\decoders\ndb\btree\PageTrailerDecoder.cs" />
     <Compile Include="impl\decoders\ndb\btree\LBBTEntryDecoder.cs" />
     <Compile Include="impl\decoders\ndb\btree\LNBTEntryDecoder.cs" />
-    <Compile Include="impl\decoders\ndb\NIDDecoder.cs" />
     <Compile Include="impl\encoders\ndb\BIDEncoder.cs" />
     <Compile Include="impl\encoders\ndb\IBEncoder.cs" />
     <Compile Include="impl\encoders\ndb\BREFEncoder.cs" />
@@ -163,6 +162,7 @@
     <Compile Include="impl\encoders\ndb\btree\LBBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\ndb\btree\LNBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\ndb\NIDEncoder.cs" />
+    <Compile Include="impl\FuncBasedDecoder.cs" />
     <Compile Include="impl\FuncBasedExtractor.cs" />
     <Compile Include="impl\FuncBasedFactory.cs" />
     <Compile Include="impl\HeaderBasedStringEncoder.cs" />
@@ -201,7 +201,7 @@
     <Compile Include="impl\ndb\datatree\BIDsFromInternalDataBlockExtractor.cs" />
     <Compile Include="impl\ndb\datatree\InternalDataBlockLoader.cs" />
     <Compile Include="impl\ndb\BTPageLoader.cs" />
-    <Compile Include="impl\ndb\ExternalDataBlockReader.cs" />
+    <Compile Include="impl\ndb\DataTreeReader.cs" />
     <Compile Include="impl\ndb\nbt\INBTEntriesFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\nbt\LNBTEntriesFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\NodeEntryFinder.cs" />
@@ -227,7 +227,9 @@
     <Compile Include="interfaces\ltp\bth\IBTreeOnHeapGenerator.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeEncoder.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeGenerator.cs" />
+    <Compile Include="interfaces\ltp\tc\TableRow.cs" />
     <Compile Include="interfaces\messaging\changetracking\IChangesApplier.cs" />
+    <Compile Include="interfaces\messaging\changetracking\IFolderGenerator.cs" />
     <Compile Include="interfaces\messaging\IPropertyContextBasedPropertyReader.cs" />
     <Compile Include="interfaces\messaging\IPropertyValueReader.cs" />
     <Compile Include="interfaces\ltp\pc\IPropertyContextGenerator.cs" />
@@ -242,12 +244,13 @@
     <Compile Include="interfaces\model\NodePath.cs" />
     <Compile Include="interfaces\model\UnallocatedNodeId.cs" />
     <Compile Include="interfaces\ndb\DataBlockEntry.cs" />
+    <Compile Include="interfaces\ndb\INIDAllocator.cs" />
     <Compile Include="interfaces\rawallocation\IAllocationFinder.cs" />
     <Compile Include="interfaces\rawallocation\IAllocationReserver.cs" />
     <Compile Include="interfaces\rawallocation\IRawDataAllocator.cs" />
     <Compile Include="interfaces\ndb\IDataBlockEntryFinder.cs" />
     <Compile Include="interfaces\ndb\IDataBlockReader.cs" />
-    <Compile Include="interfaces\ndb\IExternalDataBlockReader.cs" />
+    <Compile Include="interfaces\ndb\IDataTreeReader.cs" />
     <Compile Include="interfaces\ndb\INodeEntryFinder.cs" />
     <Compile Include="interfaces\messaging\IPropertyNameToIdMap.cs" />
     <Compile Include="interfaces\rawallocation\IStreamExtender.cs" />

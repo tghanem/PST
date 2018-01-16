@@ -1,5 +1,4 @@
 ﻿using pst.encodables.ndb;
-using pst.interfaces;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.tc;
 using pst.interfaces.messaging;
@@ -14,7 +13,6 @@ namespace pst
     public class Message : ObjectBase
     {
         private readonly NodePath nodePath;
-        private readonly IDecoder<NID> nidDecoder;
         private readonly IChangesTracker changesTracker;
         private readonly INodeEntryFinder nodeEntryFinder;
         private readonly IRowIndexReader rowIndexReader;
@@ -28,7 +26,6 @@ namespace pst
 
         internal Message(
             NodePath nodePath,
-            IDecoder<NID> nidDecoder,
             IChangesTracker changesTracker,
             INodeEntryFinder nodeEntryFinder,
             IRowIndexReader rowIndexReader,
@@ -38,7 +35,6 @@ namespace pst
             ITableContextBasedPropertyReader tableContextBasedPropertyReader) : base(nodePath, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
         {
             this.nodePath = nodePath;
-            this.nidDecoder = nidDecoder;
             this.changesTracker = changesTracker;
             this.nodeEntryFinder = nodeEntryFinder;
             this.rowIndexReader = rowIndexReader;
@@ -92,7 +88,6 @@ namespace pst
                         changesTracker,
                         propertyNameToIdMap,
                         propertyContextBasedPropertyReader,
-                        nidDecoder,
                         nodeEntryFinder,
                         rowIndexReader,
                         tableContextReader,
@@ -115,7 +110,7 @@ namespace pst
 
             foreach (var tableRow in tableContextReader.GetAllRows(tableContextNodePath))
             {
-                var attachmentNodeId = AllocatedNodeId.OfValue(nidDecoder.Decode(tableRow.RowId.RowId));
+                var attachmentNodeId = AllocatedNodeId.OfValue(NID.OfValue(tableRow.RowId.RowId));
 
                 changesTracker.TrackNode(
                     nodePath.Add(attachmentNodeId),

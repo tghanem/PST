@@ -7,14 +7,14 @@ using System.Linq;
 
 namespace pst.impl.ndb
 {
-    class ExternalDataBlockReader : IExternalDataBlockReader
+    class DataTreeReader : IDataTreeReader
     {
         private readonly INodeEntryFinder nodeEntryFinder;
         private readonly IDataBlockEntryFinder dataBlockEntryFinder;
         private readonly IDataBlockReader dataBlockReader;
         private readonly IBlockDataDeObfuscator blockDataDeObfuscator;
 
-        public ExternalDataBlockReader(
+        public DataTreeReader(
             INodeEntryFinder nodeEntryFinder,
             IDataBlockEntryFinder dataBlockEntryFinder,
             IDataBlockReader dataBlockReader,
@@ -30,10 +30,10 @@ namespace pst.impl.ndb
         {
             var nodeEntry = nodeEntryFinder.GetEntry(nodePath);
 
-            return ReadExternalDataBlock(nodeEntry.Value.NodeDataBlockId, blockIndex);
+            return Read(nodeEntry.Value.NodeDataBlockId, blockIndex);
         }
 
-        private BinaryData[] ReadExternalDataBlock(BID dataTreeRootBlockId, Maybe<int> blockIndex)
+        private BinaryData[] Read(BID dataTreeRootBlockId, Maybe<int> blockIndex)
         {
             var dataBlockTree = dataBlockEntryFinder.Find(dataTreeRootBlockId);
 

@@ -49,11 +49,9 @@ namespace pst
                         CreateDataBlockReader(dataStream, dataBlockEntryCache)),
                     new SIEntriesFromSubnodeBlockExtractor(
                         new SIEntryDecoder(
-                            new NIDDecoder(),
                             new BIDDecoder())),
                     new SLEntriesFromSubnodeBlockExtractor(
                         new SLEntryDecoder(
-                            new NIDDecoder(),
                             new BIDDecoder())));
         }
 
@@ -70,13 +68,11 @@ namespace pst
                         entry => entry.ChildPageBlockReference),
                     new INBTEntriesFromBTPageExtractor(
                         new INBTEntryDecoder(
-                            new NIDDecoder(),
                             new BREFDecoder(
                                 new BIDDecoder(),
                                 new IBDecoder()))),
                     new LNBTEntriesFromBTPageExtractor(
                         new LNBTEntryDecoder(
-                            new NIDDecoder(),
                             new BIDDecoder())),
                     new FuncBasedExtractor<BTPage, int>(
                         page => page.PageLevel),

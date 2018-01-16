@@ -1,7 +1,6 @@
 ﻿using pst.encodables.ndb;
 using pst.impl;
 using pst.impl.decoders;
-using pst.impl.decoders.ndb;
 using pst.impl.messaging;
 using pst.impl.messaging.changetracking;
 using pst.interfaces.messaging.changetracking;
@@ -28,9 +27,7 @@ namespace pst
 
             return
                 new PSTFile(
-                    new EntryIdDecoder(
-                        new NIDDecoder()),
-                    new NIDDecoder(),
+                    new EntryIdDecoder(),
                     new ChangesTracker(trackedObjects, trackedAssociatedObjects),
                     CreateHeaderBasedStringEncoder(stream),
                     CreateNodeEntryFinder(stream, cachedNodeEntries, dataBlockEntryCache),
@@ -42,8 +39,7 @@ namespace pst
                     unallocatedNodeIdGenerator,
                     new ChangesApplier(
                         trackedObjects,
-                        trackedAssociatedObjects,
-                        CreateTableContextReader(stream, cachedNodeEntries, dataBlockEntryCache)));
+                        trackedAssociatedObjects));
         }
     }
 }

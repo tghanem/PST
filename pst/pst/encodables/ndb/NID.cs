@@ -1,11 +1,10 @@
-﻿using System;
+﻿using pst.utilities;
+using System;
 
 namespace pst.encodables.ndb
 {
     class NID : IComparable<NID>
     {
-        public static readonly NID Zero = new NID(0);
-
         public int Type { get; }
 
         public int Index { get; }
@@ -23,9 +22,15 @@ namespace pst.encodables.ndb
             Index = index;
         }
 
-        public static NID OfValue(int value)
+        public static NID OfValue(BinaryData encodedData)
         {
-            return new NID(value);
+            var value = encodedData.ToInt32();
+
+            var type = value & 0x0000001F;
+
+            var index = Convert.ToInt32((value & 0xFFFFFFE0) >> 5);
+
+            return new NID(type, index);
         }
 
         public int Value => Index << 5 | Type;

@@ -1,6 +1,5 @@
 ﻿using pst.core;
 using pst.encodables;
-using pst.encodables.ndb;
 using pst.interfaces;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.tc;
@@ -14,7 +13,6 @@ namespace pst
     public partial class PSTFile
     {
         private readonly IDecoder<EntryId> entryIdDecoder;
-        private readonly IDecoder<NID> nidDecoder;
         private readonly IChangesTracker changesTracker;
         private readonly IEncoder<string> stringEncoder;
         private readonly INodeEntryFinder nodeEntryFinder;
@@ -28,7 +26,6 @@ namespace pst
 
         private PSTFile(
             IDecoder<EntryId> entryIdDecoder,
-            IDecoder<NID> nidDecoder,
             IChangesTracker changesTracker,
             IEncoder<string> stringEncoder,
             INodeEntryFinder nodeEntryFinder,
@@ -41,7 +38,6 @@ namespace pst
             IChangesApplier changesApplier)
         {
             this.entryIdDecoder = entryIdDecoder;
-            this.nidDecoder = nidDecoder;
             this.changesTracker = changesTracker;
             this.stringEncoder = stringEncoder;
             this.nodeEntryFinder = nodeEntryFinder;
@@ -95,7 +91,6 @@ namespace pst
                     stringEncoder,
                     propertyNameToIdMap,
                     propertyContextBasedPropertyReader,
-                    nidDecoder,
                     nodeEntryFinder,
                     rowIndexReader,
                     tableContextReader,

@@ -7,13 +7,10 @@ namespace pst.impl.decoders.ndb.blocks.subnode
 {
     class SIEntryDecoder : IDecoder<SIEntry>
     {
-        private readonly IDecoder<NID> nidDecoder;
-
         private readonly IDecoder<BID> bidDecoder;
 
-        public SIEntryDecoder(IDecoder<NID> nidDecoder, IDecoder<BID> bidDecoder)
+        public SIEntryDecoder(IDecoder<BID> bidDecoder)
         {
-            this.nidDecoder = nidDecoder;
             this.bidDecoder = bidDecoder;
         }
 
@@ -25,7 +22,7 @@ namespace pst.impl.decoders.ndb.blocks.subnode
 
             return
                 new SIEntry(
-                    nidDecoder.Decode(nodeId.Take(4)),
+                    NID.OfValue(nodeId.Take(4)),
                     parser.TakeAndSkip(8, bidDecoder));
         }
     }
