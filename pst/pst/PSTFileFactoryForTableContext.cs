@@ -32,7 +32,6 @@ namespace pst
             return
                 new RowIndexReader<NID>(
                     new TCINFODecoder(
-                        new HIDDecoder(),
                         new TCOLDESCDecoder()),
                     CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     CreateNIDBasedBTreeOnHeapReader(dataStream, nodeEntryCache, dataBlockEntryCache),
@@ -48,10 +47,8 @@ namespace pst
                 new RowMatrixReader(
                     CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     new RowValuesExtractor(),
-                    new HNIDDecoder(
-                        new HIDDecoder()),
+                    new HNIDDecoder(),
                     new TCINFODecoder(
-                        new HIDDecoder(),
                         new TCOLDESCDecoder()),
                     CreateExternalDataBlockReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }

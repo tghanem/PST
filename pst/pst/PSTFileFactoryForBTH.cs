@@ -23,10 +23,8 @@ namespace pst
         {
             return
                 new BTreeOnHeapReader<PropertyId>(
-                    new HIDDecoder(),
                     new PropertyIdDecoder(),
-                    new BTHHEADERDecoder(
-                        new HIDDecoder()),
+                    new BTHHEADERDecoder(),
                     CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 
@@ -37,10 +35,8 @@ namespace pst
         {
             return
                 new BTreeOnHeapReader<NID>(
-                    new HIDDecoder(),
                     new FuncBasedDecoder<NID>(NID.OfValue), 
-                    new BTHHEADERDecoder(
-                        new HIDDecoder()),
+                    new BTHHEADERDecoder(),
                     CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 
@@ -51,8 +47,7 @@ namespace pst
         {
             return
                 new HeapOnNodeReader(
-                    new HNHDRDecoder(
-                        new HIDDecoder()),
+                    new HNHDRDecoder(),
                     new HNPAGEHDRDecoder(),
                     new HNPAGEMAPDecoder(),
                     new HNBITMAPHDRDecoder(),

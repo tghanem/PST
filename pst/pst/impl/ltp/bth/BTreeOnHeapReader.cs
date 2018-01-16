@@ -12,19 +12,16 @@ namespace pst.impl.ltp.bth
 {
     class BTreeOnHeapReader<TKey> : IBTreeOnHeapReader<TKey> where TKey : IComparable<TKey>
     {
-        private readonly IDecoder<HID> hidDecoder;
         private readonly IDecoder<TKey> keyDecoder;
         private readonly IDecoder<BTHHEADER> bthHeaderDecoder;
         private readonly IHeapOnNodeReader heapOnNodeReader;
 
         public BTreeOnHeapReader(
-            IDecoder<HID> hidDecoder,
             IDecoder<TKey> keyDecoder,
             IDecoder<BTHHEADER> bthHeaderDecoder,
             IHeapOnNodeReader heapOnNodeReader)
         {
             this.keyDecoder = keyDecoder;
-            this.hidDecoder = hidDecoder;
             this.heapOnNodeReader = heapOnNodeReader;
             this.bthHeaderDecoder = bthHeaderDecoder;
         }
@@ -111,11 +108,9 @@ namespace pst.impl.ltp.bth
                     items,
                     item =>
                     {
-                        var hid = hidDecoder.Decode(item.Take(keySize, 4));
-
                         Enumerate(
                             nodePath,
-                            hid,
+                            HID.OfValue(item.Take(keySize, 4)),
                             keySize,
                             dataSize,
                             currentDepth - 1,
@@ -158,7 +153,7 @@ namespace pst.impl.ltp.bth
                 for (var i = 0; i < items.Length; i++)
                 {
                     var key = items[i].Take(bthKeySize);
-                    var hid = hidDecoder.Decode(items[i].Take(bthKeySize, 4));
+                    var hid = HID.OfValue(items[i].Take(bthKeySize, 4));
 
                     if (keyToFind.CompareTo(keyDecoder.Decode(key)) < 0)
                     {

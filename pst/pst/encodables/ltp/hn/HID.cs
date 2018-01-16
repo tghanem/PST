@@ -1,4 +1,6 @@
-﻿namespace pst.encodables.ltp.hn
+﻿using pst.utilities;
+
+namespace pst.encodables.ltp.hn
 {
     class HID
     {
@@ -18,6 +20,19 @@
             Type = type;
             Index = index;
             BlockIndex = blockIndex;
+        }
+
+        public static HID OfValue(BinaryData encodedData)
+        {
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            var value = parser.TakeAndSkip(4).ToInt32();
+
+            return
+                new HID(
+                    value & 0x0000001F,
+                    (value >> 5) & 0x000003FF,
+                    (value >> 16) & 0x0000FFFF);
         }
 
         public int Value => BlockIndex << 16 | Index << 5 | Type;

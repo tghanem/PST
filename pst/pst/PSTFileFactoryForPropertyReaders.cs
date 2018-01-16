@@ -52,8 +52,7 @@ namespace pst
         {
             return
                 new PropertyValueReader(
-                    new HNIDDecoder(
-                        new HIDDecoder()),
+                    new HNIDDecoder(),
                     CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     CreateExternalDataBlockReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }

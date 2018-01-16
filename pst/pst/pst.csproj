@@ -102,7 +102,6 @@
     <Compile Include="impl\decoders\ltp\bth\BTHHEADERDecoder.cs" />
     <Compile Include="impl\decoders\ltp\bth\DataRecordDecoder.cs" />
     <Compile Include="impl\decoders\ltp\bth\IndexRecordDecoder.cs" />
-    <Compile Include="impl\decoders\ltp\hn\HIDDecoder.cs" />
     <Compile Include="impl\decoders\ltp\hn\HNBITMAPHDRDecoder.cs" />
     <Compile Include="impl\decoders\ltp\hn\HNHDRDecoder.cs" />
     <Compile Include="impl\decoders\ltp\hn\HNIDDecoder.cs" />

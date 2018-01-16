@@ -1,22 +1,15 @@
-﻿using pst.interfaces;
-using pst.utilities;
-using pst.encodables.ltp.hn;
+﻿using pst.encodables.ltp.hn;
 using pst.encodables.ndb;
+using pst.interfaces;
+using pst.utilities;
 
 namespace pst.impl.decoders.ltp.hn
 {
     class HNIDDecoder : IDecoder<HNID>
     {
-        private readonly IDecoder<HID> hidDecoder;
-
-        public HNIDDecoder(IDecoder<HID> hidDecoder)
-        {
-            this.hidDecoder = hidDecoder;
-        }
-
         public HNID Decode(BinaryData encodedData)
         {
-            var hid = hidDecoder.Decode(encodedData);
+            var hid = HID.OfValue(encodedData);
 
             if (hid.Type == Constants.NID_TYPE_HID)
             {
