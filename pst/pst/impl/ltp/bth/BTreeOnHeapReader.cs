@@ -13,17 +13,14 @@ namespace pst.impl.ltp.bth
     class BTreeOnHeapReader<TKey> : IBTreeOnHeapReader<TKey> where TKey : IComparable<TKey>
     {
         private readonly IDecoder<TKey> keyDecoder;
-        private readonly IDecoder<BTHHEADER> bthHeaderDecoder;
         private readonly IHeapOnNodeReader heapOnNodeReader;
 
         public BTreeOnHeapReader(
             IDecoder<TKey> keyDecoder,
-            IDecoder<BTHHEADER> bthHeaderDecoder,
             IHeapOnNodeReader heapOnNodeReader)
         {
             this.keyDecoder = keyDecoder;
             this.heapOnNodeReader = heapOnNodeReader;
-            this.bthHeaderDecoder = bthHeaderDecoder;
         }
 
         public Maybe<DataRecord> ReadDataRecord(NID[] nodePath, TKey key)
@@ -38,7 +35,7 @@ namespace pst.impl.ltp.bth
             var userRootHeapItem = heapOnNodeReader.GetHeapItem(nodePath, userRoot);
 
             var bthHeader =
-                bthHeaderDecoder.Decode(userRootHeapItem);
+                BTHHEADER.OfValue(userRootHeapItem);
 
             if (bthHeader.Root.Value == 0)
                 return Maybe<DataRecord>.NoValue();
@@ -59,18 +56,13 @@ namespace pst.impl.ltp.bth
 
             if (userRoot.HasValue)
             {
-                bthHeader =
-                    bthHeaderDecoder
-                    .Decode(heapOnNodeReader.GetHeapItem(nodePath, userRoot.Value));
+                bthHeader = BTHHEADER.OfValue(heapOnNodeReader.GetHeapItem(nodePath, userRoot.Value));
             }
             else
             {
-                var hnHeader =
-                    heapOnNodeReader.GetHeapOnNodeHeader(nodePath);
+                var hnHeader = heapOnNodeReader.GetHeapOnNodeHeader(nodePath);
 
-                bthHeader =
-                    bthHeaderDecoder
-                    .Decode(heapOnNodeReader.GetHeapItem(nodePath, hnHeader.UserRoot));
+                bthHeader = BTHHEADER.OfValue(heapOnNodeReader.GetHeapItem(nodePath, hnHeader.UserRoot));
             }
 
             if (bthHeader.Root.Value == 0)

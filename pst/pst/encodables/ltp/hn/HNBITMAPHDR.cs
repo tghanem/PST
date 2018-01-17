@@ -15,5 +15,15 @@ namespace pst.encodables.ltp.hn
             PageMapOffset = pageMapOffset;
             FillLevel = fillLevel;
         }
+
+        public static HNBITMAPHDR OfValue(BinaryData encodedData)
+        {
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new HNBITMAPHDR(
+                    parser.TakeAndSkip(2).ToInt32(),
+                    parser.TakeAndSkip(64));
+        }
     }
 }

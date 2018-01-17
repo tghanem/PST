@@ -27,5 +27,18 @@ namespace pst.encodables.ltp.hn
             UserRoot = userRoot;
             FillLevel = fillLevel;
         }
+
+        public static HNHDR OfValue(BinaryData encodedData)
+        {
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new HNHDR(
+                    parser.TakeAndSkip(2).ToInt32(),
+                    parser.TakeAndSkip(1).ToInt32(),
+                    parser.TakeAndSkip(1).ToInt32(),
+                    HID.OfValue(parser.TakeAndSkip(4)),
+                    parser.TakeAndSkip(4));
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace pst.encodables.messaging
+﻿using pst.utilities;
+
+namespace pst.encodables.messaging
 {
     class NAMEID
     {
@@ -20,6 +22,24 @@
             Type = type;
             GuidIndex = guidIndex;
             PropertyIndex = propertyIndex;
+        }
+
+        public static NAMEID OfValue(BinaryData encodedData)
+        {
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            var propertyId = parser.TakeAndSkip(4).ToInt32();
+
+            var typeNameGuidIndex = parser.TakeAndSkip(2).ToInt32();
+
+            var propertyIndex = parser.TakeAndSkip(2).ToInt32();
+
+            return
+                new NAMEID(
+                    propertyId,
+                    typeNameGuidIndex & 0x0001,
+                    (typeNameGuidIndex & 0xFFFE) >> 1,
+                    propertyIndex);
         }
     }
 }

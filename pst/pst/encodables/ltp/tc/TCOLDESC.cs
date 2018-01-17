@@ -1,4 +1,6 @@
-﻿namespace pst.encodables.ltp.tc
+﻿using pst.utilities;
+
+namespace pst.encodables.ltp.tc
 {
     class TCOLDESC
     {
@@ -20,6 +22,18 @@
             DataOffset = dataOffset;
             DataSize = dataSize;
             CellExistenceBitmapIndex = cellExistenceBitmapIndex;
+        }
+
+        public static TCOLDESC OfValue(BinaryData encodedData)
+        {
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new TCOLDESC(
+                    parser.TakeAndSkip(4).ToInt32(),
+                    parser.TakeAndSkip(2).ToInt32(),
+                    parser.TakeAndSkip(1).ToInt32(),
+                    parser.TakeAndSkip(1).ToInt32());
         }
     }
 }

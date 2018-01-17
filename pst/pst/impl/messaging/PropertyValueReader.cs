@@ -1,7 +1,6 @@
 ﻿using pst.core;
 using pst.encodables.ltp.hn;
 using pst.encodables.ndb;
-using pst.interfaces;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.messaging;
 using pst.interfaces.ndb;
@@ -12,16 +11,13 @@ namespace pst.impl.messaging
 {
     class PropertyValueReader : IPropertyValueReader
     {
-        private readonly IDecoder<HNID> hnidDecoder;
         private readonly IHeapOnNodeReader heapOnNodeReader;
         private readonly IDataTreeReader dataTreeReader;
 
         public PropertyValueReader(
-            IDecoder<HNID> hnidDecoder,
             IHeapOnNodeReader heapOnNodeReader,
             IDataTreeReader dataTreeReader)
         {
-            this.hnidDecoder = hnidDecoder;
             this.heapOnNodeReader = heapOnNodeReader;
             this.dataTreeReader = dataTreeReader;
         }
@@ -37,7 +33,7 @@ namespace pst.impl.messaging
                     return new PropertyValue(propertyValue);
                 }
 
-                var hnid = hnidDecoder.Decode(propertyValue);
+                var hnid = HNID.OfValue(propertyValue);
 
                 var heapItem = heapOnNodeReader.GetHeapItem(nodePath, hnid.HID);
 
@@ -46,7 +42,7 @@ namespace pst.impl.messaging
 
             if (propertyType.IsMultiValueFixedLength() || propertyType.IsVariableLength() || propertyType.IsMultiValueVariableLength())
             {
-                var hnid = hnidDecoder.Decode(propertyValue);
+                var hnid = HNID.OfValue(propertyValue);
 
                 var value = GetHNIDBinaryData(nodePath, hnid);
 
@@ -60,7 +56,7 @@ namespace pst.impl.messaging
 
             if (propertyType.Value == Constants.PtypObject)
             {
-                var hnid = hnidDecoder.Decode(propertyValue);
+                var hnid = HNID.OfValue(propertyValue);
 
                 var heapItem = heapOnNodeReader.GetHeapItem(nodePath, hnid.HID);
 

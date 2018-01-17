@@ -1,6 +1,5 @@
 ﻿using pst.core;
 using pst.encodables.messaging;
-using pst.interfaces;
 using pst.interfaces.ltp;
 using pst.interfaces.messaging;
 using pst.interfaces.model;
@@ -14,14 +13,10 @@ namespace pst.impl.messaging
     {
         private static readonly NodePath MapNodePath = NodePath.OfValue(AllocatedNodeId.OfValue(Constants.NID_NAME_TO_ID_MAP));
 
-        private readonly IDecoder<NAMEID> nameIdDecoder;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
 
-        public PropertyNameToIdMap(
-            IDecoder<NAMEID> nameIdDecoder,
-            IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader)
+        public PropertyNameToIdMap(IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader)
         {
-            this.nameIdDecoder = nameIdDecoder;
             this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
         }
 
@@ -38,7 +33,7 @@ namespace pst.impl.messaging
 
             for (var i = 0; i < entriesCount; i++)
             {
-                var entry = nameIdDecoder.Decode(entryStream.Value.Value.Take(i * 8, 8));
+                var entry = NAMEID.OfValue(entryStream.Value.Value.Take(i * 8, 8));
 
                 if (entry.Type == 0)
                 {
@@ -67,7 +62,7 @@ namespace pst.impl.messaging
 
             for (var i = 0; i < entriesCount; i++)
             {
-                var entry = nameIdDecoder.Decode(entryStream.Value.Value.Take(i * 8, 8));
+                var entry = NAMEID.OfValue(entryStream.Value.Value.Take(i * 8, 8));
 
                 if (entry.Type == 1)
                 {

@@ -1,7 +1,5 @@
 ﻿using pst.encodables.ndb;
 using pst.impl.converters;
-using pst.impl.decoders.ltp.hn;
-using pst.impl.decoders.ltp.tc;
 using pst.impl.ltp.tc;
 using pst.impl.ndb;
 using pst.interfaces;
@@ -31,8 +29,6 @@ namespace pst
         {
             return
                 new RowIndexReader<NID>(
-                    new TCINFODecoder(
-                        new TCOLDESCDecoder()),
                     CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     CreateNIDBasedBTreeOnHeapReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     new DataRecordToTCROWIDConverter());
@@ -47,9 +43,6 @@ namespace pst
                 new RowMatrixReader(
                     CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     new RowValuesExtractor(),
-                    new HNIDDecoder(),
-                    new TCINFODecoder(
-                        new TCOLDESCDecoder()),
                     CreateExternalDataBlockReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 

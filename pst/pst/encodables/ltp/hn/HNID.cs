@@ -1,5 +1,6 @@
 ﻿using pst.core;
 using pst.encodables.ndb;
+using pst.utilities;
 
 namespace pst.encodables.ltp.hn
 {
@@ -16,6 +17,18 @@ namespace pst.encodables.ltp.hn
         public HNID(NID nid)
         {
             this.nid = nid;
+        }
+
+        public static HNID OfValue(BinaryData encodedData)
+        {
+            var hid = HID.OfValue(encodedData);
+
+            if (hid.Type == Constants.NID_TYPE_HID)
+            {
+                return new HNID(hid);
+            }
+
+            return new HNID(NID.OfValue(encodedData));
         }
 
         public bool IsHID => hid.HasValue;

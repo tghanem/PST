@@ -12,19 +12,16 @@ namespace pst.impl.ltp.tc
 {
     class RowIndexReader<TRowId> : IRowIndexReader where TRowId : IComparable<TRowId>
     {
-        private readonly IDecoder<TCINFO> tcinfoDecoder;
         private readonly IHeapOnNodeReader heapOnNodeReader;
         private readonly IBTreeOnHeapReader<TRowId> bthReader;
         private readonly IConverter<DataRecord, TCROWID> dataRecordToTCROWIDConverter;
 
         public RowIndexReader(
-            IDecoder<TCINFO> tcinfoDecoder,
             IHeapOnNodeReader heapOnNodeReader,
             IBTreeOnHeapReader<TRowId> bthReader,
             IConverter<DataRecord, TCROWID> dataRecordToTCROWIDConverter)
         {
             this.bthReader = bthReader;
-            this.tcinfoDecoder = tcinfoDecoder;
             this.heapOnNodeReader = heapOnNodeReader;
             this.dataRecordToTCROWIDConverter = dataRecordToTCROWIDConverter;
         }
@@ -38,7 +35,7 @@ namespace pst.impl.ltp.tc
                 heapOnNodeReader.GetHeapItem(nodePath, hnHeader.UserRoot);
 
             var tcinfo =
-                tcinfoDecoder.Decode(heapItem);
+                TCINFO.OfValue(heapItem);
             
             return
                 bthReader

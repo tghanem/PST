@@ -1,4 +1,5 @@
 ﻿using pst.encodables.ltp.hn;
+using pst.utilities;
 
 namespace pst.encodables.ltp.bth
 {
@@ -26,6 +27,19 @@ namespace pst.encodables.ltp.bth
             SizeOfDataValue = sizeOfDataValue;
             IndexDepth = indexDepth;
             Root = root;
+        }
+
+        public static BTHHEADER OfValue(BinaryData encodedData)
+        {
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new BTHHEADER(
+                    parser.TakeAndSkip(1).ToInt32(),
+                    parser.TakeAndSkip(1).ToInt32(),
+                    parser.TakeAndSkip(1).ToInt32(),
+                    parser.TakeAndSkip(1).ToInt32(),
+                    HID.OfValue(parser.TakeAndSkip(4)));
         }
     }
 }

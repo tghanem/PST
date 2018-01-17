@@ -2,7 +2,6 @@
 using pst.encodables.ltp.hn;
 using pst.encodables.ltp.tc;
 using pst.encodables.ndb;
-using pst.interfaces;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.ltp.tc;
 using pst.interfaces.ndb;
@@ -14,21 +13,15 @@ namespace pst.impl.ltp.tc
     {
         private readonly IHeapOnNodeReader heapOnNodeReader;
         private readonly IRowValuesExtractor rowValuesExtractor;
-        private readonly IDecoder<HNID> hnidDecoder;
-        private readonly IDecoder<TCINFO> tcinfoDecoder;
         private readonly IDataTreeReader dataTreeReader;
 
         public RowMatrixReader(
             IHeapOnNodeReader heapOnNodeReader,
             IRowValuesExtractor rowValuesExtractor,
-            IDecoder<HNID> hnidDecoder,
-            IDecoder<TCINFO> tcinfoDecoder,
             IDataTreeReader dataTreeReader)
         {
             this.rowValuesExtractor = rowValuesExtractor;
             this.heapOnNodeReader = heapOnNodeReader;
-            this.tcinfoDecoder = tcinfoDecoder;
-            this.hnidDecoder = hnidDecoder;
             this.dataTreeReader = dataTreeReader;
         }
 
@@ -38,13 +31,13 @@ namespace pst.impl.ltp.tc
 
             var userRootHeapItem = heapOnNodeReader.GetHeapItem(nodePath, hnHeader.UserRoot);
 
-            var tcInfo = tcinfoDecoder.Decode(userRootHeapItem);
+            var tcInfo = TCINFO.OfValue(userRootHeapItem);
 
             var cebStartingOffset = tcInfo.GroupsOffsets[2];
 
             var rowLength = tcInfo.GroupsOffsets[3];
 
-            var rowMatrixHnid = hnidDecoder.Decode(tcInfo.RowMatrix);
+            var rowMatrixHnid = HNID.OfValue(tcInfo.RowMatrix);
 
             if (rowMatrixHnid.IsZero)
             {
