@@ -31,7 +31,6 @@ namespace pst
                     CreateHeaderBasedStringEncoder(stream, cachedHeaderHolder),
                     CreateNodeEntryFinder(stream, cachedNodeEntries, dataBlockEntryCache, cachedHeaderHolder),
                     CreateRowIndexReader(stream, cachedNodeEntries, dataBlockEntryCache, cachedHeaderHolder),
-                    CreateTableContextReader(stream, cachedNodeEntries, dataBlockEntryCache, cachedHeaderHolder),
                     CreatePropertyIdToNameMap(stream, cachedNodeEntries, dataBlockEntryCache, cachedHeaderHolder),
                     CreatePropertyContextBasedPropertyReader(stream, cachedNodeEntries, dataBlockEntryCache, cachedHeaderHolder),
                     CreateTagBasedTableContextBasedPropertyReader(stream, cachedNodeEntries, dataBlockEntryCache, cachedHeaderHolder),

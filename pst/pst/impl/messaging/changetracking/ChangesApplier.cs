@@ -1,6 +1,5 @@
 ﻿using pst.interfaces.messaging.changetracking;
 using pst.interfaces.model;
-using System;
 using System.Collections.Generic;
 
 namespace pst.impl.messaging.changetracking
@@ -16,7 +15,23 @@ namespace pst.impl.messaging.changetracking
 
         public void Apply()
         {
-            throw new NotImplementedException();
+            foreach (var rootTrackedNode in trackedNodes.Values)
+            {
+                Apply(rootTrackedNode);
+            }
+        }
+
+        private void Apply(NodeTrackingObject trackingObject)
+        {
+            foreach (var child in trackingObject.Children)
+            {
+                Apply(child);
+
+                if (child.Type == ObjectTypes.Folder)
+                {
+                    
+                }
+            }
         }
     }
 }

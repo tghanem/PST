@@ -6,7 +6,7 @@ namespace pst.interfaces.ltp.tc
 {
     interface IRowIndexReader
     {
-        Maybe<TCROWID> GetRowId(NID[] nodePath, int rowId);
+        Maybe<int> GetRowIndex(NID[] nodePath, int rowId);
 
         TCROWID[] GetAllRowIds(NID[] nodePath);
     }

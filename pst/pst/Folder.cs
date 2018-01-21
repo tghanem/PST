@@ -19,7 +19,6 @@ namespace pst
         private readonly IEncoder<string> stringEncoder;
         private readonly INodeEntryFinder nodeEntryFinder;
         private readonly IRowIndexReader rowIndexReader;
-        private readonly ITableContextReader tableContextReader;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
         private readonly ITableContextBasedPropertyReader tableContextBasedPropertyReader;
@@ -37,7 +36,6 @@ namespace pst
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
             INodeEntryFinder nodeEntryFinder,
             IRowIndexReader rowIndexReader,
-            ITableContextReader tableContextReader,
             ITableContextBasedPropertyReader tableContextBasedPropertyReader,
             INIDAllocator nodeIdAllocator) : base(objectPath, objectTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
         {
@@ -47,7 +45,6 @@ namespace pst
             this.stringEncoder = stringEncoder;
             this.nodeEntryFinder = nodeEntryFinder;
             this.rowIndexReader = rowIndexReader;
-            this.tableContextReader = tableContextReader;
             this.tableContextBasedPropertyReader = tableContextBasedPropertyReader;
             this.nodeIdAllocator = nodeIdAllocator;
             this.propertyNameToIdMap = propertyNameToIdMap;
@@ -93,7 +90,6 @@ namespace pst
                     propertyContextBasedPropertyReader,
                     nodeEntryFinder,
                     rowIndexReader,
-                    tableContextReader,
                     tableContextBasedPropertyReader,
                     nodeIdAllocator);
         }
@@ -123,7 +119,6 @@ namespace pst
                         propertyContextBasedPropertyReader,
                         nodeEntryFinder,
                         rowIndexReader,
-                        tableContextReader,
                         tableContextBasedPropertyReader,
                         nodeIdAllocator))
                 .ToArray();
@@ -151,7 +146,6 @@ namespace pst
                             recipientTracker,
                             nodeEntryFinder,
                             rowIndexReader,
-                            tableContextReader,
                             propertyNameToIdMap,
                             propertyContextBasedPropertyReader,
                             tableContextBasedPropertyReader))

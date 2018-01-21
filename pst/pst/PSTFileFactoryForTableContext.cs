@@ -10,18 +10,6 @@ namespace pst
 {
     public partial class PSTFile
     {
-        private static ITableContextReader CreateTableContextReader(
-            Stream stream,
-            ICache<NID[], NodeEntry> nodeEntryCache,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache,
-            IDataHolder<Header> cachedHeaderHolder)
-        {
-            return
-                new TableContextReader(
-                    CreateRowIndexReader(stream, nodeEntryCache, dataBlockEntryCache, cachedHeaderHolder),
-                    CreateRowMatrixReader(stream, nodeEntryCache, dataBlockEntryCache, cachedHeaderHolder));
-        }
-
         private static IRowIndexReader CreateRowIndexReader(
             Stream dataStream,
             ICache<NID[], NodeEntry> nodeEntryCache,

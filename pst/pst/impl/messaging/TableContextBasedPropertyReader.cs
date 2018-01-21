@@ -23,14 +23,14 @@ namespace pst.impl.messaging
 
         public Maybe<PropertyValue> Read(NID[] nodePath, int rowId, PropertyTag propertyTag)
         {
-            var tcRowId = rowIndexReader.GetRowId(nodePath, rowId);
+            var rowIndex = rowIndexReader.GetRowIndex(nodePath, rowId);
 
-            if (tcRowId.HasNoValue)
+            if (rowIndex.HasNoValue)
             {
                 return Maybe<PropertyValue>.NoValue();
             }
 
-            var row = rowMatrixReader.GetRow(nodePath, tcRowId.Value.RowIndex);
+            var row = rowMatrixReader.GetRow(nodePath, rowIndex.Value);
 
             if (row.HasNoValue)
             {

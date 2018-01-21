@@ -21,7 +21,7 @@ namespace pst.impl.ltp.tc
             this.heapOnNodeReader = heapOnNodeReader;
         }
 
-        public Maybe<TCROWID> GetRowId(NID[] nodePath, int rowId)
+        public Maybe<int> GetRowIndex(NID[] nodePath, int rowId)
         {
             var hnHeader = heapOnNodeReader.GetHeapOnNodeHeader(nodePath);
 
@@ -33,10 +33,10 @@ namespace pst.impl.ltp.tc
 
             if (dataRecord.HasNoValue)
             {
-                return Maybe<TCROWID>.NoValue();
+                return Maybe<int>.NoValue();
             }
 
-            return new TCROWID(dataRecord.Value.Key, dataRecord.Value.Data.ToInt32());
+            return dataRecord.Value.Data.ToInt32();
         }
 
         public TCROWID[] GetAllRowIds(NID[] nodePath)
@@ -46,7 +46,7 @@ namespace pst.impl.ltp.tc
             var heapItem = heapOnNodeReader.GetHeapItem(nodePath, hnHeader.UserRoot);
 
             var tcinfo = TCINFO.OfValue(heapItem);
-            
+
             return
                 bthReader
                 .ReadAllDataRecords(nodePath, tcinfo.RowIndex)

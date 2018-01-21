@@ -169,7 +169,6 @@
     <Compile Include="impl\ltp\tc\RowIndexReader.cs" />
     <Compile Include="impl\ltp\tc\RowMatrixReader.cs" />
     <Compile Include="impl\ltp\tc\RowValuesExtractor.cs" />
-    <Compile Include="impl\ltp\tc\TableContextReader.cs" />
     <Compile Include="impl\messaging\changetracking\ChangesApplier.cs" />
     <Compile Include="impl\messaging\changetracking\ObjectTracker.cs" />
     <Compile Include="impl\messaging\changetracking\RecipientTracker.cs" />
@@ -219,7 +218,6 @@
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeGenerator.cs" />
     <Compile Include="interfaces\ltp\tc\TableRow.cs" />
     <Compile Include="interfaces\messaging\changetracking\IChangesApplier.cs" />
-    <Compile Include="interfaces\messaging\changetracking\IFolderGenerator.cs" />
     <Compile Include="interfaces\messaging\changetracking\IRecipientTracker.cs" />
     <Compile Include="interfaces\messaging\IPropertyContextBasedPropertyReader.cs" />
     <Compile Include="interfaces\messaging\IPropertyValueReader.cs" />
@@ -249,7 +247,6 @@
     <Compile Include="interfaces\ltp\tc\IRowIndexReader.cs" />
     <Compile Include="interfaces\ltp\tc\IRowMatrixReader.cs" />
     <Compile Include="interfaces\ltp\tc\IRowValuesExtractor.cs" />
-    <Compile Include="interfaces\ltp\tc\ITableContextReader.cs" />
     <Compile Include="interfaces\ndb\ISubnodeBTreeBlockLevelDecider.cs" />
     <Compile Include="interfaces\ndb\ISubNodesEnumerator.cs" />
     <Compile Include="MAPIProperties.cs" />

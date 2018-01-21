@@ -16,7 +16,6 @@ namespace pst
         private readonly IEncoder<string> stringEncoder;
         private readonly INodeEntryFinder nodeEntryFinder;
         private readonly IRowIndexReader rowIndexReader;
-        private readonly ITableContextReader tableContextReader;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
         private readonly ITableContextBasedPropertyReader tableContextBasedPropertyReader;
@@ -29,7 +28,6 @@ namespace pst
             IEncoder<string> stringEncoder,
             INodeEntryFinder nodeEntryFinder,
             IRowIndexReader rowIndexReader,
-            ITableContextReader tableContextReader,
             IPropertyNameToIdMap propertyNameToIdMap,
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
             ITableContextBasedPropertyReader tableContextBasedPropertyReader,
@@ -41,7 +39,6 @@ namespace pst
             this.stringEncoder = stringEncoder;
             this.nodeEntryFinder = nodeEntryFinder;
             this.rowIndexReader = rowIndexReader;
-            this.tableContextReader = tableContextReader;
             this.propertyNameToIdMap = propertyNameToIdMap;
             this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
             this.tableContextBasedPropertyReader = tableContextBasedPropertyReader;
@@ -85,7 +82,6 @@ namespace pst
                     propertyContextBasedPropertyReader,
                     nodeEntryFinder,
                     rowIndexReader,
-                    tableContextReader,
                     tableContextBasedPropertyReader,
                     nodeIdAllocator);
         }

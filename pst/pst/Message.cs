@@ -17,7 +17,6 @@ namespace pst
         private readonly IRecipientTracker recipientTracker;
         private readonly INodeEntryFinder nodeEntryFinder;
         private readonly IRowIndexReader rowIndexReader;
-        private readonly ITableContextReader tableContextReader;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
         private readonly ITableContextBasedPropertyReader tableContextBasedPropertyReader;
@@ -31,7 +30,6 @@ namespace pst
             IRecipientTracker recipientTracker,
             INodeEntryFinder nodeEntryFinder,
             IRowIndexReader rowIndexReader,
-            ITableContextReader tableContextReader,
             IPropertyNameToIdMap propertyNameToIdMap,
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
             ITableContextBasedPropertyReader tableContextBasedPropertyReader) : base(objectPath, objectTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
@@ -41,7 +39,6 @@ namespace pst
             this.recipientTracker = recipientTracker;
             this.nodeEntryFinder = nodeEntryFinder;
             this.rowIndexReader = rowIndexReader;
-            this.tableContextReader = tableContextReader;
             this.propertyNameToIdMap = propertyNameToIdMap;
             this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
             this.tableContextBasedPropertyReader = tableContextBasedPropertyReader;
@@ -99,7 +96,6 @@ namespace pst
                         propertyContextBasedPropertyReader,
                         nodeEntryFinder,
                         rowIndexReader,
-                        tableContextReader,
                         tableContextBasedPropertyReader))
                 .ToArray();
         }
