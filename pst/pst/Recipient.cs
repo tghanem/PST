@@ -1,4 +1,5 @@
 ﻿using pst.core;
+using pst.encodables.ndb;
 using pst.interfaces.ltp;
 using pst.interfaces.messaging;
 using pst.interfaces.messaging.changetracking;
@@ -9,19 +10,25 @@ namespace pst
 {
     public class Recipient
     {
-        private readonly AssociatedObjectPath associatedObjectPath;
-        private readonly IChangesTracker changesTracker;
+        private readonly ObjectPath messageObjectPath;
+        private readonly NID recipientTableNodeId;
+        private readonly int recipientRowId;
+        private readonly IRecipientTracker objectTracker;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly ITableContextBasedPropertyReader tableContextBasedPropertyReader;
 
         internal Recipient(
-            AssociatedObjectPath associatedObjectPath,
-            IChangesTracker changesTracker,
+            ObjectPath messageObjectPath,
+            NID recipientTableNodeId,
+            int recipientRowId,
+            IRecipientTracker objectTracker,
             IPropertyNameToIdMap propertyNameToIdMap,
             ITableContextBasedPropertyReader tableContextBasedPropertyReader)
         {
-            this.associatedObjectPath = associatedObjectPath;
-            this.changesTracker = changesTracker;
+            this.messageObjectPath = messageObjectPath;
+            this.recipientTableNodeId = recipientTableNodeId;
+            this.recipientRowId = recipientRowId;
+            this.objectTracker = objectTracker;
             this.propertyNameToIdMap = propertyNameToIdMap;
             this.tableContextBasedPropertyReader = tableContextBasedPropertyReader;
         }
@@ -35,7 +42,12 @@ namespace pst
                 return;
             }
 
-            changesTracker.SetProperty(associatedObjectPath, resolvedTag.Value, propertyValue);
+            objectTracker.SetProperty(
+                messageObjectPath,
+                recipientTableNodeId,
+                recipientRowId,
+                resolvedTag.Value,
+                propertyValue);
         }
 
         public void SetProperty(StringPropertyTag propertyTag, PropertyValue propertyValue)
@@ -47,12 +59,22 @@ namespace pst
                 return;
             }
 
-            changesTracker.SetProperty(associatedObjectPath, resolvedTag.Value, propertyValue);
+            objectTracker.SetProperty(
+                messageObjectPath,
+                recipientTableNodeId,
+                recipientRowId,
+                resolvedTag.Value,
+                propertyValue);
         }
 
         public void SetProperty(PropertyTag propertyTag, PropertyValue propertyValue)
         {
-            changesTracker.SetProperty(associatedObjectPath, propertyTag, propertyValue);
+            objectTracker.SetProperty(
+                messageObjectPath,
+                recipientTableNodeId,
+                recipientRowId,
+                propertyTag,
+                propertyValue);
         }
 
         public Maybe<PropertyValue> GetProperty(NumericalPropertyTag propertyTag)
@@ -82,10 +104,12 @@ namespace pst
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
             return
-                changesTracker.GetProperty(
-                    associatedObjectPath,
+                objectTracker.GetProperty(
+                    messageObjectPath,
+                    recipientTableNodeId,
+                    recipientRowId,
                     propertyTag,
-                    () => tableContextBasedPropertyReader.Read(associatedObjectPath.NodePath.AllocatedIds, associatedObjectPath.RowId, propertyTag));
+                    () => tableContextBasedPropertyReader.Read(new[] { messageObjectPath.LocalNodeId, recipientTableNodeId }, recipientRowId, propertyTag));
         }
 
         public void DeleteProperty(NumericalPropertyTag propertyTag)
@@ -97,7 +121,11 @@ namespace pst
                 return;
             }
 
-            changesTracker.DeleteProperty(associatedObjectPath, resolvedTag.Value);
+            objectTracker.DeleteProperty(
+                messageObjectPath,
+                recipientTableNodeId,
+                recipientRowId,
+                resolvedTag.Value);
         }
 
         public void DeleteProperty(StringPropertyTag propertyTag)
@@ -109,12 +137,20 @@ namespace pst
                 return;
             }
 
-            changesTracker.DeleteProperty(associatedObjectPath, resolvedTag.Value);
+            objectTracker.DeleteProperty(
+                messageObjectPath,
+                recipientTableNodeId,
+                recipientRowId,
+                resolvedTag.Value);
         }
 
         public void DeleteProperty(PropertyTag propertyTag)
         {
-            changesTracker.DeleteProperty(associatedObjectPath, propertyTag);
+            objectTracker.DeleteProperty(
+                messageObjectPath,
+                recipientTableNodeId,
+                recipientRowId,
+                propertyTag);
         }
     }
 }

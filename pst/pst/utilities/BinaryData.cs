@@ -29,26 +29,19 @@ namespace pst.utilities
             return new BinaryData(newArray);
         }
 
-        public static BinaryData Empty()
-            => new BinaryData(new byte[0]);
+        public static BinaryData Empty() => new BinaryData(new byte[0]);
 
-        public static BinaryData From(int value)
-            => new BinaryData(BitConverter.GetBytes(value));
+        public static BinaryData OfValue(int value) => new BinaryData(BitConverter.GetBytes(value));
 
-        public static BinaryData From(byte value)
-            => new BinaryData(new[] { value });
+        public static BinaryData OfValue(byte value) => new BinaryData(new[] { value });
 
-        public static BinaryData From(bool value)
-            => new BinaryData(BitConverter.GetBytes(value));
+        public static BinaryData OfValue(bool value) => new BinaryData(BitConverter.GetBytes(value));
 
-        public static BinaryData OfValue(byte[] value)
-            => new BinaryData(value);
+        public static BinaryData OfValue(byte[] value) => new BinaryData(value);
 
-        public static implicit operator byte[] (BinaryData data)
-            => data.Value;
+        public static implicit operator byte[] (BinaryData data) => data.Value;
 
-        public BinaryData Take(int count)
-            => new BinaryData(Value.Take(count).ToArray());
+        public BinaryData Take(int count) => new BinaryData(Value.Take(count).ToArray());
 
         public BinaryData Take(int offset, int count)
         {
@@ -57,11 +50,9 @@ namespace pst.utilities
             return OfValue(buffer);
         }
 
-        public BinaryData Pad(int count)
-            => new BinaryData(Value.Concat(new byte[count]).ToArray());
+        public BinaryData Pad(int count) => new BinaryData(Value.Concat(new byte[count]).ToArray());
 
-        public BinaryData Reverse()
-            => new BinaryData(Value.Reverse().ToArray());
+        public BinaryData Reverse() => new BinaryData(Value.Reverse().ToArray());
 
         public string ToUnicode()
         {

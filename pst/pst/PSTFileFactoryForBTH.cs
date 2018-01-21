@@ -8,6 +8,7 @@ using pst.interfaces;
 using pst.interfaces.ltp.bth;
 using pst.interfaces.ltp.hn;
 using pst.interfaces.ndb;
+using System;
 using System.IO;
 
 namespace pst
@@ -25,14 +26,14 @@ namespace pst
                     CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 
-        private static IBTreeOnHeapReader<NID> CreateNIDBasedBTreeOnHeapReader(
+        private static IBTreeOnHeapReader<int> CreateInt32BasedBTreeOnHeapReader(
             Stream dataStream,
             ICache<NID[], NodeEntry> nodeEntryCache,
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
-                new BTreeOnHeapReader<NID>(
-                    new FuncBasedDecoder<NID>(NID.OfValue),
+                new BTreeOnHeapReader<int>(
+                    new FuncBasedDecoder<int>(d => BitConverter.ToInt32(d.Value, 0)),
                     CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 

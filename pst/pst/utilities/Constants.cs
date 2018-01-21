@@ -10,6 +10,8 @@ namespace pst.utilities
 
         public static readonly NID NID_HIERARCHY_TABLE_TEMPLATE = new NID(0x60D);
 
+        public const int NID_TYPE_NORMAL_MESSAGE = 0x04;
+        public const int NID_TYPE_NORMAL_FOLDER = 0x02;
         public const int NID_TYPE_HIERARCHY_TABLE = 0x0D;
         public const int NID_TYPE_CONTENTS_TABLE = 0x0E;
         public const int NID_TYPE_RECIPIENT_TABLE = 0x12;

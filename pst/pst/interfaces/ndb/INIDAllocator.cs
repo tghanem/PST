@@ -4,6 +4,6 @@ namespace pst.interfaces.ndb
 {
     interface INIDAllocator
     {
-        NID Allocate(int type, BID dataTreeRootBlockId, BID subnodeBTreeRootBlockId);
+        NID Allocate(int type);
     }
 }

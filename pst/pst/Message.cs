@@ -12,8 +12,9 @@ namespace pst
 {
     public class Message : ObjectBase
     {
-        private readonly NodePath nodePath;
-        private readonly IChangesTracker changesTracker;
+        private readonly ObjectPath objectPath;
+        private readonly IObjectTracker objectTracker;
+        private readonly IRecipientTracker recipientTracker;
         private readonly INodeEntryFinder nodeEntryFinder;
         private readonly IRowIndexReader rowIndexReader;
         private readonly ITableContextReader tableContextReader;
@@ -25,17 +26,19 @@ namespace pst
         private bool preExistingAttachmentsLoaded;
 
         internal Message(
-            NodePath nodePath,
-            IChangesTracker changesTracker,
+            ObjectPath objectPath,
+            IObjectTracker objectTracker,
+            IRecipientTracker recipientTracker,
             INodeEntryFinder nodeEntryFinder,
             IRowIndexReader rowIndexReader,
             ITableContextReader tableContextReader,
             IPropertyNameToIdMap propertyNameToIdMap,
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
-            ITableContextBasedPropertyReader tableContextBasedPropertyReader) : base(nodePath, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
+            ITableContextBasedPropertyReader tableContextBasedPropertyReader) : base(objectPath, objectTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
         {
-            this.nodePath = nodePath;
-            this.changesTracker = changesTracker;
+            this.objectPath = objectPath;
+            this.objectTracker = objectTracker;
+            this.recipientTracker = recipientTracker;
             this.nodeEntryFinder = nodeEntryFinder;
             this.rowIndexReader = rowIndexReader;
             this.tableContextReader = tableContextReader;
@@ -52,18 +55,23 @@ namespace pst
                 preExistingRecipientsLoaded = true;
             }
 
-            var recipientTableNodePath =
-                changesTracker
-                .GetChildren(
-                    parentNodePath: nodePath,
-                    childType: ObjectTypes.RecipientTable,
-                    childStatePredicate: s => s == ObjectStates.New || s == ObjectStates.Loaded)
-                .First();
+            var recipientTableNodeId = recipientTracker.GetTrackedRecipientTable(objectPath);
 
             return
-                changesTracker
-                .GetAssociatedObjects(recipientTableNodePath)
-                .Select(path => new Recipient(path, changesTracker, propertyNameToIdMap, tableContextBasedPropertyReader))
+                recipientTracker
+                .GetTrackedRecipients(
+                    messageObjectPath: objectPath,
+                    recipientTableNodeId: recipientTableNodeId,
+                    recipientStatePredicate: s => s == ObjectStates.New || s == ObjectStates.Loaded)
+                .Select(
+                    recipientRowId =>
+                    new Recipient(
+                        objectPath,
+                        recipientTableNodeId,
+                        recipientRowId,
+                        recipientTracker,
+                        propertyNameToIdMap,
+                        tableContextBasedPropertyReader))
                 .ToArray();
         }
 
@@ -76,16 +84,17 @@ namespace pst
             }
 
             return
-                changesTracker
-                .GetChildren(
-                    parentNodePath: nodePath,
+                objectTracker
+                .GetChildObjects(
+                    objectPath: objectPath,
                     childType: ObjectTypes.Attachment,
                     childStatePredicate: s => s == ObjectStates.New || s == ObjectStates.Loaded)
                 .Select(
                     path =>
                     new Attachment(
                         path,
-                        changesTracker,
+                        objectTracker,
+                        recipientTracker,
                         propertyNameToIdMap,
                         propertyContextBasedPropertyReader,
                         nodeEntryFinder,
@@ -97,7 +106,7 @@ namespace pst
 
         private void LoadPreExistingAttachments()
         {
-            var entry = nodeEntryFinder.GetEntry(nodePath.AllocatedIds);
+            var entry = nodeEntryFinder.GetEntry(new[] { objectPath.LocalNodeId });
 
             if (entry.HasNoValue)
             {
@@ -106,23 +115,15 @@ namespace pst
 
             var tableContextNodeId = entry.Value.GetChildOfType(Constants.NID_TYPE_ATTACHMENT_TABLE).LocalSubnodeId;
 
-            var tableContextNodePath = nodePath.Add(AllocatedNodeId.OfValue(tableContextNodeId));
-
-            foreach (var tableRow in tableContextReader.GetAllRows(tableContextNodePath))
+            foreach (var rowId in rowIndexReader.GetAllRowIds(new[] { objectPath.LocalNodeId, tableContextNodeId }))
             {
-                var attachmentNodeId = AllocatedNodeId.OfValue(NID.OfValue(tableRow.RowId.RowId));
-
-                changesTracker.TrackNode(
-                    nodePath.Add(attachmentNodeId),
-                    ObjectTypes.Attachment,
-                    ObjectStates.Loaded,
-                    nodePath);
+                objectTracker.TrackObject(objectPath.Add(NID.OfValue(rowId.RowId)), ObjectTypes.Attachment, ObjectStates.Loaded);
             }
         }
 
         private void LoadPreExistingRecipients()
         {
-            var entry = nodeEntryFinder.GetEntry(nodePath.AllocatedIds);
+            var entry = nodeEntryFinder.GetEntry(new[] { objectPath.LocalNodeId });
 
             if (entry.HasNoValue)
             {
@@ -131,17 +132,11 @@ namespace pst
 
             var tableContextNodeId = entry.Value.GetChildOfType(Constants.NID_TYPE_RECIPIENT_TABLE).LocalSubnodeId;
 
-            var tableContextNodePath = nodePath.Add(AllocatedNodeId.OfValue(tableContextNodeId));
+            recipientTracker.TrackRecipientTable(objectPath, tableContextNodeId, ObjectStates.Loaded);
 
-            changesTracker.TrackNode(tableContextNodePath, ObjectTypes.RecipientTable, ObjectStates.Loaded, nodePath);
-
-            foreach (var rowId in tableContextReader.GetAllRows(tableContextNodePath))
+            foreach (var rowId in rowIndexReader.GetAllRowIds(new[] { objectPath.LocalNodeId, tableContextNodeId }))
             {
-                changesTracker.Associate(
-                    tableContextNodePath,
-                    rowId.RowId,
-                    ObjectTypes.Recipient,
-                    ObjectStates.Loaded);
+                recipientTracker.TrackRecipient(objectPath, tableContextNodeId, rowId.RowId.ToInt32(), ObjectStates.Loaded);
             }
         }
     }

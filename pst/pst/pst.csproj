@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -97,11 +98,8 @@
     <Compile Include="impl\blockallocation\datatree\XBlockFactory.cs" />
     <Compile Include="impl\blockallocation\subnodebtree\SubnodeBTreeAllocator.cs" />
     <Compile Include="impl\btree\BTreeEntryFinder.cs" />
-    <Compile Include="impl\converters\DataRecordToTCROWIDConverter.cs" />
-    <Compile Include="impl\decoders\EntryIdDecoder.cs" />
     <Compile Include="impl\decoders\ltp\bth\DataRecordDecoder.cs" />
     <Compile Include="impl\decoders\ltp\bth\IndexRecordDecoder.cs" />
-    <Compile Include="impl\decoders\ltp\tc\TCROWIDDecoder.cs" />
     <Compile Include="impl\decoders\messaging\PropertyIdDecoder.cs" />
     <Compile Include="impl\decoders\messaging\PropertyTagDecoder.cs" />
     <Compile Include="impl\decoders\messaging\PropertyTypeDecoder.cs" />
@@ -151,7 +149,6 @@
     <Compile Include="impl\encoders\ndb\btree\PageTrailerEncoder.cs" />
     <Compile Include="impl\encoders\ndb\btree\LBBTEntryEncoder.cs" />
     <Compile Include="impl\encoders\ndb\btree\LNBTEntryEncoder.cs" />
-    <Compile Include="impl\encoders\ndb\NIDEncoder.cs" />
     <Compile Include="impl\FuncBasedDecoder.cs" />
     <Compile Include="impl\FuncBasedExtractor.cs" />
     <Compile Include="impl\FuncBasedFactory.cs" />
@@ -173,12 +170,12 @@
     <Compile Include="impl\ltp\tc\RowValuesExtractor.cs" />
     <Compile Include="impl\ltp\tc\TableContextReader.cs" />
     <Compile Include="impl\messaging\changetracking\ChangesApplier.cs" />
-    <Compile Include="impl\messaging\changetracking\ChangesTracker.cs" />
+    <Compile Include="impl\messaging\changetracking\ObjectTracker.cs" />
+    <Compile Include="impl\messaging\changetracking\RecipientTracker.cs" />
     <Compile Include="impl\messaging\PropertyContextBasedPropertyReader.cs" />
     <Compile Include="impl\messaging\PropertyNameToIdMap.cs" />
     <Compile Include="impl\messaging\PropertyValueReader.cs" />
     <Compile Include="impl\messaging\TableContextBasedPropertyReader.cs" />
-    <Compile Include="impl\messaging\UnallocatedNodeIdGenerator.cs" />
     <Compile Include="impl\rawallocation\AMapBasedAllocationReserver.cs" />
     <Compile Include="impl\rawallocation\AMapBasedStreamExtender.cs" />
     <Compile Include="impl\ndb\bbt\IBBTEntriesFromBTPageExtractor.cs" />
@@ -220,18 +217,18 @@
     <Compile Include="interfaces\ltp\tc\TableRow.cs" />
     <Compile Include="interfaces\messaging\changetracking\IChangesApplier.cs" />
     <Compile Include="interfaces\messaging\changetracking\IFolderGenerator.cs" />
+    <Compile Include="interfaces\messaging\changetracking\IRecipientTracker.cs" />
     <Compile Include="interfaces\messaging\IPropertyContextBasedPropertyReader.cs" />
     <Compile Include="interfaces\messaging\IPropertyValueReader.cs" />
     <Compile Include="interfaces\ltp\pc\IPropertyContextGenerator.cs" />
     <Compile Include="interfaces\messaging\ITableContextBasedPropertyReader.cs" />
-    <Compile Include="interfaces\messaging\IUnallocatedNodeIdGenerator.cs" />
     <Compile Include="interfaces\model\AllocatedNodeId.cs" />
-    <Compile Include="interfaces\messaging\changetracking\IChangesTracker.cs" />
+    <Compile Include="interfaces\messaging\changetracking\IObjectTracker.cs" />
     <Compile Include="interfaces\messaging\changetracking\PropertyTrackingObject.cs" />
-    <Compile Include="interfaces\messaging\changetracking\NodeTrackingObject.cs" />
+    <Compile Include="interfaces\messaging\changetracking\TrackingObject.cs" />
     <Compile Include="interfaces\model\AssociatedObjectPath.cs" />
     <Compile Include="interfaces\model\NodeId.cs" />
-    <Compile Include="interfaces\model\NodePath.cs" />
+    <Compile Include="interfaces\model\ObjectPath.cs" />
     <Compile Include="interfaces\model\UnallocatedNodeId.cs" />
     <Compile Include="interfaces\ndb\DataBlockEntry.cs" />
     <Compile Include="interfaces\ndb\INIDAllocator.cs" />
@@ -294,7 +291,9 @@
     <Compile Include="utilities\Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="impl\converters\" />
     <Folder Include="impl\decoders\ltp\hn\" />
+    <Folder Include="impl\decoders\ltp\tc\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

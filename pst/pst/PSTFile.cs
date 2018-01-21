@@ -1,5 +1,4 @@
-﻿using pst.core;
-using pst.encodables;
+﻿using pst.encodables;
 using pst.interfaces;
 using pst.interfaces.ltp;
 using pst.interfaces.ltp.tc;
@@ -12,8 +11,8 @@ namespace pst
 {
     public partial class PSTFile
     {
-        private readonly IDecoder<EntryId> entryIdDecoder;
-        private readonly IChangesTracker changesTracker;
+        private readonly IObjectTracker objectTracker;
+        private readonly IRecipientTracker recipientTracker;
         private readonly IEncoder<string> stringEncoder;
         private readonly INodeEntryFinder nodeEntryFinder;
         private readonly IRowIndexReader rowIndexReader;
@@ -21,12 +20,12 @@ namespace pst
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
         private readonly ITableContextBasedPropertyReader tableContextBasedPropertyReader;
-        private readonly IUnallocatedNodeIdGenerator nodeIdGenerator;
+        private readonly INIDAllocator nodeIdAllocator;
         private readonly IChangesApplier changesApplier;
 
         private PSTFile(
-            IDecoder<EntryId> entryIdDecoder,
-            IChangesTracker changesTracker,
+            IObjectTracker objectTracker,
+            IRecipientTracker recipientTracker,
             IEncoder<string> stringEncoder,
             INodeEntryFinder nodeEntryFinder,
             IRowIndexReader rowIndexReader,
@@ -34,11 +33,11 @@ namespace pst
             IPropertyNameToIdMap propertyNameToIdMap,
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
             ITableContextBasedPropertyReader tableContextBasedPropertyReader,
-            IUnallocatedNodeIdGenerator nodeIdGenerator,
+            INIDAllocator nodeIdAllocator,
             IChangesApplier changesApplier)
         {
-            this.entryIdDecoder = entryIdDecoder;
-            this.changesTracker = changesTracker;
+            this.objectTracker = objectTracker;
+            this.recipientTracker = recipientTracker;
             this.stringEncoder = stringEncoder;
             this.nodeEntryFinder = nodeEntryFinder;
             this.rowIndexReader = rowIndexReader;
@@ -46,7 +45,7 @@ namespace pst
             this.propertyNameToIdMap = propertyNameToIdMap;
             this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
             this.tableContextBasedPropertyReader = tableContextBasedPropertyReader;
-            this.nodeIdGenerator = nodeIdGenerator;
+            this.nodeIdAllocator = nodeIdAllocator;
             this.changesApplier = changesApplier;
         }
 
@@ -54,16 +53,12 @@ namespace pst
         {
             get
             {
-                if (!changesTracker.IsObjectTracked(MessageStore.StorePath))
+                if (!objectTracker.IsObjectTracked(MessageStore.StorePath))
                 {
-                    changesTracker.TrackNode(
-                        MessageStore.StorePath,
-                        ObjectTypes.Store,
-                        ObjectStates.Loaded,
-                        Maybe<NodePath>.NoValue());
+                    objectTracker.TrackObject(MessageStore.StorePath, ObjectTypes.Store, ObjectStates.Loaded);
                 }
 
-                return new MessageStore(changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader);
+                return new MessageStore(objectTracker, propertyNameToIdMap, propertyContextBasedPropertyReader);
             }
         }
 
@@ -71,23 +66,20 @@ namespace pst
         {
             var ipmSubtreeEntryId = MessageStore.GetProperty(MAPIProperties.PidTagIpmSubTreeEntryId);
 
-            var entryId = entryIdDecoder.Decode(ipmSubtreeEntryId.Value.Value);
+            var entryId = EntryId.OfValue(ipmSubtreeEntryId.Value.Value);
 
-            var nodePath = NodePath.OfValue(AllocatedNodeId.OfValue(entryId.NID));
+            var nodePath = new ObjectPath(new[] { entryId.NID });
 
-            if (!changesTracker.IsObjectTracked(nodePath))
+            if (!objectTracker.IsObjectTracked(nodePath))
             {
-                changesTracker.TrackNode(
-                    nodePath,
-                    ObjectTypes.Folder,
-                    ObjectStates.Loaded,
-                    Maybe<NodePath>.NoValue());
+                objectTracker.TrackObject(nodePath, ObjectTypes.Folder, ObjectStates.Loaded);
             }
 
             return
                 new Folder(
                     nodePath,
-                    changesTracker,
+                    objectTracker,
+                    recipientTracker, 
                     stringEncoder,
                     propertyNameToIdMap,
                     propertyContextBasedPropertyReader,
@@ -95,7 +87,7 @@ namespace pst
                     rowIndexReader,
                     tableContextReader,
                     tableContextBasedPropertyReader,
-                    nodeIdGenerator);
+                    nodeIdAllocator);
         }
 
         public void Save()

@@ -1,7 +1,5 @@
 ﻿using pst.encodables.ndb;
 using pst.impl;
-using pst.impl.decoders;
-using pst.impl.messaging;
 using pst.impl.messaging.changetracking;
 using pst.interfaces.messaging.changetracking;
 using pst.interfaces.model;
@@ -19,16 +17,14 @@ namespace pst
 
             var dataBlockEntryCache = new DictionaryBasedCache<BID, DataBlockEntry>();
 
-            var trackedObjects = new Dictionary<NodePath, NodeTrackingObject>();
+            var trackedObjects = new Dictionary<ObjectPath, NodeTrackingObject>();
 
-            var trackedAssociatedObjects = new Dictionary<AssociatedObjectPath, TrackingObject>();
-
-            var unallocatedNodeIdGenerator = new UnallocatedNodeIdGenerator();
+            var trackedRecipientTables = new Dictionary<ObjectPath, RecipientTableTrackingObject>();
 
             return
                 new PSTFile(
-                    new EntryIdDecoder(),
-                    new ChangesTracker(trackedObjects, trackedAssociatedObjects),
+                    new ObjectTracker(trackedObjects),
+                    new RecipientTracker(trackedRecipientTables),
                     CreateHeaderBasedStringEncoder(stream),
                     CreateNodeEntryFinder(stream, cachedNodeEntries, dataBlockEntryCache),
                     CreateRowIndexReader(stream, cachedNodeEntries, dataBlockEntryCache),
@@ -36,10 +32,8 @@ namespace pst
                     CreatePropertyIdToNameMap(stream, cachedNodeEntries, dataBlockEntryCache),
                     CreatePropertyContextBasedPropertyReader(stream, cachedNodeEntries, dataBlockEntryCache),
                     CreateTagBasedTableContextBasedPropertyReader(stream, cachedNodeEntries, dataBlockEntryCache),
-                    unallocatedNodeIdGenerator,
-                    new ChangesApplier(
-                        trackedObjects,
-                        trackedAssociatedObjects));
+                    null,
+                    new ChangesApplier(trackedObjects));
         }
     }
 }

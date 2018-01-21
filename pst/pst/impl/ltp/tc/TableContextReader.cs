@@ -15,12 +15,12 @@ namespace pst.impl.ltp.tc
             this.rowMatrixReader = rowMatrixReader;
         }
 
-        public TableRow[] GetAllRows(NodePath nodePath)
+        public TableRow[] GetAllRows(ObjectPath objectPath)
         {
             return
                 rowIndexReader
-                .GetAllRowIds(nodePath.AllocatedIds)
-                .Select(id => rowMatrixReader.GetRow(nodePath.AllocatedIds, id).Value)
+                .GetAllRowIds(objectPath.Ids)
+                .Select(id => rowMatrixReader.GetRow(objectPath.Ids, id.RowIndex).Value)
                 .ToArray();
         }
     }

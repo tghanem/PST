@@ -11,8 +11,9 @@ namespace pst
 {
     public class Attachment : ObjectBase
     {
-        private readonly NodePath nodePath;
-        private readonly IChangesTracker changesTracker;
+        private readonly ObjectPath objectPath;
+        private readonly IObjectTracker objectTracker;
+        private readonly IRecipientTracker recipientTracker;
         private readonly INodeEntryFinder nodeEntryFinder;
         private readonly IRowIndexReader rowIndexReader;
         private readonly ITableContextReader tableContextReader;
@@ -21,17 +22,19 @@ namespace pst
         private readonly ITableContextBasedPropertyReader tableContextBasedPropertyReader;
 
         internal Attachment(
-            NodePath nodePath,
-            IChangesTracker changesTracker,
+            ObjectPath objectPath,
+            IObjectTracker objectTracker,
+            IRecipientTracker recipientTracker,
             IPropertyNameToIdMap propertyNameToIdMap,
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
             INodeEntryFinder nodeEntryFinder,
             IRowIndexReader rowIndexReader,
             ITableContextReader tableContextReader,
-            ITableContextBasedPropertyReader tableContextBasedPropertyReader) : base(nodePath, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
+            ITableContextBasedPropertyReader tableContextBasedPropertyReader) : base(objectPath, objectTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
         {
-            this.nodePath = nodePath;
-            this.changesTracker = changesTracker;
+            this.objectPath = objectPath;
+            this.objectTracker = objectTracker;
+            this.recipientTracker = recipientTracker;
             this.nodeEntryFinder = nodeEntryFinder;
             this.rowIndexReader = rowIndexReader;
             this.tableContextReader = tableContextReader;
@@ -49,18 +52,18 @@ namespace pst
                 return Maybe<Message>.NoValue();
             }
 
-            var embeddedMessageNodePath = nodePath.Add(embeddedMessageNodeId.Value);
+            var embeddedMessageNodePath = objectPath.Add(embeddedMessageNodeId.Value);
 
-            changesTracker.TrackNode(
+            objectTracker.TrackObject(
                 embeddedMessageNodePath,
                 ObjectTypes.Message,
-                ObjectStates.Loaded,
-                nodePath);
+                ObjectStates.Loaded);
 
             return
                 new Message(
                     embeddedMessageNodePath,
-                    changesTracker,
+                    objectTracker,
+                    recipientTracker,
                     nodeEntryFinder,
                     rowIndexReader,
                     tableContextReader,
@@ -69,25 +72,25 @@ namespace pst
                     tableContextBasedPropertyReader);
         }
 
-        private Maybe<NodeId> GetEmbeddedMessageNodeId()
+        private Maybe<NID> GetEmbeddedMessageNodeId()
         {
-            var entry = nodeEntryFinder.GetEntry(nodePath.AllocatedIds);
+            var entry = nodeEntryFinder.GetEntry(new[] { objectPath.ParentObjectPath.LocalNodeId, objectPath.LocalNodeId });
 
             if (entry.HasNoValue)
             {
-                return Maybe<NodeId>.NoValue();
+                return Maybe<NID>.NoValue();
             }
 
             var attachMethodPropertyValue = GetProperty(MAPIProperties.PidTagAttachMethod);
 
             if (!attachMethodPropertyValue.HasValueAnd(v => v.Value.HasFlag(MAPIProperties.afEmbeddedMessage)))
             {
-                return Maybe<NodeId>.NoValue();
+                return Maybe<NID>.NoValue();
             }
 
             var attachDataObject = GetProperty(MAPIProperties.PidTagAttachDataObject);
 
-            return AllocatedNodeId.OfValue(NID.OfValue(attachDataObject.Value.Value.Take(4)));
+            return NID.OfValue(attachDataObject.Value.Value.Take(4));
         }
     }
 }

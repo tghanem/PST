@@ -1,27 +1,29 @@
-﻿using pst.core;
+using pst.core;
+using pst.encodables.ndb;
 using pst.interfaces.ltp;
 using pst.interfaces.messaging;
 using pst.interfaces.messaging.changetracking;
 using pst.interfaces.model;
 using pst.utilities;
+using System.Linq;
 
 namespace pst
 {
     public abstract class ObjectBase
     {
-        private readonly NodePath nodePath;
-        private readonly IChangesTracker changesTracker;
+        private readonly ObjectPath objectPath;
+        private readonly IObjectTracker objectTracker;
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
 
         internal ObjectBase(
-            NodePath nodePath,
-            IChangesTracker changesTracker,
+            ObjectPath objectPath,
+            IObjectTracker objectTracker,
             IPropertyNameToIdMap propertyNameToIdMap,
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader)
         {
-            this.nodePath = nodePath;
-            this.changesTracker = changesTracker;
+            this.objectPath = objectPath;
+            this.objectTracker = objectTracker;
             this.propertyNameToIdMap = propertyNameToIdMap;
             this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
         }
@@ -35,7 +37,7 @@ namespace pst
                 return;
             }
 
-            changesTracker.SetProperty(nodePath, resolvedTag.Value, propertyValue);
+            objectTracker.SetProperty(objectPath, resolvedTag.Value, propertyValue);
         }
 
         public void SetProperty(StringPropertyTag propertyTag, PropertyValue propertyValue)
@@ -47,12 +49,12 @@ namespace pst
                 return;
             }
 
-            changesTracker.SetProperty(nodePath, resolvedTag.Value, propertyValue);
+            objectTracker.SetProperty(objectPath, resolvedTag.Value, propertyValue);
         }
 
         public void SetProperty(PropertyTag propertyTag, PropertyValue propertyValue)
         {
-            changesTracker.SetProperty(nodePath, propertyTag, propertyValue);
+            objectTracker.SetProperty(objectPath, propertyTag, propertyValue);
         }
 
         public Maybe<PropertyValue> GetProperty(NumericalPropertyTag propertyTag)
@@ -82,10 +84,10 @@ namespace pst
         public Maybe<PropertyValue> GetProperty(PropertyTag propertyTag)
         {
             return
-                changesTracker.GetProperty(
-                    nodePath,
+                objectTracker.GetProperty(
+                    objectPath,
                     propertyTag,
-                    () => propertyContextBasedPropertyReader.Read(nodePath.AllocatedIds, propertyTag));
+                    () => propertyContextBasedPropertyReader.Read(GetNodePath(), propertyTag));
         }
 
         public void DeleteProperty(NumericalPropertyTag propertyTag)
@@ -97,7 +99,7 @@ namespace pst
                 return;
             }
 
-            changesTracker.DeleteProperty(nodePath, resolvedTag.Value);
+            objectTracker.DeleteProperty(objectPath, resolvedTag.Value);
         }
 
         public void DeleteProperty(StringPropertyTag propertyTag)
@@ -109,12 +111,22 @@ namespace pst
                 return;
             }
 
-            changesTracker.DeleteProperty(nodePath, resolvedTag.Value);
+            objectTracker.DeleteProperty(objectPath, resolvedTag.Value);
         }
 
         public void DeleteProperty(PropertyTag propertyTag)
         {
-            changesTracker.DeleteProperty(nodePath, propertyTag);
+            objectTracker.DeleteProperty(objectPath, propertyTag);
+        }
+
+        private NID[] GetNodePath()
+        {
+            if (objectPath.LocalNodeId.Type == Constants.NID_TYPE_NORMAL_FOLDER)
+            {
+                return new[] { objectPath.LocalNodeId };
+            }
+
+            return objectPath.Ids.Where(id => id.Type != Constants.NID_TYPE_NORMAL_FOLDER).ToArray();
         }
     }
 }

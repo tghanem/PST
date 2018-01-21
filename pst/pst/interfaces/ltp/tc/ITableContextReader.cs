@@ -4,6 +4,6 @@ namespace pst.interfaces.ltp.tc
 {
     interface ITableContextReader
     {
-        TableRow[] GetAllRows(NodePath nodePath);
+        TableRow[] GetAllRows(ObjectPath objectPath);
     }
 }

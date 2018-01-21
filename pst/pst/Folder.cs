@@ -13,8 +13,9 @@ namespace pst
 {
     public class Folder : ObjectBase
     {
-        private readonly NodePath nodePath;
-        private readonly IChangesTracker changesTracker;
+        private readonly ObjectPath objectPath;
+        private readonly IObjectTracker objectTracker;
+        private readonly IRecipientTracker recipientTracker;
         private readonly IEncoder<string> stringEncoder;
         private readonly INodeEntryFinder nodeEntryFinder;
         private readonly IRowIndexReader rowIndexReader;
@@ -22,14 +23,15 @@ namespace pst
         private readonly IPropertyNameToIdMap propertyNameToIdMap;
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
         private readonly ITableContextBasedPropertyReader tableContextBasedPropertyReader;
-        private readonly IUnallocatedNodeIdGenerator nodeIdGenerator;
+        private readonly INIDAllocator nodeIdAllocator;
 
         private bool subfoldersLoaded;
         private bool messagesLoaded;
 
         internal Folder(
-            NodePath nodePath,
-            IChangesTracker changesTracker,
+            ObjectPath objectPath,
+            IObjectTracker objectTracker,
+            IRecipientTracker recipientTracker,
             IEncoder<string> stringEncoder,
             IPropertyNameToIdMap propertyNameToIdMap,
             IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader,
@@ -37,54 +39,55 @@ namespace pst
             IRowIndexReader rowIndexReader,
             ITableContextReader tableContextReader,
             ITableContextBasedPropertyReader tableContextBasedPropertyReader,
-            IUnallocatedNodeIdGenerator nodeIdGenerator) : base(nodePath, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
+            INIDAllocator nodeIdAllocator) : base(objectPath, objectTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
         {
-            this.nodePath = nodePath;
-            this.changesTracker = changesTracker;
+            this.objectPath = objectPath;
+            this.objectTracker = objectTracker;
+            this.recipientTracker = recipientTracker;
             this.stringEncoder = stringEncoder;
             this.nodeEntryFinder = nodeEntryFinder;
             this.rowIndexReader = rowIndexReader;
             this.tableContextReader = tableContextReader;
             this.tableContextBasedPropertyReader = tableContextBasedPropertyReader;
-            this.nodeIdGenerator = nodeIdGenerator;
+            this.nodeIdAllocator = nodeIdAllocator;
             this.propertyNameToIdMap = propertyNameToIdMap;
             this.propertyContextBasedPropertyReader = propertyContextBasedPropertyReader;
         }
 
         public Folder NewFolder(string displayName)
         {
-            var childFolderNodePath = NodePath.OfValue(nodeIdGenerator.New());
+            var childFolderNodePath = objectPath.Add(nodeIdAllocator.Allocate(Constants.NID_TYPE_NORMAL_FOLDER));
 
-            changesTracker.TrackNode(
+            objectTracker.TrackObject(
                 childFolderNodePath,
                 ObjectTypes.Folder,
-                ObjectStates.New,
-                nodePath);
+                ObjectStates.New);
 
-            changesTracker.SetProperty(
+            objectTracker.SetProperty(
                 childFolderNodePath,
                 MAPIProperties.PidTagDisplayName,
                 new PropertyValue(stringEncoder.Encode(displayName)));
 
-            changesTracker.SetProperty(
+            objectTracker.SetProperty(
                 childFolderNodePath,
                 MAPIProperties.PidTagContentCount,
-                new PropertyValue(BinaryData.From(0)));
+                new PropertyValue(BinaryData.OfValue(0)));
 
-            changesTracker.SetProperty(
+            objectTracker.SetProperty(
                 childFolderNodePath,
                 MAPIProperties.PidTagContentUnreadCount,
-                new PropertyValue(BinaryData.From(0)));
+                new PropertyValue(BinaryData.OfValue(0)));
 
-            changesTracker.SetProperty(
+            objectTracker.SetProperty(
                 childFolderNodePath,
                 MAPIProperties.PidTagSubfolders,
-                new PropertyValue(BinaryData.From(false)));
+                new PropertyValue(BinaryData.OfValue(false)));
 
             return
                 new Folder(
                     childFolderNodePath,
-                    changesTracker,
+                    objectTracker,
+                    recipientTracker,
                     stringEncoder,
                     propertyNameToIdMap,
                     propertyContextBasedPropertyReader,
@@ -92,7 +95,7 @@ namespace pst
                     rowIndexReader,
                     tableContextReader,
                     tableContextBasedPropertyReader,
-                    nodeIdGenerator);
+                    nodeIdAllocator);
         }
 
         public Folder[] GetSubFolders()
@@ -104,16 +107,17 @@ namespace pst
             }
 
             return
-                changesTracker
-                .GetChildren(
-                    parentNodePath: nodePath,
+                objectTracker
+                .GetChildObjects(
+                    objectPath: objectPath,
                     childType: ObjectTypes.Folder,
                     childStatePredicate: s => s == ObjectStates.New || s == ObjectStates.Loaded)
                 .Select(
                     childNodePath =>
                     new Folder(
                         childNodePath,
-                        changesTracker,
+                        objectTracker,
+                        recipientTracker,
                         stringEncoder,
                         propertyNameToIdMap,
                         propertyContextBasedPropertyReader,
@@ -121,7 +125,7 @@ namespace pst
                         rowIndexReader,
                         tableContextReader,
                         tableContextBasedPropertyReader,
-                        nodeIdGenerator))
+                        nodeIdAllocator))
                 .ToArray();
         }
 
@@ -134,16 +138,17 @@ namespace pst
             }
 
             return
-                changesTracker
-                .GetChildren(
-                    parentNodePath: nodePath,
+                objectTracker
+                .GetChildObjects(
+                    objectPath: objectPath,
                     childType: ObjectTypes.Message,
                     childStatePredicate: s => s == ObjectStates.New || s == ObjectStates.Loaded)
                 .Select(
                     childNodePath =>
                         new Message(
                             childNodePath,
-                            changesTracker,
+                            objectTracker,
+                            recipientTracker,
                             nodeEntryFinder,
                             rowIndexReader,
                             tableContextReader,
@@ -155,13 +160,13 @@ namespace pst
 
         private void TrackPreExistingChildren(int tableContextNodeType, ObjectTypes childObjectType)
         {
-            var childrenTableContextNodePath = new[] { nodePath.AllocatedId.ChangeType(tableContextNodeType) };
+            var childrenTableContextNodePath = new[] { objectPath.LocalNodeId.ChangeType(tableContextNodeType) };
 
             foreach (var rowId in rowIndexReader.GetAllRowIds(childrenTableContextNodePath))
             {
-                var childNodePath = NodePath.OfValue(AllocatedNodeId.OfValue(NID.OfValue(rowId.RowId)));
+                var childNodePath = objectPath.Add(NID.OfValue(rowId.RowId));
 
-                changesTracker.TrackNode(childNodePath, childObjectType, ObjectStates.Loaded, nodePath);
+                objectTracker.TrackObject(childNodePath, childObjectType, ObjectStates.Loaded);
             }
         }
     }

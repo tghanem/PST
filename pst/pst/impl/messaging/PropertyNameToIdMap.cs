@@ -11,7 +11,7 @@ namespace pst.impl.messaging
 {
     class PropertyNameToIdMap : IPropertyNameToIdMap
     {
-        private static readonly NodePath MapNodePath = NodePath.OfValue(AllocatedNodeId.OfValue(Constants.NID_NAME_TO_ID_MAP));
+        private static readonly ObjectPath MapObjectPath = new ObjectPath(new[] { Constants.NID_NAME_TO_ID_MAP });
 
         private readonly IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader;
 
@@ -22,7 +22,7 @@ namespace pst.impl.messaging
 
         public Maybe<PropertyId> GetPropertyId(Guid propertySet, int numericalId)
         {
-            var entryStream = propertyContextBasedPropertyReader.Read(MapNodePath.AllocatedIds, MAPIProperties.PidTagNameidStreamEntry);
+            var entryStream = propertyContextBasedPropertyReader.Read(MapObjectPath.Ids, MAPIProperties.PidTagNameidStreamEntry);
 
             if (entryStream.HasNoValue)
             {
@@ -49,9 +49,9 @@ namespace pst.impl.messaging
 
         public Maybe<PropertyId> GetPropertyId(Guid propertySet, string propertyName)
         {
-            var entryStream = propertyContextBasedPropertyReader.Read(MapNodePath.AllocatedIds, MAPIProperties.PidTagNameidStreamEntry);
+            var entryStream = propertyContextBasedPropertyReader.Read(MapObjectPath.Ids, MAPIProperties.PidTagNameidStreamEntry);
 
-            var stringStream = propertyContextBasedPropertyReader.Read(MapNodePath.AllocatedIds, MAPIProperties.PidTagNameidStreamString);
+            var stringStream = propertyContextBasedPropertyReader.Read(MapObjectPath.Ids, MAPIProperties.PidTagNameidStreamString);
 
             if (entryStream.HasNoValue || stringStream.HasNoValue)
             {

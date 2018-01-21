@@ -4,6 +4,7 @@ using pst.encodables.ndb.btree;
 using pst.impl;
 using pst.interfaces;
 using pst.interfaces.ltp;
+using pst.interfaces.messaging.changetracking;
 using System;
 using System.Collections.Generic;
 
@@ -11,6 +12,72 @@ namespace pst.utilities
 {
     static class ExtensionMethods
     {
+        public static Maybe<PropertyValue> GetProperty(this TrackingObject trackingObject, PropertyTag propertyTag, Func<Maybe<PropertyValue>> untrackedPropertyValueReader)
+        {
+            var propertyValue = GetProperty(trackingObject, propertyTag);
+
+            if (propertyValue.HasValue)
+            {
+                return propertyValue;
+            }
+
+            var untrackedPropertyValue = untrackedPropertyValueReader();
+
+            if (untrackedPropertyValue.HasNoValue)
+            {
+                return Maybe<PropertyValue>.NoValue();
+            }
+
+            trackingObject.UpdateProperty(
+                propertyTag,
+                p => new PropertyTrackingObject(propertyTag, PropertyStates.Loaded, untrackedPropertyValue.Value));
+
+            return untrackedPropertyValue;
+        }
+
+        public static PropertyTrackingObject DeleteProperty(this Maybe<PropertyTrackingObject> propertyTrackingObject, PropertyTag propertyTag)
+        {
+            if (propertyTrackingObject.HasValue)
+            {
+                if (propertyTrackingObject.Value.State == PropertyStates.Loaded ||
+                    propertyTrackingObject.Value.State == PropertyStates.LoadedAndUpdated ||
+                    propertyTrackingObject.Value.State == PropertyStates.LoadedAndDeleted)
+                {
+                    return propertyTrackingObject.Value.SetState(PropertyStates.LoadedAndDeleted);
+                }
+
+                return propertyTrackingObject.Value.SetState(PropertyStates.Deleted);
+            }
+
+            return new PropertyTrackingObject(propertyTag, PropertyStates.Deleted, Maybe<PropertyValue>.NoValue());
+        }
+
+        public static PropertyTrackingObject SetProperty(this Maybe<PropertyTrackingObject> propertyTrackingObject, PropertyTag propertyTag, PropertyValue propertyValue)
+        {
+            if (propertyTrackingObject.HasNoValue)
+            {
+                return new PropertyTrackingObject(propertyTag, PropertyStates.New, propertyValue);
+            }
+
+            if (propertyTrackingObject.Value.State == PropertyStates.Loaded ||
+                propertyTrackingObject.Value.State == PropertyStates.LoadedAndUpdated ||
+                propertyTrackingObject.Value.State == PropertyStates.LoadedAndDeleted)
+            {
+                return
+                    propertyTrackingObject
+                    .Value
+                    .SetState(PropertyStates.LoadedAndUpdated)
+                    .SetValue(propertyValue);
+            }
+
+            if (propertyTrackingObject.Value.State == PropertyStates.Deleted)
+            {
+                return new PropertyTrackingObject(propertyTag, PropertyStates.New, propertyValue);
+            }
+
+            return propertyTrackingObject.Value.SetValue(propertyValue);
+        }
+
         public static Maybe<PropertyTag> Resolve(this IPropertyNameToIdMap map, StringPropertyTag tag)
         {
             var propertyId = map.GetPropertyId(tag.Set, tag.Name);
@@ -353,6 +420,24 @@ namespace pst.utilities
             }
 
             return entries.ToArray();
+        }
+
+        private static Maybe<PropertyValue> GetProperty(TrackingObject trackingObject, PropertyTag propertyTag)
+        {
+            var property = trackingObject.GetProperty(propertyTag);
+
+            if (property.HasNoValue)
+            {
+                return Maybe<PropertyValue>.NoValue();
+            }
+
+            if (property.Value.State == PropertyStates.Deleted ||
+                property.Value.State == PropertyStates.LoadedAndDeleted)
+            {
+                return Maybe<PropertyValue>.NoValue();
+            }
+
+            return property.Value.Value;
         }
     }
 }

@@ -25,7 +25,7 @@ namespace pst.impl.ltp.tc
             this.dataTreeReader = dataTreeReader;
         }
 
-        public Maybe<TableRow> GetRow(NID[] nodePath, TCROWID rowId)
+        public Maybe<TableRow> GetRow(NID[] nodePath, int rowIndex)
         {
             var hnHeader = heapOnNodeReader.GetHeapOnNodeHeader(nodePath);
 
@@ -50,15 +50,15 @@ namespace pst.impl.ltp.tc
 
                 var encodedRows = heapItem.Slice(rowLength);
 
-                var rowValues = rowValuesExtractor.Extract(encodedRows[rowId.RowIndex], tcInfo.ColumnDescriptors, cebStartingOffset);
+                var rowValues = rowValuesExtractor.Extract(encodedRows[rowIndex], tcInfo.ColumnDescriptors, cebStartingOffset);
 
-                return Maybe<TableRow>.OfValue(new TableRow(rowId, rowValues));
+                return Maybe<TableRow>.OfValue(new TableRow(rowValues));
             }
             else
             {
                 var numberOfRowsPerBlock = (8 * 1024 - 16) / rowLength;
 
-                var blockIndex = rowId.RowIndex / numberOfRowsPerBlock;
+                var blockIndex = rowIndex / numberOfRowsPerBlock;
 
                 var childNodePath = new List<NID>(nodePath) { rowMatrixHnid.NID };
 
@@ -66,9 +66,9 @@ namespace pst.impl.ltp.tc
 
                 var encodedRows = dataBlock.Slice(rowLength);
 
-                var rowValues = rowValuesExtractor.Extract(encodedRows[rowId.RowIndex], tcInfo.ColumnDescriptors, cebStartingOffset);
+                var rowValues = rowValuesExtractor.Extract(encodedRows[rowIndex], tcInfo.ColumnDescriptors, cebStartingOffset);
 
-                return Maybe<TableRow>.OfValue(new TableRow(rowId, rowValues));
+                return Maybe<TableRow>.OfValue(new TableRow(rowValues));
             }
         }
     }

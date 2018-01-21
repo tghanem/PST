@@ -1,4 +1,5 @@
 ﻿using pst.encodables.ndb;
+using pst.utilities;
 
 namespace pst.encodables
 {
@@ -15,6 +16,17 @@ namespace pst.encodables
             Flags = flags;
             UID = uid;
             NID = nid;
+        }
+
+        public static EntryId OfValue(BinaryData encodedData)
+        {
+            var parser = BinaryDataParser.OfValue(encodedData);
+
+            return
+                new EntryId(
+                    parser.TakeAndSkip(4).ToInt32(),
+                    parser.TakeAndSkip(16).Value,
+                    NID.OfValue(parser.TakeAndSkip(4)));
         }
     }
 }

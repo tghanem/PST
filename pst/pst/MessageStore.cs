@@ -8,12 +8,12 @@ namespace pst
 {
     public class MessageStore : ObjectBase
     {
-        internal static readonly NodePath StorePath = NodePath.OfValue(AllocatedNodeId.OfValue(Constants.NID_MESSAGE_STORE));
+        internal static readonly ObjectPath StorePath = new ObjectPath(new[] { Constants.NID_MESSAGE_STORE });
 
         internal MessageStore(
-            IChangesTracker changesTracker,
+            IObjectTracker objectTracker,
             IPropertyNameToIdMap propertyNameToIdMap,
-            IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader) : base(StorePath, changesTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
+            IPropertyContextBasedPropertyReader propertyContextBasedPropertyReader) : base(StorePath, objectTracker, propertyNameToIdMap, propertyContextBasedPropertyReader)
         {
         }
     }

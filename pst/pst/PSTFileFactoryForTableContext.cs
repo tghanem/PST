@@ -1,5 +1,4 @@
 ﻿using pst.encodables.ndb;
-using pst.impl.converters;
 using pst.impl.ltp.tc;
 using pst.impl.ndb;
 using pst.interfaces;
@@ -28,10 +27,9 @@ namespace pst
             ICache<BID, DataBlockEntry> dataBlockEntryCache)
         {
             return
-                new RowIndexReader<NID>(
+                new RowIndexReader(
                     CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    CreateNIDBasedBTreeOnHeapReader(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    new DataRecordToTCROWIDConverter());
+                    CreateInt32BasedBTreeOnHeapReader(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
 
         private static IRowMatrixReader CreateRowMatrixReader(

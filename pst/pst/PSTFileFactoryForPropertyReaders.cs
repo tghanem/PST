@@ -17,6 +17,7 @@ namespace pst
         {
             return
                 new TableContextBasedPropertyReader(
+                    CreateRowIndexReader(dataStream, nodeEntryCache, dataBlockEntryCache), 
                     CreateRowMatrixReader(dataStream, nodeEntryCache, dataBlockEntryCache),
                     CreatePropertyValueProcessor(dataStream, nodeEntryCache, dataBlockEntryCache));
         }
