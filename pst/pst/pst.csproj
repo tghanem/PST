@@ -219,6 +219,7 @@
     <Compile Include="interfaces\ltp\tc\TableRow.cs" />
     <Compile Include="interfaces\messaging\changetracking\IChangesApplier.cs" />
     <Compile Include="interfaces\messaging\changetracking\IRecipientTracker.cs" />
+    <Compile Include="interfaces\messaging\INodeChangesApplier.cs" />
     <Compile Include="interfaces\messaging\IPropertyContextBasedPropertyReader.cs" />
     <Compile Include="interfaces\messaging\IPropertyValueReader.cs" />
     <Compile Include="interfaces\ltp\pc\IPropertyContextGenerator.cs" />

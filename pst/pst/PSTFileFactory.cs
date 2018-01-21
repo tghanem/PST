@@ -35,7 +35,7 @@ namespace pst
                     CreatePropertyContextBasedPropertyReader(stream, cachedNodeEntries, dataBlockEntryCache, cachedHeaderHolder),
                     CreateTagBasedTableContextBasedPropertyReader(stream, cachedNodeEntries, dataBlockEntryCache, cachedHeaderHolder),
                     new HeaderBasedNIDAllocator(CreateHeaderUsageProvider(stream, cachedHeaderHolder)), 
-                    new ChangesApplier(trackedObjects));
+                    new ChangesApplier(trackedObjects, null));
         }
     }
 }

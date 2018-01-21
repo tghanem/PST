@@ -13,9 +13,7 @@ namespace pst.impl.ltp.tc
         private readonly IHeapOnNodeReader heapOnNodeReader;
         private readonly IBTreeOnHeapReader<int> bthReader;
 
-        public RowIndexReader(
-            IHeapOnNodeReader heapOnNodeReader,
-            IBTreeOnHeapReader<int> bthReader)
+        public RowIndexReader(IHeapOnNodeReader heapOnNodeReader, IBTreeOnHeapReader<int> bthReader)
         {
             this.bthReader = bthReader;
             this.heapOnNodeReader = heapOnNodeReader;
@@ -23,11 +21,7 @@ namespace pst.impl.ltp.tc
 
         public Maybe<int> GetRowIndex(NID[] nodePath, int rowId)
         {
-            var hnHeader = heapOnNodeReader.GetHeapOnNodeHeader(nodePath);
-
-            var heapItem = heapOnNodeReader.GetHeapItem(nodePath, hnHeader.UserRoot);
-
-            var tcinfo = TCINFO.OfValue(heapItem);
+            var tcinfo = GetTableContextInfo(nodePath);
 
             var dataRecord = bthReader.ReadDataRecord(nodePath, tcinfo.RowIndex, rowId);
 
@@ -41,17 +35,27 @@ namespace pst.impl.ltp.tc
 
         public TCROWID[] GetAllRowIds(NID[] nodePath)
         {
-            var hnHeader = heapOnNodeReader.GetHeapOnNodeHeader(nodePath);
-
-            var heapItem = heapOnNodeReader.GetHeapItem(nodePath, hnHeader.UserRoot);
-
-            var tcinfo = TCINFO.OfValue(heapItem);
+            var tcinfo = GetTableContextInfo(nodePath);
 
             return
                 bthReader
                 .ReadAllDataRecords(nodePath, tcinfo.RowIndex)
                 .Select(r => new TCROWID(r.Key, r.Data.ToInt32()))
                 .ToArray();
+        }
+
+        public TCOLDESC[] GetColumns(NID[] nodePath)
+        {
+            return GetTableContextInfo(nodePath).ColumnDescriptors;
+        }
+
+        private TCINFO GetTableContextInfo(NID[] nodePath)
+        {
+            var hnHeader = heapOnNodeReader.GetHeapOnNodeHeader(nodePath);
+
+            var heapItem = heapOnNodeReader.GetHeapItem(nodePath, hnHeader.UserRoot);
+
+            return TCINFO.OfValue(heapItem);
         }
     }
 }

@@ -9,5 +9,7 @@ namespace pst.interfaces.ltp.tc
         Maybe<int> GetRowIndex(NID[] nodePath, int rowId);
 
         TCROWID[] GetAllRowIds(NID[] nodePath);
+
+        TCOLDESC[] GetColumns(NID[] nodePath);
     }
 }
