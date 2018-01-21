@@ -222,14 +222,11 @@
     <Compile Include="interfaces\messaging\IPropertyValueReader.cs" />
     <Compile Include="interfaces\ltp\pc\IPropertyContextGenerator.cs" />
     <Compile Include="interfaces\messaging\ITableContextBasedPropertyReader.cs" />
-    <Compile Include="interfaces\model\AllocatedNodeId.cs" />
     <Compile Include="interfaces\messaging\changetracking\IObjectTracker.cs" />
     <Compile Include="interfaces\messaging\changetracking\PropertyTrackingObject.cs" />
     <Compile Include="interfaces\messaging\changetracking\TrackingObject.cs" />
-    <Compile Include="interfaces\model\AssociatedObjectPath.cs" />
     <Compile Include="interfaces\model\NodeId.cs" />
     <Compile Include="interfaces\model\ObjectPath.cs" />
-    <Compile Include="interfaces\model\UnallocatedNodeId.cs" />
     <Compile Include="interfaces\ndb\DataBlockEntry.cs" />
     <Compile Include="interfaces\ndb\INIDAllocator.cs" />
     <Compile Include="interfaces\rawallocation\IAllocationFinder.cs" />
@@ -242,7 +239,6 @@
     <Compile Include="interfaces\messaging\IPropertyNameToIdMap.cs" />
     <Compile Include="interfaces\rawallocation\IStreamExtender.cs" />
     <Compile Include="interfaces\ndb\NodeEntry.cs" />
-    <Compile Include="interfaces\IConverter.cs" />
     <Compile Include="interfaces\IExtractor.cs" />
     <Compile Include="interfaces\ltp\bth\IBTreeOnHeapReader.cs" />
     <Compile Include="interfaces\ltp\hn\IHeapOnNodeItemsLoader.cs" />
@@ -290,11 +286,7 @@
     <Compile Include="utilities\encodings\PermutativeEncoding.cs" />
     <Compile Include="utilities\Utilities.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="impl\converters\" />
-    <Folder Include="impl\decoders\ltp\hn\" />
-    <Folder Include="impl\decoders\ltp\tc\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
