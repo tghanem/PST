@@ -23,30 +23,32 @@ namespace pst
         private static INodeEntryFinder CreateNodeEntryFinder(
             Stream dataStream,
             ICache<NID[], NodeEntry> nodeEntryCache,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache)
+            ICache<BID, DataBlockEntry> dataBlockEntryCache,
+            IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new NodeEntryFinderThatCachesTheNodeEntry(
                     nodeEntryCache,
                     new NodeEntryFinder(
-                        CreateHeaderUsageProvider(dataStream), 
+                        CreateHeaderUsageProvider(dataStream, cachedHeaderHolder), 
                         CreateNodeBTreeEntryFinder(dataStream),
-                        CreateSubnodesEnumerator(dataStream, dataBlockEntryCache)));
+                        CreateSubnodesEnumerator(dataStream, dataBlockEntryCache, cachedHeaderHolder)));
         }
 
         private static ISubNodesEnumerator CreateSubnodesEnumerator(
             Stream dataStream,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache)
+            ICache<BID, DataBlockEntry> dataBlockEntryCache,
+            IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new SubNodesEnumerator(
                     new SubnodeBTreeBlockLevelDecider(
-                        CreateDataBlockReader(dataStream, dataBlockEntryCache)),
+                        CreateDataBlockReader(dataStream, dataBlockEntryCache, cachedHeaderHolder)),
                     new SubnodeBlockLoader(
                         new SubnodeBlockDecoder(
                             new BlockTrailerDecoder(
                                 new BIDDecoder())),
-                        CreateDataBlockReader(dataStream, dataBlockEntryCache)),
+                        CreateDataBlockReader(dataStream, dataBlockEntryCache, cachedHeaderHolder)),
                     new SIEntriesFromSubnodeBlockExtractor(
                         new SIEntryDecoder(
                             new BIDDecoder())),

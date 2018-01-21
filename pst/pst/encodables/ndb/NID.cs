@@ -5,6 +5,8 @@ namespace pst.encodables.ndb
 {
     class NID : IComparable<NID>
     {
+        public static readonly NID Zero = new NID(0);
+
         public int Type { get; }
 
         public int Index { get; }

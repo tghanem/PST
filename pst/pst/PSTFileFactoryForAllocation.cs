@@ -1,4 +1,5 @@
-﻿using pst.encodables.ndb.blocks.data;
+﻿using pst.encodables.ndb;
+using pst.encodables.ndb.blocks.data;
 using pst.encodables.ndb.btree;
 using pst.encodables.ndb.maps;
 using pst.impl;
@@ -26,7 +27,8 @@ namespace pst
     {
         private static IFactory<IHeapOnNodeGenerator> CreateHeapOnNodeGeneratorFactory(
             Stream dataStream,
-            List<LBBTEntry> allocatedBlockBTreeEntries)
+            List<LBBTEntry> allocatedBlockBTreeEntries,
+            IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new FuncBasedFactory<IHeapOnNodeGenerator>(
@@ -37,30 +39,32 @@ namespace pst
                             new HNBITMAPHDREncoder(),
                             new HNPAGEHDREncoder(),
                             new HNPAGEMAPEncoder()),
-                        CreateDataTreeAllocator(dataStream, allocatedBlockBTreeEntries)));
+                        CreateDataTreeAllocator(dataStream, allocatedBlockBTreeEntries, cachedHeaderHolder)));
         }
 
         private static IDataTreeAllocator CreateDataTreeAllocator(
             Stream dataStream,
-            List<LBBTEntry> allocatedBlockBTreeEntries)
+            List<LBBTEntry> allocatedBlockBTreeEntries,
+            IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new DataTreeAllocator(
-                    CreateExternalDataBlockAllocator(dataStream, allocatedBlockBTreeEntries),
-                    CreateInternalDataBlockAllocator(dataStream, allocatedBlockBTreeEntries, internalBlockLevel: 0x01),
-                    CreateInternalDataBlockAllocator(dataStream, allocatedBlockBTreeEntries, internalBlockLevel: 0x02));
+                    CreateExternalDataBlockAllocator(dataStream, allocatedBlockBTreeEntries, cachedHeaderHolder),
+                    CreateInternalDataBlockAllocator(dataStream, allocatedBlockBTreeEntries, cachedHeaderHolder, internalBlockLevel: 0x01),
+                    CreateInternalDataBlockAllocator(dataStream, allocatedBlockBTreeEntries, cachedHeaderHolder, internalBlockLevel: 0x02));
         }
 
         private static IDataBlockAllocator<BlockIdsWithTotalNumberOfBytesInReferencedBlocks> CreateInternalDataBlockAllocator(
             Stream dataStream,
             List<LBBTEntry> allocatedBlockBTreeEntries,
+            IDataHolder<Header> cachedHeaderHolder,
             int internalBlockLevel)
         {
             return
                 new DataBlockAllocator<InternalDataBlock, BlockIdsWithTotalNumberOfBytesInReferencedBlocks>(
-                    CreateRawDataAllocator(dataStream),
+                    CreateRawDataAllocator(dataStream, cachedHeaderHolder),
                     new BlockBTreeEntryAllocator(
-                        CreateHeaderUsageProvider(dataStream),
+                        CreateHeaderUsageProvider(dataStream, cachedHeaderHolder),
                         allocatedBlockBTreeEntries),
                     new RegionInitializer<InternalDataBlock>(
                         dataStream,
@@ -74,13 +78,14 @@ namespace pst
 
         private static IDataBlockAllocator<BinaryData> CreateExternalDataBlockAllocator(
             Stream dataStream,
-            List<LBBTEntry> allocatedBlockBTreeEntries)
+            List<LBBTEntry> allocatedBlockBTreeEntries,
+            IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new DataBlockAllocator<ExternalDataBlock, BinaryData>(
-                    CreateRawDataAllocator(dataStream),
+                    CreateRawDataAllocator(dataStream, cachedHeaderHolder),
                     new BlockBTreeEntryAllocator(
-                        CreateHeaderUsageProvider(dataStream),
+                        CreateHeaderUsageProvider(dataStream, cachedHeaderHolder),
                         allocatedBlockBTreeEntries),
                     new RegionInitializer<ExternalDataBlock>(
                         dataStream,
@@ -88,23 +93,25 @@ namespace pst
                             new BlockTrailerEncoder(
                                 new BIDEncoder()))),
                     new ExternalDataBlockFactory(
-                        CreateBlockEncoding(dataStream)),
+                        CreateBlockEncoding(dataStream, cachedHeaderHolder)),
                     new FuncBasedExtractor<BinaryData, int>(d => d.Length),
                     isInternal: false);
         }
 
         private static IRawDataAllocator CreateRawDataAllocator(
-            Stream dataStream)
+            Stream dataStream,
+            IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new RawDataAllocator(
                     CreateAllocationFinder(dataStream),
-                    CreateAMapBasedStreamExtender(dataStream),
-                    CreateAMapBasedAllocationReserver(dataStream));
+                    CreateAMapBasedStreamExtender(dataStream, cachedHeaderHolder),
+                    CreateAMapBasedAllocationReserver(dataStream, cachedHeaderHolder));
         }
 
         private static IAllocationReserver CreateAMapBasedAllocationReserver(
-            Stream dataStream)
+            Stream dataStream,
+            IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new AMapBasedAllocationReserver(
@@ -115,11 +122,12 @@ namespace pst
                             new PageTrailerDecoder(
                                 new BIDDecoder())),
                         0x200),
-                    CreateHeaderUsageProvider(dataStream));
+                    CreateHeaderUsageProvider(dataStream, cachedHeaderHolder));
         }
 
         private static IStreamExtender CreateAMapBasedStreamExtender(
-            Stream dataStream)
+            Stream dataStream,
+            IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new AMapBasedStreamExtender(
@@ -128,9 +136,7 @@ namespace pst
                     CreateMapEncoder(),
                     CreateMapEncoder(),
                     CreateMapEncoder(),
-                    new HeaderUsageProvider(
-                        new DataReader(dataStream),
-                        CreateHeaderDecoder()));
+                    CreateHeaderUsageProvider(dataStream, cachedHeaderHolder));
         }
 
         private static AMapBasedAllocationFinder CreateAllocationFinder(

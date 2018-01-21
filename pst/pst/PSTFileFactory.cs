@@ -1,6 +1,7 @@
 ﻿using pst.encodables.ndb;
 using pst.impl;
 using pst.impl.messaging.changetracking;
+using pst.impl.ndb;
 using pst.interfaces.messaging.changetracking;
 using pst.interfaces.model;
 using pst.interfaces.ndb;
@@ -21,18 +22,20 @@ namespace pst
 
             var trackedRecipientTables = new Dictionary<ObjectPath, RecipientTableTrackingObject>();
 
+            var cachedHeaderHolder = new DefaultDataHolder<Header>();
+
             return
                 new PSTFile(
                     new ObjectTracker(trackedObjects),
                     new RecipientTracker(trackedRecipientTables),
-                    CreateHeaderBasedStringEncoder(stream),
-                    CreateNodeEntryFinder(stream, cachedNodeEntries, dataBlockEntryCache),
-                    CreateRowIndexReader(stream, cachedNodeEntries, dataBlockEntryCache),
-                    CreateTableContextReader(stream, cachedNodeEntries, dataBlockEntryCache),
-                    CreatePropertyIdToNameMap(stream, cachedNodeEntries, dataBlockEntryCache),
-                    CreatePropertyContextBasedPropertyReader(stream, cachedNodeEntries, dataBlockEntryCache),
-                    CreateTagBasedTableContextBasedPropertyReader(stream, cachedNodeEntries, dataBlockEntryCache),
-                    null,
+                    CreateHeaderBasedStringEncoder(stream, cachedHeaderHolder),
+                    CreateNodeEntryFinder(stream, cachedNodeEntries, dataBlockEntryCache, cachedHeaderHolder),
+                    CreateRowIndexReader(stream, cachedNodeEntries, dataBlockEntryCache, cachedHeaderHolder),
+                    CreateTableContextReader(stream, cachedNodeEntries, dataBlockEntryCache, cachedHeaderHolder),
+                    CreatePropertyIdToNameMap(stream, cachedNodeEntries, dataBlockEntryCache, cachedHeaderHolder),
+                    CreatePropertyContextBasedPropertyReader(stream, cachedNodeEntries, dataBlockEntryCache, cachedHeaderHolder),
+                    CreateTagBasedTableContextBasedPropertyReader(stream, cachedNodeEntries, dataBlockEntryCache, cachedHeaderHolder),
+                    new HeaderBasedNIDAllocator(CreateHeaderUsageProvider(stream, cachedHeaderHolder)), 
                     new ChangesApplier(trackedObjects));
         }
     }

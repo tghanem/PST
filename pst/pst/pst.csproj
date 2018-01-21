@@ -121,6 +121,7 @@
     <Compile Include="impl\decoders\ndb\blocks\subnode\SubnodeBlockDecoder.cs" />
     <Compile Include="impl\decoders\ndb\HeaderDecoder.cs" />
     <Compile Include="impl\decoders\ndb\RootDecoder.cs" />
+    <Compile Include="impl\DefaultDataHolder.cs" />
     <Compile Include="impl\DictionaryBasedCache.cs" />
     <Compile Include="impl\encoders\ltp\hn\HeapOnNodeEncoder.cs" />
     <Compile Include="impl\encoders\ltp\hn\HNBITMAPHDREncoder.cs" />
@@ -176,6 +177,7 @@
     <Compile Include="impl\messaging\PropertyNameToIdMap.cs" />
     <Compile Include="impl\messaging\PropertyValueReader.cs" />
     <Compile Include="impl\messaging\TableContextBasedPropertyReader.cs" />
+    <Compile Include="impl\ndb\HeaderBasedNIDAllocator.cs" />
     <Compile Include="impl\rawallocation\AMapBasedAllocationReserver.cs" />
     <Compile Include="impl\rawallocation\AMapBasedStreamExtender.cs" />
     <Compile Include="impl\ndb\bbt\IBBTEntriesFromBTPageExtractor.cs" />
@@ -206,6 +208,7 @@
     <Compile Include="interfaces\btree\IBTreeNodeLoader.cs" />
     <Compile Include="interfaces\IBlockDataObfuscator.cs" />
     <Compile Include="interfaces\ICache.cs" />
+    <Compile Include="interfaces\IDataHolder.cs" />
     <Compile Include="interfaces\IFactory.cs" />
     <Compile Include="interfaces\IHeaderUsageProvider.cs" />
     <Compile Include="interfaces\io\IDataReader.cs" />

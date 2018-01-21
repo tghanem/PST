@@ -1,5 +1,4 @@
-﻿using pst.core;
-using pst.encodables.ndb;
+﻿using pst.encodables.ndb;
 using pst.interfaces;
 using pst.interfaces.io;
 using System;
@@ -11,22 +10,37 @@ namespace pst.impl
         private readonly IDataReader dataReader;
         private readonly IDecoder<Header> headerDecoder;
 
-        private Maybe<Header> cachedHeader;
+        private readonly IDataHolder<Header> cachedHeaderHolder;
 
-        public HeaderUsageProvider(IDataReader dataReader, IDecoder<Header> headerDecoder)
+        public HeaderUsageProvider(
+            IDataReader dataReader,
+            IDecoder<Header> headerDecoder,
+            IDataHolder<Header> cachedHeaderHolder)
         {
             this.dataReader = dataReader;
             this.headerDecoder = headerDecoder;
+            this.cachedHeaderHolder = cachedHeaderHolder;
         }
 
         public void Use(Func<Header, Header> useHeader)
         {
-            cachedHeader = Maybe<Header>.OfValue(useHeader(GetHeader()));
+            cachedHeaderHolder.SetData(useHeader(GetHeader()));
         }
 
         public Header GetHeader()
         {
-            return cachedHeader.HasValue ? cachedHeader.Value : headerDecoder.Decode(dataReader.Read(0, 546));
+            var cachedHeader = cachedHeaderHolder.GetData();
+
+            if (cachedHeader.HasNoValue)
+            {
+                var header = headerDecoder.Decode(dataReader.Read(0, 546));
+
+                cachedHeaderHolder.SetData(header);
+
+                return header;
+            }
+
+            return cachedHeader.Value;
         }
     }
 }

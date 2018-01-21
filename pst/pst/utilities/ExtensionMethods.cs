@@ -408,6 +408,13 @@ namespace pst.utilities
                     header.RGBReserved3);
         }
 
+        public static Header IncrementNIDForType(this Header header, int type)
+        {
+            header.NIDs[type] = new NID(type, header.NIDs[type].Index + 1);
+
+            return header;
+        }
+
         public static T[] DecodeMultipleItems<T>(this IDecoder<T> decoder, int numberOfItems, int itemSize, BinaryData data)
         {
             var entries = new List<T>();

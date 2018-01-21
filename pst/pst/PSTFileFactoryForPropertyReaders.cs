@@ -13,43 +13,47 @@ namespace pst
         private static ITableContextBasedPropertyReader CreateTagBasedTableContextBasedPropertyReader(
             Stream dataStream,
             ICache<NID[], NodeEntry> nodeEntryCache,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache)
+            ICache<BID, DataBlockEntry> dataBlockEntryCache,
+            IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new TableContextBasedPropertyReader(
-                    CreateRowIndexReader(dataStream, nodeEntryCache, dataBlockEntryCache), 
-                    CreateRowMatrixReader(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    CreatePropertyValueProcessor(dataStream, nodeEntryCache, dataBlockEntryCache));
+                    CreateRowIndexReader(dataStream, nodeEntryCache, dataBlockEntryCache, cachedHeaderHolder), 
+                    CreateRowMatrixReader(dataStream, nodeEntryCache, dataBlockEntryCache, cachedHeaderHolder),
+                    CreatePropertyValueProcessor(dataStream, nodeEntryCache, dataBlockEntryCache, cachedHeaderHolder));
         }
 
         private static IPropertyNameToIdMap CreatePropertyIdToNameMap(
             Stream dataStream,
             ICache<NID[], NodeEntry> nodeEntryCache,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache)
+            ICache<BID, DataBlockEntry> dataBlockEntryCache,
+            IDataHolder<Header> cachedHeaderHolder)
         {
-            return new PropertyNameToIdMap(CreatePropertyContextBasedPropertyReader(dataStream, nodeEntryCache, dataBlockEntryCache));
+            return new PropertyNameToIdMap(CreatePropertyContextBasedPropertyReader(dataStream, nodeEntryCache, dataBlockEntryCache, cachedHeaderHolder));
         }
 
         private static IPropertyContextBasedPropertyReader CreatePropertyContextBasedPropertyReader(
             Stream dataStream,
             ICache<NID[], NodeEntry> nodeEntryCache,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache)
+            ICache<BID, DataBlockEntry> dataBlockEntryCache,
+            IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new PropertyContextBasedPropertyReader(
-                    CreatePropertyIdBasedBTreeOnHeapReader(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    CreatePropertyValueProcessor(dataStream, nodeEntryCache, dataBlockEntryCache));
+                    CreatePropertyIdBasedBTreeOnHeapReader(dataStream, nodeEntryCache, dataBlockEntryCache, cachedHeaderHolder),
+                    CreatePropertyValueProcessor(dataStream, nodeEntryCache, dataBlockEntryCache, cachedHeaderHolder));
         }
 
         private static IPropertyValueReader CreatePropertyValueProcessor(
             Stream dataStream,
             ICache<NID[], NodeEntry> nodeEntryCache,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache)
+            ICache<BID, DataBlockEntry> dataBlockEntryCache,
+            IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new PropertyValueReader(
-                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache),
-                    CreateExternalDataBlockReader(dataStream, nodeEntryCache, dataBlockEntryCache));
+                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache, cachedHeaderHolder),
+                    CreateExternalDataBlockReader(dataStream, nodeEntryCache, dataBlockEntryCache, cachedHeaderHolder));
         }
     }
 }

@@ -22,23 +22,25 @@ namespace pst
     {
         private static IDataBlockReader CreateDataBlockReader(
             Stream dataReader,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache)
+            ICache<BID, DataBlockEntry> dataBlockEntryCache,
+            IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new BlockIdBasedDataBlockReader(
                     new DataReader(dataReader),
-                    CreateDataBlockEntryFinder(dataReader, dataBlockEntryCache));
+                    CreateDataBlockEntryFinder(dataReader, dataBlockEntryCache, cachedHeaderHolder));
         }
 
         private static IDataBlockEntryFinder CreateDataBlockEntryFinder(
             Stream dataReader,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache)
+            ICache<BID, DataBlockEntry> dataBlockEntryCache,
+            IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new DataBlockEntryFinderThatCachesTheDataBlockEntry(
                     new DataBlockEntryFinder(
                         new DataReader(dataReader),
-                        CreateHeaderUsageProvider(dataReader), 
+                        CreateHeaderUsageProvider(dataReader, cachedHeaderHolder), 
                         new BIDsFromInternalDataBlockExtractor(
                             new BIDDecoder()),
                         new InternalDataBlockLoader(

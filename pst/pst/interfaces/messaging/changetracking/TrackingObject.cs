@@ -1,8 +1,8 @@
 ﻿using pst.core;
+using pst.encodables.ndb;
 using pst.interfaces.model;
 using System;
 using System.Collections.Generic;
-using pst.encodables.ndb;
 
 namespace pst.interfaces.messaging.changetracking
 {
