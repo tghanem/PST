@@ -4,7 +4,7 @@ using pst.interfaces.ltp;
 using pst.interfaces.ltp.tc;
 using pst.interfaces.messaging;
 using pst.interfaces.messaging.changetracking;
-using pst.interfaces.model;
+using pst.interfaces.messaging.changetracking.model;
 using pst.interfaces.ndb;
 
 namespace pst

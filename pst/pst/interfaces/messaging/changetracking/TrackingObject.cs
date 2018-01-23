@@ -1,6 +1,4 @@
 ﻿using pst.core;
-using pst.encodables.ndb;
-using pst.interfaces.model;
 using System;
 using System.Collections.Generic;
 
@@ -64,36 +62,6 @@ namespace pst.interfaces.messaging.changetracking
 
             properties.Add(update(Maybe<PropertyTrackingObject>.NoValue()));
         }
-    }
-
-    class NodeTrackingObject : TrackingObject
-    {
-        private readonly List<NodeTrackingObject> children;
-
-        public NodeTrackingObject(ObjectPath path, ObjectTypes type, ObjectStates state) : base(type, state)
-        {
-            Path = path;
-            children = new List<NodeTrackingObject>();
-        }
-
-        public ObjectPath Path { get; }
-
-        public NodeTrackingObject[] Children => children.ToArray();
-
-        public void AddChild(NodeTrackingObject child) => children.Add(child);
-    }
-
-    class RecipientTableTrackingObject : TrackingObject
-    {
-        public RecipientTableTrackingObject(NID recipientTableNodeId, ObjectTypes type, ObjectStates state) : base(type, state)
-        {
-            RecipientTableNodeId = recipientTableNodeId;
-            TrackedRecipients = new Dictionary<int, TrackingObject>();
-        }
-
-        public NID RecipientTableNodeId { get; }
-
-        public IDictionary<int, TrackingObject> TrackedRecipients { get; }
     }
 }
 

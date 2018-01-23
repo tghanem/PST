@@ -2,7 +2,7 @@
 using pst.encodables.messaging;
 using pst.interfaces.ltp;
 using pst.interfaces.messaging;
-using pst.interfaces.model;
+using pst.interfaces.messaging.changetracking.model;
 using pst.utilities;
 using System;
 using System.Text;

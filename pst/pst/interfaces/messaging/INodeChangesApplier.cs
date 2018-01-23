@@ -1,5 +1,6 @@
 ﻿using pst.core;
 using pst.interfaces.messaging.changetracking;
+using pst.interfaces.messaging.changetracking.model;
 using System;
 
 namespace pst.interfaces.messaging

@@ -170,6 +170,7 @@
     <Compile Include="impl\ltp\tc\RowMatrixReader.cs" />
     <Compile Include="impl\ltp\tc\RowValuesExtractor.cs" />
     <Compile Include="impl\messaging\changetracking\ChangesApplier.cs" />
+    <Compile Include="impl\messaging\changetracking\NodeChangesApplier.cs" />
     <Compile Include="impl\messaging\changetracking\ObjectTracker.cs" />
     <Compile Include="impl\messaging\changetracking\RecipientTracker.cs" />
     <Compile Include="impl\messaging\PropertyContextBasedPropertyReader.cs" />
@@ -219,6 +220,13 @@
     <Compile Include="interfaces\ltp\tc\TableRow.cs" />
     <Compile Include="interfaces\messaging\changetracking\IChangesApplier.cs" />
     <Compile Include="interfaces\messaging\changetracking\IRecipientTracker.cs" />
+    <Compile Include="interfaces\messaging\changetracking\model\AttachmentTrackingObject.cs" />
+    <Compile Include="interfaces\messaging\changetracking\model\FolderTrackingObject.cs" />
+    <Compile Include="interfaces\messaging\changetracking\model\MessageTrackingObject.cs" />
+    <Compile Include="interfaces\messaging\changetracking\model\NodeTrackingObject.cs" />
+    <Compile Include="interfaces\messaging\changetracking\model\ObjectPath.cs" />
+    <Compile Include="interfaces\messaging\changetracking\model\RecipientTableTrackingObject.cs" />
+    <Compile Include="interfaces\messaging\changetracking\model\TableContextTrackingObject.cs" />
     <Compile Include="interfaces\messaging\INodeChangesApplier.cs" />
     <Compile Include="interfaces\messaging\IPropertyContextBasedPropertyReader.cs" />
     <Compile Include="interfaces\messaging\IPropertyValueReader.cs" />
@@ -227,8 +235,6 @@
     <Compile Include="interfaces\messaging\changetracking\IObjectTracker.cs" />
     <Compile Include="interfaces\messaging\changetracking\PropertyTrackingObject.cs" />
     <Compile Include="interfaces\messaging\changetracking\TrackingObject.cs" />
-    <Compile Include="interfaces\model\NodeId.cs" />
-    <Compile Include="interfaces\model\ObjectPath.cs" />
     <Compile Include="interfaces\ndb\DataBlockEntry.cs" />
     <Compile Include="interfaces\ndb\INIDAllocator.cs" />
     <Compile Include="interfaces\rawallocation\IAllocationFinder.cs" />
@@ -287,7 +293,9 @@
     <Compile Include="utilities\encodings\PermutativeEncoding.cs" />
     <Compile Include="utilities\Utilities.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="interfaces\model\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

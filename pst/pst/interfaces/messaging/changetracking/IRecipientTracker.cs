@@ -1,6 +1,6 @@
 ﻿using pst.core;
 using pst.encodables.ndb;
-using pst.interfaces.model;
+using pst.interfaces.messaging.changetracking.model;
 using System;
 
 namespace pst.interfaces.messaging.changetracking

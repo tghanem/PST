@@ -2,8 +2,7 @@
 using pst.impl;
 using pst.impl.messaging.changetracking;
 using pst.impl.ndb;
-using pst.interfaces.messaging.changetracking;
-using pst.interfaces.model;
+using pst.interfaces.messaging.changetracking.model;
 using pst.interfaces.ndb;
 using System.Collections.Generic;
 using System.IO;
