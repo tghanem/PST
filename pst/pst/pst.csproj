@@ -194,7 +194,7 @@
     <Compile Include="impl\ndb\NodeEntryFinder.cs" />
     <Compile Include="impl\ndb\subnodebtree\SLEntriesFromSubnodeBlockExtractor.cs" />
     <Compile Include="impl\ndb\subnodebtree\SubnodeBlockLoader.cs" />
-    <Compile Include="impl\ndb\subnodebtree\SubnodesEnumerator.cs" />
+    <Compile Include="impl\ndb\subnodebtree\SubNodesEnumerator.cs" />
     <Compile Include="interfaces\blockallocation\datatree\IDataBlockAllocator.cs" />
     <Compile Include="interfaces\blockallocation\datatree\IDataBlockFactory.cs" />
     <Compile Include="interfaces\blockallocation\datatree\IDataTreeAllocator.cs" />
