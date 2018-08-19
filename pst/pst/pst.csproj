@@ -192,7 +192,6 @@
     <Compile Include="impl\ndb\nbt\INBTEntriesFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\nbt\LNBTEntriesFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\NodeEntryFinder.cs" />
-    <Compile Include="impl\ndb\subnodebtree\SubnodeBTreeBlockLevelDecider.cs" />
     <Compile Include="impl\ndb\subnodebtree\SLEntriesFromSubnodeBlockExtractor.cs" />
     <Compile Include="impl\ndb\subnodebtree\SubnodeBlockLoader.cs" />
     <Compile Include="impl\ndb\subnodebtree\SubnodesEnumerator.cs" />
@@ -251,7 +250,6 @@
     <Compile Include="interfaces\ltp\tc\IRowIndexReader.cs" />
     <Compile Include="interfaces\ltp\tc\IRowMatrixReader.cs" />
     <Compile Include="interfaces\ltp\tc\IRowValuesExtractor.cs" />
-    <Compile Include="interfaces\ndb\ISubnodeBTreeBlockLevelDecider.cs" />
     <Compile Include="interfaces\ndb\ISubNodesEnumerator.cs" />
     <Compile Include="MAPIProperties.cs" />
     <Compile Include="Message.cs" />

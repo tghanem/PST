@@ -9,18 +9,18 @@ namespace pst.impl.ndb.subnodebtree
 {
     class SubNodesEnumerator : ISubNodesEnumerator
     {
-        private readonly ISubnodeBTreeBlockLevelDecider subnodeBTreeBlockLevelDecider;
+        private readonly IDataBlockReader dataBlockReader;
         private readonly IBTreeNodeLoader<SubnodeBlock, BID> subnodeBlockLoader;
         private readonly IExtractor<SubnodeBlock, SIEntry[]> entriesFromIntermediateSubnodeBlockExtractor;
         private readonly IExtractor<SubnodeBlock, SLEntry[]> entriesFromLeafSubnodeBlockExtractor;
 
         public SubNodesEnumerator(
-            ISubnodeBTreeBlockLevelDecider subnodeBTreeBlockLevelDecider,
+            IDataBlockReader dataBlockReader,
             IBTreeNodeLoader<SubnodeBlock, BID> subnodeBlockLoader,
             IExtractor<SubnodeBlock, SIEntry[]> entriesFromIntermediateSubnodeBlockExtractor,
             IExtractor<SubnodeBlock, SLEntry[]> entriesFromLeafSubnodeBlockExtractor)
         {
-            this.subnodeBTreeBlockLevelDecider = subnodeBTreeBlockLevelDecider;
+            this.dataBlockReader = dataBlockReader;
             this.subnodeBlockLoader = subnodeBlockLoader;
             this.entriesFromIntermediateSubnodeBlockExtractor = entriesFromIntermediateSubnodeBlockExtractor;
             this.entriesFromLeafSubnodeBlockExtractor = entriesFromLeafSubnodeBlockExtractor;
@@ -28,10 +28,7 @@ namespace pst.impl.ndb.subnodebtree
 
         public SLEntry[] Enumerate(BID subnodeDataBlockId)
         {
-            return
-                EnumerateAndAdd(
-                    subnodeDataBlockId,
-                    subnodeBTreeBlockLevelDecider.GetBlockLevel(subnodeDataBlockId));
+            return EnumerateAndAdd(subnodeDataBlockId, GetBlockLevel(subnodeDataBlockId));
         }
 
         private SLEntry[] EnumerateAndAdd(BID blockId, int currentDepth)
@@ -59,6 +56,13 @@ namespace pst.impl.ndb.subnodebtree
 
                 return entriesFromLeafSubnodeBlockExtractor.Extract(subnodeBlock);
             }
+        }
+
+        private int GetBlockLevel(BID blockId)
+        {
+            var dataBlock = dataBlockReader.Read(blockId);
+
+            return dataBlock.Value[1];
         }
     }
 }

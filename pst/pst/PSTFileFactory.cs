@@ -1,5 +1,6 @@
 ﻿using pst.encodables.ndb;
 using pst.encodables.ndb.blocks.data;
+using pst.encodables.ndb.blocks.subnode;
 using pst.encodables.ndb.btree;
 using pst.impl;
 using pst.impl.messaging.changetracking;
@@ -24,16 +25,18 @@ namespace pst
 
             var cachedInternalDataBlocks = new DictionaryBasedCache<BID, InternalDataBlock>();
 
+            var cachedSubnodeBlocks = new DictionaryBasedCache<BID, SubnodeBlock>();
+
             return
                 new PSTFile(
                     new ObjectTracker(trackedObjects),
                     new RecipientTracker(trackedRecipientTables),
                     CreateHeaderBasedStringEncoder(stream, cachedHeaderHolder),
-                    CreateNodeEntryFinder(stream, cachedBTPages, cachedHeaderHolder), 
-                    CreateRowIndexReader(stream, cachedBTPages, cachedInternalDataBlocks, cachedHeaderHolder), 
-                    CreatePropertyIdToNameMap(stream, cachedBTPages, cachedInternalDataBlocks, cachedHeaderHolder), 
-                    CreatePropertyContextBasedPropertyReader(stream, cachedBTPages, cachedInternalDataBlocks, cachedHeaderHolder), 
-                    CreateTagBasedTableContextBasedPropertyReader(stream, cachedBTPages, cachedInternalDataBlocks, cachedHeaderHolder), 
+                    CreateNodeEntryFinder(stream, cachedBTPages, cachedSubnodeBlocks, cachedHeaderHolder), 
+                    CreateRowIndexReader(stream, cachedBTPages, cachedSubnodeBlocks, cachedInternalDataBlocks, cachedHeaderHolder), 
+                    CreatePropertyIdToNameMap(stream, cachedBTPages, cachedSubnodeBlocks, cachedInternalDataBlocks, cachedHeaderHolder), 
+                    CreatePropertyContextBasedPropertyReader(stream, cachedBTPages, cachedSubnodeBlocks, cachedInternalDataBlocks, cachedHeaderHolder), 
+                    CreateTagBasedTableContextBasedPropertyReader(stream, cachedBTPages, cachedSubnodeBlocks, cachedInternalDataBlocks, cachedHeaderHolder), 
                     new HeaderBasedNIDAllocator(CreateHeaderUsageProvider(stream, cachedHeaderHolder)), 
                     new ChangesApplier(trackedObjects, null));
         }

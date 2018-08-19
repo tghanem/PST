@@ -1,15 +1,13 @@
 ﻿using pst.encodables.ndb;
+using pst.encodables.ndb.blocks.subnode;
 using pst.encodables.ndb.btree;
 using pst.impl;
 using pst.impl.btree;
 using pst.impl.decoders.ndb;
-using pst.impl.decoders.ndb.blocks;
-using pst.impl.decoders.ndb.blocks.subnode;
 using pst.impl.decoders.ndb.btree;
 using pst.impl.io;
 using pst.impl.ndb;
 using pst.impl.ndb.nbt;
-using pst.impl.ndb.subnodebtree;
 using pst.interfaces;
 using pst.interfaces.btree;
 using pst.interfaces.ndb;
@@ -22,35 +20,14 @@ namespace pst
         private static INodeEntryFinder CreateNodeEntryFinder(
             Stream dataStream,
             ICache<BID, BTPage> cachedBTPages,
+            ICache<BID, SubnodeBlock> cachedSubnodeBlocks,
             IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new NodeEntryFinder(
                     CreateHeaderUsageProvider(dataStream, cachedHeaderHolder), 
                     CreateNodeBTreeEntryFinder(dataStream, cachedBTPages), 
-                    CreateSubNodesEnumerator(dataStream, cachedBTPages, cachedHeaderHolder));
-        }
-
-        private static ISubNodesEnumerator CreateSubNodesEnumerator(
-            Stream dataStream,
-            ICache<BID, BTPage> cachedBTPages,
-            IDataHolder<Header> cachedHeaderHolder)
-        {
-            return
-                new SubNodesEnumerator(
-                    new SubnodeBTreeBlockLevelDecider(
-                        CreateDataBlockReader(dataStream, cachedBTPages, cachedHeaderHolder)),
-                    new SubnodeBlockLoader(
-                        new SubnodeBlockDecoder(
-                            new BlockTrailerDecoder(
-                                new BIDDecoder())),
-                        CreateDataBlockReader(dataStream, cachedBTPages, cachedHeaderHolder)),
-                    new SIEntriesFromSubnodeBlockExtractor(
-                        new SIEntryDecoder(
-                            new BIDDecoder())),
-                    new SLEntriesFromSubnodeBlockExtractor(
-                        new SLEntryDecoder(
-                            new BIDDecoder())));
+                    CreateSubNodesEnumerator(dataStream, cachedBTPages, cachedSubnodeBlocks, cachedHeaderHolder));
         }
 
         private static IBTreeEntryFinder<NID, LNBTEntry, BREF> CreateNodeBTreeEntryFinder(

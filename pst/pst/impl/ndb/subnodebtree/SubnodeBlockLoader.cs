@@ -8,20 +8,30 @@ namespace pst.impl.ndb.subnodebtree
 {
     class SubnodeBlockLoader : IBTreeNodeLoader<SubnodeBlock, BID>
     {
-        private readonly IDecoder<SubnodeBlock> subnodeBlockDecoder;
+        private readonly ICache<BID, SubnodeBlock> cachedSubnodeBlocks;
         private readonly IDataBlockReader dataBlockReader;
+        private readonly IDecoder<SubnodeBlock> subnodeBlockDecoder;
 
-        public SubnodeBlockLoader(IDecoder<SubnodeBlock> subnodeBlockDecoder, IDataBlockReader dataBlockReader)
+        public SubnodeBlockLoader(ICache<BID, SubnodeBlock> cachedSubnodeBlocks, IDataBlockReader dataBlockReader, IDecoder<SubnodeBlock> subnodeBlockDecoder)
         {
             this.subnodeBlockDecoder = subnodeBlockDecoder;
             this.dataBlockReader = dataBlockReader;
+            this.cachedSubnodeBlocks = cachedSubnodeBlocks;
         }
 
         public SubnodeBlock LoadNode(BID nodeReference)
         {
-            var encodedBlock = dataBlockReader.Read(nodeReference);
+            return
+                cachedSubnodeBlocks
+                .GetOrAdd(
+                    nodeReference,
+                    () =>
+                    {
+                        var encodedBlock = dataBlockReader.Read(nodeReference);
 
-            return subnodeBlockDecoder.Decode(encodedBlock);
+                        return subnodeBlockDecoder.Decode(encodedBlock);
+                    })
+                .Value;
         }
     }
 }
