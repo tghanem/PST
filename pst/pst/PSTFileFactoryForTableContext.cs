@@ -1,9 +1,9 @@
 ﻿using pst.encodables.ndb;
+using pst.encodables.ndb.blocks.data;
+using pst.encodables.ndb.btree;
 using pst.impl.ltp.tc;
-using pst.impl.ndb;
 using pst.interfaces;
 using pst.interfaces.ltp.tc;
-using pst.interfaces.ndb;
 using System.IO;
 
 namespace pst
@@ -12,40 +12,27 @@ namespace pst
     {
         private static IRowIndexReader CreateRowIndexReader(
             Stream dataStream,
-            ICache<NID[], NodeEntry> nodeEntryCache,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache,
+            ICache<BID, BTPage> cachedBTPages,
+            ICache<BID, InternalDataBlock> cachedInternalDataBlocks,
             IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new RowIndexReader(
-                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache, cachedHeaderHolder),
-                    CreateInt32BasedBTreeOnHeapReader(dataStream, nodeEntryCache, dataBlockEntryCache, cachedHeaderHolder));
+                    CreateHeapOnNodeReader(dataStream, cachedBTPages, cachedInternalDataBlocks, cachedHeaderHolder), 
+                    CreateInt32BasedBTreeOnHeapReader(dataStream, cachedBTPages, cachedInternalDataBlocks, cachedHeaderHolder));
         }
 
         private static IRowMatrixReader CreateRowMatrixReader(
             Stream dataStream,
-            ICache<NID[], NodeEntry> nodeEntryCache,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache,
+            ICache<BID, BTPage> cachedBTPages,
+            ICache<BID, InternalDataBlock> cachedInternalDataBlocks,
             IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new RowMatrixReader(
-                    CreateHeapOnNodeReader(dataStream, nodeEntryCache, dataBlockEntryCache, cachedHeaderHolder),
+                    CreateHeapOnNodeReader(dataStream, cachedBTPages, cachedInternalDataBlocks, cachedHeaderHolder), 
                     new RowValuesExtractor(),
-                    CreateExternalDataBlockReader(dataStream, nodeEntryCache, dataBlockEntryCache, cachedHeaderHolder));
-        }
-
-        private static IDataTreeReader CreateExternalDataBlockReader(
-            Stream dataStream,
-            ICache<NID[], NodeEntry> nodeEntryCache,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache,
-            IDataHolder<Header> cachedHeaderHolder)
-        {
-            return new DataTreeReader(
-                CreateNodeEntryFinder(dataStream, nodeEntryCache, dataBlockEntryCache, cachedHeaderHolder),
-                CreateDataBlockEntryFinder(dataStream, dataBlockEntryCache, cachedHeaderHolder),
-                CreateDataBlockReader(dataStream, dataBlockEntryCache, cachedHeaderHolder),
-                CreateBlockEncoding(dataStream, cachedHeaderHolder));
+                    CreateDataTreeReader(dataStream, cachedBTPages, cachedInternalDataBlocks, cachedHeaderHolder));
         }
     }
 }

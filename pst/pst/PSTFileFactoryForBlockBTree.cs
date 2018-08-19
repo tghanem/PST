@@ -1,4 +1,5 @@
 ﻿using pst.encodables.ndb;
+using pst.encodables.ndb.blocks.data;
 using pst.encodables.ndb.btree;
 using pst.impl;
 using pst.impl.btree;
@@ -9,7 +10,6 @@ using pst.impl.decoders.ndb.btree;
 using pst.impl.io;
 using pst.impl.ndb;
 using pst.impl.ndb.bbt;
-using pst.impl.ndb.cache;
 using pst.impl.ndb.datatree;
 using pst.interfaces;
 using pst.interfaces.btree;
@@ -22,38 +22,56 @@ namespace pst
     {
         private static IDataBlockReader CreateDataBlockReader(
             Stream dataReader,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache,
+            ICache<BID, BTPage> cachedBTPages,
             IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new BlockIdBasedDataBlockReader(
                     new DataReader(dataReader),
-                    CreateDataBlockEntryFinder(dataReader, dataBlockEntryCache, cachedHeaderHolder));
+                    CreateHeaderUsageProvider(dataReader, cachedHeaderHolder), 
+                    CreateBlockBTreeEntryFinder(dataReader, cachedBTPages));
         }
 
-        private static IDataBlockEntryFinder CreateDataBlockEntryFinder(
-            Stream dataReader,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache,
+        private static IDataTreeReader CreateDataTreeReader(
+            Stream dataStream,
+            ICache<BID, BTPage> cachedBTPages,
+            ICache<BID, InternalDataBlock> cachedInternalDataBlocks,
             IDataHolder<Header> cachedHeaderHolder)
         {
             return
-                new DataBlockEntryFinderThatCachesTheDataBlockEntry(
-                    new DataBlockEntryFinder(
+                new DataTreeReader(
+                    CreateNodeEntryFinder(dataStream, cachedBTPages, cachedHeaderHolder),
+                    CreateDataBlockReader(dataStream, cachedBTPages, cachedHeaderHolder),
+                    CreateBlockEncoding(dataStream, cachedHeaderHolder),
+                    CreateHeaderUsageProvider(dataStream, cachedHeaderHolder),
+                    CreateBlockBTreeEntryFinder(dataStream, cachedBTPages),
+                    CreateExternalDataBlockIdsReader(dataStream, cachedBTPages, cachedInternalDataBlocks, cachedHeaderHolder));
+        }
+
+        private static IExternalDataBlockIdsReader CreateExternalDataBlockIdsReader(
+            Stream dataReader,
+            ICache<BID, BTPage> cachedBTPages,
+            ICache<BID, InternalDataBlock> cachedInternalDataBlocks,
+            IDataHolder<Header> cachedHeaderHolder)
+        {
+            return 
+                new ExternalDataBlockIdsReader(
+                    new DataReader(dataReader),
+                    CreateHeaderUsageProvider(dataReader, cachedHeaderHolder),
+                    new BIDsFromInternalDataBlockExtractor(
+                        new BIDDecoder()),
+                    new InternalDataBlockLoader(
+                        cachedInternalDataBlocks,
                         new DataReader(dataReader),
-                        CreateHeaderUsageProvider(dataReader, cachedHeaderHolder), 
-                        new BIDsFromInternalDataBlockExtractor(
-                            new BIDDecoder()),
-                        new InternalDataBlockLoader(
-                            new InternalDataBlockDecoder(
-                                new BlockTrailerDecoder(
-                                    new BIDDecoder())),
-                            new DataReader(dataReader)),
-                        CreateBlockBTreeEntryFinder(dataReader)),
-                    dataBlockEntryCache);
+                        new InternalDataBlockDecoder(
+                            new BlockTrailerDecoder(
+                                new BIDDecoder()))),
+                    CreateBlockBTreeEntryFinder(dataReader, cachedBTPages));
         }
 
         private static IBTreeEntryFinder<BID, LBBTEntry, BREF> CreateBlockBTreeEntryFinder(
-            Stream dataStream)
+            Stream dataStream,
+            ICache<BID, BTPage> cachedBTPages)
         {
             return
                 new BTreeEntryFinder<BID, LBBTEntry, IBBTEntry, BREF, BTPage>(
@@ -80,7 +98,8 @@ namespace pst
                         new DataReader(dataStream),
                         new BTPageDecoder(
                             new PageTrailerDecoder(
-                                new BIDDecoder()))));
+                                new BIDDecoder())),
+                        cachedBTPages));
         }
     }
 }

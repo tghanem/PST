@@ -8,7 +8,6 @@ using pst.impl.decoders.ndb.blocks.subnode;
 using pst.impl.decoders.ndb.btree;
 using pst.impl.io;
 using pst.impl.ndb;
-using pst.impl.ndb.cache;
 using pst.impl.ndb.nbt;
 using pst.impl.ndb.subnodebtree;
 using pst.interfaces;
@@ -22,33 +21,30 @@ namespace pst
     {
         private static INodeEntryFinder CreateNodeEntryFinder(
             Stream dataStream,
-            ICache<NID[], NodeEntry> nodeEntryCache,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache,
+            ICache<BID, BTPage> cachedBTPages,
             IDataHolder<Header> cachedHeaderHolder)
         {
             return
-                new NodeEntryFinderThatCachesTheNodeEntry(
-                    nodeEntryCache,
-                    new NodeEntryFinder(
-                        CreateHeaderUsageProvider(dataStream, cachedHeaderHolder), 
-                        CreateNodeBTreeEntryFinder(dataStream),
-                        CreateSubnodesEnumerator(dataStream, dataBlockEntryCache, cachedHeaderHolder)));
+                new NodeEntryFinder(
+                    CreateHeaderUsageProvider(dataStream, cachedHeaderHolder), 
+                    CreateNodeBTreeEntryFinder(dataStream, cachedBTPages), 
+                    CreateSubNodesEnumerator(dataStream, cachedBTPages, cachedHeaderHolder));
         }
 
-        private static ISubNodesEnumerator CreateSubnodesEnumerator(
+        private static ISubNodesEnumerator CreateSubNodesEnumerator(
             Stream dataStream,
-            ICache<BID, DataBlockEntry> dataBlockEntryCache,
+            ICache<BID, BTPage> cachedBTPages,
             IDataHolder<Header> cachedHeaderHolder)
         {
             return
                 new SubNodesEnumerator(
                     new SubnodeBTreeBlockLevelDecider(
-                        CreateDataBlockReader(dataStream, dataBlockEntryCache, cachedHeaderHolder)),
+                        CreateDataBlockReader(dataStream, cachedBTPages, cachedHeaderHolder)),
                     new SubnodeBlockLoader(
                         new SubnodeBlockDecoder(
                             new BlockTrailerDecoder(
                                 new BIDDecoder())),
-                        CreateDataBlockReader(dataStream, dataBlockEntryCache, cachedHeaderHolder)),
+                        CreateDataBlockReader(dataStream, cachedBTPages, cachedHeaderHolder)),
                     new SIEntriesFromSubnodeBlockExtractor(
                         new SIEntryDecoder(
                             new BIDDecoder())),
@@ -58,7 +54,8 @@ namespace pst
         }
 
         private static IBTreeEntryFinder<NID, LNBTEntry, BREF> CreateNodeBTreeEntryFinder(
-            Stream dataStream)
+            Stream dataStream,
+            ICache<BID, BTPage> cachedBTPages)
         {
             return
                 new BTreeEntryFinder<NID, LNBTEntry, INBTEntry, BREF, BTPage>(
@@ -82,7 +79,8 @@ namespace pst
                         new DataReader(dataStream),
                         new BTPageDecoder(
                             new PageTrailerDecoder(
-                                new BIDDecoder()))));
+                                new BIDDecoder())),
+                        cachedBTPages));
         }
     }
 }

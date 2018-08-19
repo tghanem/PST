@@ -177,16 +177,14 @@
     <Compile Include="impl\messaging\PropertyNameToIdMap.cs" />
     <Compile Include="impl\messaging\PropertyValueReader.cs" />
     <Compile Include="impl\messaging\TableContextBasedPropertyReader.cs" />
+    <Compile Include="impl\ndb\datatree\ExternalDataBlockIdsReader.cs" />
     <Compile Include="impl\ndb\HeaderBasedNIDAllocator.cs" />
     <Compile Include="impl\rawallocation\AMapBasedAllocationReserver.cs" />
     <Compile Include="impl\rawallocation\AMapBasedStreamExtender.cs" />
     <Compile Include="impl\ndb\bbt\IBBTEntriesFromBTPageExtractor.cs" />
     <Compile Include="impl\ndb\bbt\LBBTEntriesFromBTPageExtractor.cs" />
-    <Compile Include="impl\ndb\cache\DataBlockEntryFinderThatCachesTheDataBlockEntry.cs" />
-    <Compile Include="impl\ndb\cache\NodeEntryFinderThatCachesTheNodeEntry.cs" />
     <Compile Include="impl\rawallocation\AMapBasedAllocationFinder.cs" />
     <Compile Include="impl\rawallocation\RawDataAllocator.cs" />
-    <Compile Include="impl\ndb\DataBlockEntryFinder.cs" />
     <Compile Include="impl\ndb\datatree\BIDsFromInternalDataBlockExtractor.cs" />
     <Compile Include="impl\ndb\datatree\InternalDataBlockLoader.cs" />
     <Compile Include="impl\ndb\BTPageLoader.cs" />
@@ -197,7 +195,7 @@
     <Compile Include="impl\ndb\subnodebtree\SubnodeBTreeBlockLevelDecider.cs" />
     <Compile Include="impl\ndb\subnodebtree\SLEntriesFromSubnodeBlockExtractor.cs" />
     <Compile Include="impl\ndb\subnodebtree\SubnodeBlockLoader.cs" />
-    <Compile Include="impl\ndb\subnodebtree\SubNodesEnumerator.cs" />
+    <Compile Include="impl\ndb\subnodebtree\SubnodesEnumerator.cs" />
     <Compile Include="interfaces\blockallocation\datatree\IDataBlockAllocator.cs" />
     <Compile Include="interfaces\blockallocation\datatree\IDataBlockFactory.cs" />
     <Compile Include="interfaces\blockallocation\datatree\IDataTreeAllocator.cs" />
@@ -235,12 +233,11 @@
     <Compile Include="interfaces\messaging\changetracking\IObjectTracker.cs" />
     <Compile Include="interfaces\messaging\changetracking\PropertyTrackingObject.cs" />
     <Compile Include="interfaces\messaging\changetracking\TrackingObject.cs" />
-    <Compile Include="interfaces\ndb\DataBlockEntry.cs" />
+    <Compile Include="interfaces\ndb\IExternalDataBlockIdsReader.cs" />
     <Compile Include="interfaces\ndb\INIDAllocator.cs" />
     <Compile Include="interfaces\rawallocation\IAllocationFinder.cs" />
     <Compile Include="interfaces\rawallocation\IAllocationReserver.cs" />
     <Compile Include="interfaces\rawallocation\IRawDataAllocator.cs" />
-    <Compile Include="interfaces\ndb\IDataBlockEntryFinder.cs" />
     <Compile Include="interfaces\ndb\IDataBlockReader.cs" />
     <Compile Include="interfaces\ndb\IDataTreeReader.cs" />
     <Compile Include="interfaces\ndb\INodeEntryFinder.cs" />
@@ -293,9 +290,7 @@
     <Compile Include="utilities\encodings\PermutativeEncoding.cs" />
     <Compile Include="utilities\Utilities.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="interfaces\model\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

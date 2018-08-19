@@ -9,9 +9,9 @@ using pst.interfaces.ndb;
 using pst.utilities;
 using System.Collections.Generic;
 
-namespace pst.impl.ndb
+namespace pst.impl.ndb.datatree
 {
-    class DataBlockEntryFinder : IDataBlockEntryFinder
+    class ExternalDataBlockIdsReader : IExternalDataBlockIdsReader
     {
         private readonly IDataReader dataReader;
         private readonly IHeaderReader headerReader;
@@ -19,7 +19,7 @@ namespace pst.impl.ndb
         private readonly IBTreeNodeLoader<InternalDataBlock, LBBTEntry> internalDataBlockLoader;
         private readonly IBTreeEntryFinder<BID, LBBTEntry, BREF> blockBTreeEntryFinder;
 
-        public DataBlockEntryFinder(
+        public ExternalDataBlockIdsReader(
             IDataReader dataReader,
             IHeaderReader headerReader,
             IExtractor<InternalDataBlock, BID[]> blockIdsFromInternalDataBlockExtractor,
@@ -33,18 +33,16 @@ namespace pst.impl.ndb
             this.blockBTreeEntryFinder = blockBTreeEntryFinder;
         }
 
-        public Maybe<DataBlockEntry> Find(BID blockId)
+        public BID[] Read(LBBTEntry dataTreeEntry)
         {
-            var lbbtEntry = GetDataBlockEntry(blockId);
+            var dataTreeRootBlockLevel = GetBlockLevel(dataTreeEntry);
 
-            if (lbbtEntry.HasNoValue)
+            if (dataTreeRootBlockLevel.HasNoValue)
             {
-                return Maybe<DataBlockEntry>.NoValue();
+                return new[] { dataTreeEntry.BlockReference.BlockId };
             }
 
-            var childBlockIds = EnumerateAndAdd(blockId, GetBlockLevel(lbbtEntry.Value));
-
-            return Maybe<DataBlockEntry>.OfValue(new DataBlockEntry(lbbtEntry.Value, childBlockIds));
+            return EnumerateAndAdd(dataTreeEntry.BlockReference.BlockId, dataTreeRootBlockLevel.Value);
         }
 
         private BID[] EnumerateAndAdd(BID blockId, int currentDepth)
@@ -81,7 +79,7 @@ namespace pst.impl.ndb
             return new[] { blockId };
         }
 
-        private int GetBlockLevel(LBBTEntry blockEntry)
+        private Maybe<int> GetBlockLevel(LBBTEntry blockEntry)
         {
             var dataBlock = dataReader.Read(blockEntry.BlockReference.ByteIndex.Value, blockEntry.GetBlockSize());
 
@@ -90,7 +88,7 @@ namespace pst.impl.ndb
                 return dataBlock.Value[1];
             }
 
-            return 0;
+            return Maybe<int>.NoValue();
         }
 
         private Maybe<LBBTEntry> GetDataBlockEntry(BID blockId)

@@ -9,8 +9,7 @@ namespace pst.impl.ndb.datatree
     {
         private readonly IDecoder<BID> bidDecoder;
 
-        public BIDsFromInternalDataBlockExtractor(
-            IDecoder<BID> bidDecoder)
+        public BIDsFromInternalDataBlockExtractor(IDecoder<BID> bidDecoder)
         {
             this.bidDecoder = bidDecoder;
         }
