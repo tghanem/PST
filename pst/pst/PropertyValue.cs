@@ -1,4 +1,5 @@
 ﻿using pst.utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,6 +14,11 @@ namespace pst
         public PropertyValue(BinaryData value)
         {
             Value = value;
+        }
+
+        public DateTime ToDateTime()
+        {
+            return new DateTime(1601, 1, 1).Add(TimeSpan.FromMilliseconds(0.0001 * Value.ToInt64()));
         }
 
         public BinaryData[] GetMultipleVariableLengthValues()

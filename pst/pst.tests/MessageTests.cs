@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using pst.tests.Properties;
+using System;
 using System.IO;
 using System.Linq;
 
@@ -125,6 +126,19 @@ namespace pst.tests
             var multipleValuesAsStrings = result.Select(d => d.ToUnicode()).ToArray();
             Assert.AreEqual("Yellow category", multipleValuesAsStrings[1]);
             Assert.AreEqual("Green category", multipleValuesAsStrings[0]);
+        }
+
+        [Test]
+        public void ShouldCorrectlyReadMessageCreationTime()
+        {
+            //Arrange
+            var sut = GetFolderSut();
+
+            //Act
+            var result = sut.GetMessages()[0].GetProperty(MAPIProperties.PidTagCreationTime);
+
+            //Assert
+            Assert.AreEqual(DateTime.Parse("Tue 6/6/2017 10:24 PM").Date, result.Value.ToDateTime().Date);
         }
 
         private Message GetMessageSut(string folderName, string messageSubject)
