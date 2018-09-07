@@ -18,7 +18,7 @@ namespace pst
 
         public DateTime ToDateTime()
         {
-            return new DateTime(1601, 1, 1).Add(TimeSpan.FromMilliseconds(0.0001 * Value.ToInt64()));
+            return DateTime.FromFileTime(Value.ToInt64());
         }
 
         public BinaryData[] GetMultipleVariableLengthValues()
